@@ -52,7 +52,7 @@ PUT           /payment/:paymentId                   controllers.PaymentControlle
 # ProductController
 GET           /products                             controllers.ProductController.products
 GET           /product/:productId                   controllers.ProductController.product(productId: String)
-POST          /product                   controllers.ProductController.create
+POST          /product                              controllers.ProductController.create
 PUT           /product/:productId                   controllers.ProductController.update(productId: String)
 DELETE        /product/:productId                   controllers.ProductController.delete(productId: String)
 
