@@ -6,8 +6,24 @@ import play.api.mvc._
 @Singleton
 class OpinionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def opinions(productId: String) = Action {
+    Ok("")
+  }
+
+  def opinion(opinionId: String) = Action {
+    Ok("")
+  }
+
+  def create = Action {
+    Ok("")
+  }
+
+  def update(opinionId: String) = Action {
+    Ok("")
+  }
+
+  def delete(opinionId: String) = Action {
+    Ok("")
   }
 
 }

@@ -6,8 +6,24 @@ import play.api.mvc._
 @Singleton
 class ProductController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def products = Action {
+    Ok("")
+  }
+
+  def products(productId: String) = Action {
+    Ok("")
+  }
+
+  def create = Action {
+    Ok("")
+  }
+
+  def delete(productId: String) = Action {
+    Ok("")
+  }
+
+  def update(productId: String) = Action {
+    Ok("")
   }
 
 }

@@ -6,8 +6,8 @@ import play.api.mvc._
 @Singleton
 class FeaturedControlled @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def featured(productId: String) = Action {
+    Ok("")
   }
 
 }

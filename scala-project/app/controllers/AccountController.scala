@@ -6,8 +6,12 @@ import play.api.mvc._
 @Singleton
 class AccountController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def login = Action {
+    Ok("")
   }
 
+  def register = Action {
+    Ok("")
+  }
+  
 }

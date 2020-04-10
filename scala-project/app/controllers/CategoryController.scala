@@ -6,8 +6,24 @@ import play.api.mvc._
 @Singleton
 class CategoryController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def categories = Action {
+    Ok("")
+  }
+
+  def category(categoryId: String) = Action {
+    Ok("")
+  }
+
+  def create = Action {
+    Ok("")
+  }
+
+  def update(categoryId: String) = Action {
+    Ok("")
+  }
+
+  def delete(categoryId: String) = Action {
+    Ok("")
   }
 
 }
