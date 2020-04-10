@@ -23,6 +23,11 @@ RUN apt-get install -y npm
 RUN npm install -g npm@6.8
 RUN hash -r
 
-EXPOSE 8000 9000 5000 8888
+RUN useradd -ms /bin/bash sgruz
+RUN adduser sgruz sudo
+USER sgruz
 
-VOLUME [ "/home/stanislaw_gruz/projekt" ]
+VOLUME [ "/home/sgruz/projekt" ]
+WORKDIR /home/sgruz
+
+EXPOSE 8000 9000 5000 8888
