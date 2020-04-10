@@ -13,5 +13,5 @@ class AccountController @Inject()(cc: ControllerComponents) extends AbstractCont
   def register = Action {
     Ok("")
   }
-  
+
 }

@@ -10,7 +10,7 @@ class UserController @Inject()(cc: ControllerComponents) extends AbstractControl
     Ok("")
   }
 
-  def users(userId: String) = Action {
+  def user(userId: String) = Action {
     Ok("")
   }
 

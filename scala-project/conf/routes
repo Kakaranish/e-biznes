@@ -3,14 +3,68 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
+# Init routes
+GET           /                                     controllers.HomeController.index
+GET           /count                                controllers.CountController.count
+GET           /message                              controllers.AsyncController.message
+GET           /assets/*file                         controllers.Assets.versioned(path="/public", file: Asset)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+# AccountController
+POST          /login                                controllers.AccountController.login
+POST          /register                             controllers.AccountController.register
 
-      
+# CategoryController
+GET           /categories                           controllers.CategoryController.categories
+GET           /categories/:categoryId               controllers.CategoryController.category(categoryId: String)
+POST          /categories                           controllers.CategoryController.create
+PUT           /categories/:categoryId               controllers.CategoryController.update(categoryId: String)
+DELETE        /categories/:categoryId               controllers.CategoryController.delete(categoryId: String)
+
+# FeaturedController
+GET           /featured/:productId                  controllers.FeaturedController.featured(productId: String)
+
+# NotificationController
+GET           /notifications/:userId                controllers.NotificationController.notifications(userId: String)
+GET           /notification/:notificationId         controllers.NotificationController.notification(notificationId: String)
+POST          /notification                         controllers.NotificationController.create
+PUT           /notification/:notificationId         controllers.NotificationController.update(notificationId: String)
+DELETE        /notification/:notificationId         controllers.NotificationController.delete(notificationId: String)
+
+# OpinionController
+GET           /opinions/:productId                  controllers.OpinionController.opinions(productId: String)
+GET           /opinion/:opinionId                   controllers.OpinionController.opinion(opinionId: String)
+POST          /opinion                              controllers.OpinionController.create
+PUT           /opinion/:opinionId                   controllers.OpinionController.update(opinionId : String)
+DELETE        /opinione/:opinionId                  controllers.OpinionController.delete(opinionId: String)
+
+# OrderController
+GET           /orders/:userId                       controllers.OrderController.orders(userId: String)
+GET           /order/:orderId                       controllers.OrderController.order(orderId: String)
+POST          /order                                controllers.OrderController.create
+PUT           /order/:orderId                       controllers.OrderController.update(orderId : String)
+
+# PaymentController
+GET           /payments/:userId                     controllers.PaymentController.payments(userId: String)
+GET           /payment/:paymentId                   controllers.PaymentController.payment(paymentId: String)
+POST          /payment                              controllers.PaymentController.create
+PUT           /payment/:paymentId                   controllers.PaymentController.update(paymentId : String)
+
+# ProductController
+GET           /products                             controllers.ProductController.products
+GET           /product/:productId                   controllers.ProductController.product(productId: String)
+POST          /product                   controllers.ProductController.create
+PUT           /product/:productId                   controllers.ProductController.update(productId: String)
+DELETE        /product/:productId                   controllers.ProductController.delete(productId: String)
+
+# ShoppingCartController
+GET           /shopping-cart/:shoppingCartId        controllers.ShoppingCartController.productsIn(shoppingCartId: String)
+POST          /shopping-cart/                       controllers.ShoppingCartController.create
+PUT           /shopping-cart/:shoppingCartId        controllers.ShoppingCartController.update(shoppingCartId: String)
+DELETE        /shopping-cart/:shoppingCartId        controllers.ShoppingCartController.delete(shoppingCartId: String)
+
+# UserController
+GET           /users                                controllers.UserController.users
+GET           /user/:userId                         controllers.UserController.user(userId: String)
+POST          /user                                 controllers.UserController.createUser
+PUT           /user:userId                          controllers.UserController.updateUser(userId: String)
+DELETE        /user:userId                          controllers.UserController.deleteUser(userId: String)

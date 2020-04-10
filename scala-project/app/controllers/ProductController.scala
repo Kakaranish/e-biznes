@@ -10,7 +10,7 @@ class ProductController @Inject()(cc: ControllerComponents) extends AbstractCont
     Ok("")
   }
 
-  def products(productId: String) = Action {
+  def product(productId: String) = Action {
     Ok("")
   }
 
