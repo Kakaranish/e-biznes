@@ -1,13 +1,17 @@
 package controllers
 
+import daos.CategoryDao
 import javax.inject._
 import play.api.mvc._
 
-@Singleton
-class CategoryController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+import scala.concurrent.ExecutionContext
 
-  def categories = Action {
-    Ok("")
+@Singleton
+class CategoryController @Inject()(categoryDao: CategoryDao, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
+
+  def categories = Action.async { implicit request =>
+    val categories = categoryDao.list()
+    categories.map(cats => Ok(views.html.categories(cats)))
   }
 
   def category(categoryId: String) = Action {

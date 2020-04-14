@@ -1,0 +1,6 @@
+@import daos.Category
+@(categories: Seq[Category])
+
+@for(category <- categories) {
+    <b>@category.name</b>
+}

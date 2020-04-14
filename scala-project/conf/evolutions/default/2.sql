@@ -1,0 +1,15 @@
+-- !Ups
+
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "daos.Category" (
+	"id"	TEXT NOT NULL UNIQUE,
+	"name"	TEXT NOT NULL,
+	PRIMARY KEY("id")
+);
+COMMIT;
+
+-- !Downs
+
+BEGIN TRANSACTION;
+DROP TABLE IF EXISTS "daos.Category";
+COMMIT;
