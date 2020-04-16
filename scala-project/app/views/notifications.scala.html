@@ -1,0 +1,7 @@
+@import models.NotificationDao
+@(notifications: Seq[(Notification, Option[User])])
+
+@for(notification <- notifications) {
+    <b>@notification._1.content   @notification._2.get.email</b>
+}
+
