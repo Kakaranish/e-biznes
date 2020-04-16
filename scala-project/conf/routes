@@ -75,3 +75,10 @@ GET           /wishlist/item/:wishlistItemId        controllers.WishlistControll
 POST          /wishlist                             controllers.WishlistController.create
 PUT           /wishlist/item/:wishlistItemId        controllers.WishlistController.update(wishlistItemId: String)
 DELETE        /wishlist/item/:wishlistItemId        controllers.WishlistController.delete(wishlistItemId: String)
+
+# ShippingController
+GET           /shippinginfos/:userId                controllers.ShippingController.getAllShippingInfoForUser(userId: String)
+GET           /shippinginfo/:shippingInfoId         controllers.ShippingController.getWithId(shippingInfoId: String)
+POST          /shippinginfo                         controllers.ShippingController.create
+PUT           /shippinginfo:shippingInfoId          controllers.ShippingController.update(shippingInfoId: String)
+DELETE        /shippinginfo:shippingInfoId          controllers.ShippingController.delete(shippingInfoId: String)
