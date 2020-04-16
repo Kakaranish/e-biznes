@@ -2,7 +2,6 @@ package models
 
 import play.api.libs.json.Json
 import slick.jdbc.SQLiteProfile.api._
-import models.Category
 
 case class Product(id: String,
                    name: String,
