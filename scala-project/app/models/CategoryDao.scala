@@ -7,20 +7,12 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
+  private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
 
-  class CategoryTable(tag: Tag) extends Table[Category](tag, "Category") {
-    def id = column[String]("Id", O.PrimaryKey, O.Unique)
-
-    def name = column[String]("Name", O.Unique)
-
-    override def * = (id, name) <> ((Category.apply _).tupled, Category.unapply)
-  }
-
-  val categoryTable = TableQuery[CategoryTable]
+  private val categoryTable = TableQuery[CategoryTable]
 
   def create(name: String): Future[Category] = db.run {
     (categoryTable.map(c => c.name)
