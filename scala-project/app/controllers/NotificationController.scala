@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NotificationController @Inject()(notificationDao: NotificationDao, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def allNotifications = Action.async { implicit request =>
-    val notifications = notificationDao.list2()
+    val notifications = notificationDao.list()
     notifications.map(notifs => Ok(views.html.notifications(notifs)))
   }
 

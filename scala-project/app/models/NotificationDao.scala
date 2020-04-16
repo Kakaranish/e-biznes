@@ -12,9 +12,9 @@ class NotificationDao @Inject()(dbConfigProvider: DatabaseConfigProvider, userDa
 
   import dbConfig._
   import profile.api._
+  import userDao.UserTable
 
-  private class NotificationTable(tag: Tag) extends Table[Notification](tag, "Notifications") {
-
+  private class NotificationTable(tag: Tag) extends Table[Notification](tag, "Notification") {
     def id = column[String]("Id", O.PrimaryKey, O.Unique)
 
     def userId = column[String]("UserId")
@@ -28,19 +28,10 @@ class NotificationDao @Inject()(dbConfigProvider: DatabaseConfigProvider, userDa
     override def * = (id, userId, content, isRead) <> ((Notification.apply _).tupled, Notification.unapply)
   }
 
-  import userDao.UserTable
-
   private val userTable = TableQuery[UserTable]
   private val notificationTable = TableQuery[NotificationTable]
 
-//
-//  def list() = db.run {
-//    notificationTable.result
-//  }
-
-  private val x = for {
+  def list(): Future[Seq[(Notification, Option[User])]] = db.run((for {
     (notification, user) <- notificationTable joinLeft userTable
-  } yield (notification, user)
-
-  def list2(): Future[Seq[(Notification, Option[User])]] = db.run(x.result)
+  } yield (notification, user)).result)
 }
