@@ -1,3 +1,33 @@
 -- !Ups
 
+CREATE TABLE IF NOT EXISTS "Category" (
+	"Id"	TEXT NOT NULL UNIQUE,
+	"Name"	TEXT NOT NULL,
+	PRIMARY KEY("Id")
+);
+
+CREATE TABLE "User" (
+	"Id"	TEXT NOT NULL UNIQUE,
+	"Email"	TEXT NOT NULL,
+	"FirstName"	TEXT,
+	"LastName"	TEXT,
+	"Password"	TEXT NOT NULL,
+	PRIMARY KEY("Id")
+);
+
+CREATE TABLE "Notification" (
+	"Id"	TEXT NOT NULL UNIQUE,
+	"UserId"	TEXT NOT NULL,
+	"Content"	TEXT NOT NULL,
+	"IsRead"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("UserId") REFERENCES "User"("Id")
+)
+
 -- !Downs
+
+DROP TABLE IF EXISTS "Category";
+
+DROP TABLE IF EXISTS "User";
+
+DROP TABLE IF EXISTS "Notification";
