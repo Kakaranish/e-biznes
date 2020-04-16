@@ -68,3 +68,10 @@ GET           /user/:userId                         controllers.UserController.u
 POST          /user                                 controllers.UserController.createUser
 PUT           /user:userId                          controllers.UserController.updateUser(userId: String)
 DELETE        /user:userId                          controllers.UserController.deleteUser(userId: String)
+
+# WishlistController
+GET           /wishlist/:userId                     controllers.WishlistController.wishItems(userId: String)
+GET           /wishlist/item/:wishlistItemId        controllers.WishlistController.wishItem(wishlistItemId: String)
+POST          /wishlist                             controllers.WishlistController.create
+PUT           /wishlist/item/:wishlistItemId        controllers.WishlistController.update(wishlistItemId: String)
+DELETE        /wishlist/item/:wishlistItemId        controllers.WishlistController.delete(wishlistItemId: String)
