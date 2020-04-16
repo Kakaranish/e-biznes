@@ -1,4 +1,4 @@
-package daos
+package models
 
 import javax.inject.Inject
 import play.api.db.slick.DatabaseConfigProvider
@@ -12,22 +12,22 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
   import dbConfig._
   import profile.api._
 
-  class CategoryTable(tag: Tag) extends Table[Category](tag, "daos.Category") {
-    def id = column[String]("id", O.PrimaryKey, O.Unique)
+  class CategoryTable(tag: Tag) extends Table[Category](tag, "Category") {
+    def id = column[String]("Id", O.PrimaryKey, O.Unique)
 
-    def name = column[String]("name", O.Unique)
+    def name = column[String]("Name", O.Unique)
 
     override def * = (id, name) <> ((Category.apply _).tupled, Category.unapply)
   }
 
-  lazy val category = TableQuery[CategoryTable]
+  val categoryTable = TableQuery[CategoryTable]
 
   def create(name: String): Future[Category] = db.run {
-    (category.map(c => c.name)
-      returning category.map(_.id)
+    (categoryTable.map(c => c.name)
+      returning categoryTable.map(_.id)
       into ((name, id) => Category(id, name))
       ) += (name);
   }
 
-  def list(): Future[Seq[Category]] = db.run(category.result)
+  def list(): Future[Seq[Category]] = db.run(categoryTable.result)
 }
