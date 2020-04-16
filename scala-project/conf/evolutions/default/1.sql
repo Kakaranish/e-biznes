@@ -22,7 +22,7 @@ CREATE TABLE "Notification" (
 	"IsRead"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("Id"),
 	FOREIGN KEY("UserId") REFERENCES "User"("Id")
-)
+);
 
 -- !Downs
 
