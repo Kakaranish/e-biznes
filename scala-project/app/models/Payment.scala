@@ -16,7 +16,7 @@ class PaymentTable(tag: Tag) extends Table[Payment](tag, "Payment") {
 
   def methodCode = column[String]("MethodCode")
 
-  def dateTime = column[String]("DateTo,e")
+  def dateTime = column[String]("DateTime")
 
   override def * = (id, methodCode, dateTime) <> ((Payment.apply _).tupled, Payment.unapply)
 }
