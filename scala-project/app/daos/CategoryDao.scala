@@ -22,5 +22,7 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
       ) += (name);
   }
 
-  def list(): Future[Seq[Category]] = db.run(categoryTable.result)
+  def list() = db.run {
+    categoryTable.result
+  }
 }

@@ -12,7 +12,7 @@ object Notification {
   implicit val notificationFormat = Json.format[Notification]
 }
 
-private class NotificationTable(tag: Tag) extends Table[Notification](tag, "Notification") {
+class NotificationTable(tag: Tag) extends Table[Notification](tag, "Notification") {
   def id = column[String]("Id", O.PrimaryKey, O.Unique)
 
   def userId = column[String]("UserId")
