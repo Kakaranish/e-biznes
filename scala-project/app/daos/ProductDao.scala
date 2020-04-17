@@ -1,6 +1,7 @@
-package models
+package daos
 
 import javax.inject.{Inject, Singleton}
+import models.{CategoryTable, ProductTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
