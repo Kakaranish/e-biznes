@@ -1,6 +1,8 @@
 @import models.Category
 @(categories: Seq[Category])
 
+<ul>
 @for(category <- categories) {
-    <b>@category.name</b>
+    <li>CategoryId: @category.id | Name: @category.name</li>
 }
+</ul>

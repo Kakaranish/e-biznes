@@ -22,7 +22,11 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
       ) += (name);
   }
 
-  def list() = db.run {
+  def getAll() = db.run {
     categoryTable.result
+  }
+
+  def getWithId(id: String) = db.run {
+    categoryTable.filter(category => category.id === id).result.headOption
   }
 }
