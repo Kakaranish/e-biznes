@@ -1,17 +1,29 @@
 package controllers
 
+import daos.OpinionDao
 import javax.inject._
 import play.api.mvc._
 
-@Singleton
-class OpinionController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+import scala.concurrent.ExecutionContext
 
-  def opinions(productId: String) = Action {
-    Ok("")
+@Singleton
+class OpinionController @Inject()(cc: ControllerComponents, opinionDao: OpinionDao)(
+  implicit ec: ExecutionContext) extends AbstractController(cc) {
+
+  def getAllForProduct(productId: String) = Action.async { implicit request =>
+    val opinionsResult = opinionDao.getAllForProduct(productId)
+    opinionsResult.map(opinions => {
+      if (opinions.isEmpty) Ok(s"There are no opinions for product with id $productId")
+      else Ok(views.html.opinions.opinionsForProduct(opinions))
+    })
   }
 
-  def opinion(opinionId: String) = Action {
-    Ok("")
+  def getById(opinionId: String) = Action.async { implicit request =>
+    val opinionResult = opinionDao.getById(opinionId)
+    opinionResult.map(opinion => {
+      if(opinion == None) Ok(s"There is no opinion with id $opinionId")
+      else Ok(views.html.opinions.opinion(opinion.get))
+    })
   }
 
   def create = Action {
@@ -25,5 +37,4 @@ class OpinionController @Inject()(cc: ControllerComponents) extends AbstractCont
   def delete(opinionId: String) = Action {
     Ok("")
   }
-
 }

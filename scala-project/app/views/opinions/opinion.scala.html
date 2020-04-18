@@ -1,0 +1,7 @@
+@import models.Opinion
+@(opinion: ((Opinion, Option[User]), Option[Product]))
+
+<p>OpinionId: @opinion._1._1.id</p>
+<p>User: @opinion._1._2.get.firstName @opinion._1._2.get.lastName</p>
+<p>Product: @opinion._2.get.name</p>
+<p>Content: @opinion._1._1.content</p>
