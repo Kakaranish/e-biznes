@@ -9,8 +9,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class OrderedProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
-                                  orderDao: OrderDao,
-                                  productDao: ProductDao)
+                                  orderDao: OrderDao, productDao: ProductDao)
                                  (implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -21,8 +20,30 @@ class OrderedProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   private val orderTable = TableQuery[OrderTable]
   private val productTable = TableQuery[ProductTable]
 
-  // TODO:
-  def list() = db.run((for {
-    ((orderedProduct, order), product) <- orderedProductTable joinLeft orderTable joinLeft productTable
-  } yield ((orderedProduct, order), product)).result)
+  def getAll() = db.run((for {
+    ((orderedProduct, order), product) <- orderedProductTable joinLeft
+      orderTable on ((x, y) => x.orderId === y.id) joinLeft
+      productTable on ((x, y) => x._1.productId === y.id)
+  } yield ((orderedProduct, order), product))
+    .result
+  )
+
+  def getAllForOrder(orderId: String) = db.run((for {
+    ((orderedProduct, order), product) <- orderedProductTable joinLeft
+      orderTable on ((x, y) => x.orderId === y.id) joinLeft
+      productTable on ((x, y) => x._1.productId === y.id)
+  } yield ((orderedProduct, order), product))
+    .filter(record => record._1._1.orderId === orderId)
+    .result
+  )
+
+  def getById(orderedProductId: String) = db.run((for {
+    ((orderedProduct, order), product) <- orderedProductTable joinLeft
+      orderTable on ((x, y) => x.orderId === y.id) joinLeft
+      productTable on ((x, y) => x._1.productId === y.id)
+  } yield ((orderedProduct, order), product))
+    .filter(record => record._1._1.id === orderedProductId)
+    .result
+    .headOption
+  )
 }

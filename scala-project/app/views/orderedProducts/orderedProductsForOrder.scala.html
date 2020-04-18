@@ -1,0 +1,14 @@
+@import models.OrderedProduct
+@(orderedProducts: Seq[((OrderedProduct, Option[Order]), Option[models.Product])])
+
+<ul>
+    @for(orderedProduct <- orderedProducts) {
+        <li>
+            OrderedProductId: @orderedProduct._1._1.id |
+            OrderId: @orderedProduct._1._1.orderId |
+            ProductId: @orderedProduct._1._1.productId |
+            Product Name: @orderedProduct._2.get.name |
+            Ordered Quantity: @orderedProduct._1._1.quantity
+        </li>
+    }
+</ul>
