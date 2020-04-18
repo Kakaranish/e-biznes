@@ -9,9 +9,9 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class WishlistedProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
-                                  userDao: UserDao,
-                                  productDao: ProductDao)
-                                 (implicit ec: ExecutionContext) {
+                                     userDao: UserDao,
+                                     productDao: ProductDao)
+                                    (implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -21,8 +21,22 @@ class WishlistedProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   private val userTable = TableQuery[UserTable]
   private val productTable = TableQuery[ProductTable]
 
-  // Temp:
-  def list() = db.run {
-    wishlistedProductTable.result
-  }
+  def getAllForUser(userId: String) = db.run((for {
+    ((wishlistedProduct, user), product) <- wishlistedProductTable joinLeft
+      userTable on ((x, y) => x.userId === y.id) joinLeft
+      productTable on ((x, y) => x._1.productId === y.id)
+  } yield ((wishlistedProduct, user), product))
+    .filter(record => record._1._1.userId === userId)
+    .result
+  )
+
+  def getById(wishlistedProductId: String) = db.run((for {
+    ((wishlistedProduct, user), product) <- wishlistedProductTable joinLeft
+      userTable on ((x, y) => x.userId === y.id) joinLeft
+      productTable on ((x, y) => x._1.productId === y.id)
+  } yield ((wishlistedProduct, user), product))
+    .filter(record => record._1._1.id === wishlistedProductId)
+    .result
+    .headOption
+  )
 }

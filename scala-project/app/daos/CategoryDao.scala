@@ -27,6 +27,8 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
   }
 
   def getWithId(id: String) = db.run {
-    categoryTable.filter(category => category.id === id).result.headOption
+    categoryTable.filter(category => category.id === id)
+      .result
+      .headOption
   }
 }

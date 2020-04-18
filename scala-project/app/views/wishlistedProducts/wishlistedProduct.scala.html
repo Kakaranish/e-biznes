@@ -1,0 +1,6 @@
+@import models.WishlistedProduct
+@(wishlistedProduct: ((WishlistedProduct, Option[User]), Option[models.Product]))
+
+<p>User: @wishlistedProduct._1._2.get.firstName @wishlistedProduct._1._2.get.lastName</p>
+<p>ProductId: @wishlistedProduct._2.get.id</p>
+<p>Product Name: @wishlistedProduct._2.get.name</p>
