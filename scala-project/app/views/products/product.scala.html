@@ -1,0 +1,9 @@
+@import models.Product
+@(product: (Product, Option[Category]))
+
+<p>Id: @product._1.id</p>
+<p>Name: @product._1.name</p>
+<p>Category: @product._2.get.name</p>
+<p>Description: @product._1.description</p>
+<p>Price: @product._1.price</p>
+<p>Quantity: @product._1.quantity</p>

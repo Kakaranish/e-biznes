@@ -1,0 +1,15 @@
+@import models.Product
+@(products: Seq[(Product, Option[Category])])
+
+<ul>
+    @for(product <- products) {
+        <li>
+            Id: @product._1.id |
+            Name: @product._1.name |
+            Category: @product._2.get.name |
+            Description: @product._1.description |
+            Price: @product._1.price |
+            Quantity: @product._1.quantity
+        </li>
+    }
+</ul>
