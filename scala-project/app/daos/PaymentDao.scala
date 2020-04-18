@@ -16,7 +16,13 @@ class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
 
   private val paymentTable = TableQuery[PaymentTable]
 
-  def list() = db.run {
+  def getAll() = db.run {
     paymentTable.result
+  }
+
+  def getById(paymentId: String) = db.run {
+    paymentTable.filter(record => record.id === paymentId)
+      .result
+      .headOption
   }
 }

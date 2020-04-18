@@ -1,0 +1,12 @@
+@import models.Payment
+@(payments: Seq[Payment])
+
+<ul>
+    @for(payment <- payments) {
+        <li>
+            PaymentId: @payment.id |
+            Method Code: @payment.methodCode |
+            DateTime: @payment.dateTime
+        </li>
+    }
+</ul>
