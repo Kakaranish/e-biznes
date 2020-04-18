@@ -1,0 +1,12 @@
+@import models.Notification
+@(notifications: Seq[(Notification, Option[User])])
+
+<ul>
+@for(notification <- notifications) {
+    <li>
+        NotificationId: @notification._1.id |
+        User: @notification._2.get.firstName @notification._2.get.lastName |
+        Content: @notification._1.content
+    </li>
+}
+</ul>

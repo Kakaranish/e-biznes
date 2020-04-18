@@ -1,0 +1,6 @@
+@import models.Notification
+@(notification: (Notification, Option[User]))
+
+<p>NotificationId: @notification._1.id</p>
+<p>User: @notification._2.get.firstName @notification._2.get.lastName</p>
+<p>Content: @notification._1.content</p>
