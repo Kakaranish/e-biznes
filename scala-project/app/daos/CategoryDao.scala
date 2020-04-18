@@ -1,5 +1,6 @@
 package daos
 
+import java.util.UUID
 import javax.inject.Inject
 import models.{Category, CategoryTable}
 import play.api.db.slick.DatabaseConfigProvider
@@ -15,11 +16,9 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
 
   private val categoryTable = TableQuery[CategoryTable]
 
-  def create(name: String): Future[Category] = db.run {
-    (categoryTable.map(c => c.name)
-      returning categoryTable.map(_.id)
-      into ((name, id) => Category(id, name))
-      ) += (name);
+  def create(name: String) = db.run {
+    val id = UUID.randomUUID().toString()
+    categoryTable += Category(id, name)
   }
 
   def getAll() = db.run {
