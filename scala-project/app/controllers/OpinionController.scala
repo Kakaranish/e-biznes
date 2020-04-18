@@ -7,8 +7,8 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class OpinionController @Inject()(cc: ControllerComponents, opinionDao: OpinionDao)(
-  implicit ec: ExecutionContext) extends AbstractController(cc) {
+class OpinionController @Inject()(cc: ControllerComponents, opinionDao: OpinionDao)
+                                 (implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def getAllForProduct(productId: String) = Action.async { implicit request =>
     val opinionsResult = opinionDao.getAllForProduct(productId)
@@ -21,7 +21,7 @@ class OpinionController @Inject()(cc: ControllerComponents, opinionDao: OpinionD
   def getById(opinionId: String) = Action.async { implicit request =>
     val opinionResult = opinionDao.getById(opinionId)
     opinionResult.map(opinion => {
-      if(opinion == None) Ok(s"There is no opinion with id $opinionId")
+      if (opinion == None) Ok(s"There is no opinion with id $opinionId")
       else Ok(views.html.opinions.opinion(opinion.get))
     })
   }

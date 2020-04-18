@@ -9,5 +9,4 @@ class FeaturedController @Inject()(cc: ControllerComponents) extends AbstractCon
   def featured(productId: String) = Action {
     Ok("")
   }
-
 }

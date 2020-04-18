@@ -7,7 +7,8 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class CategoryController @Inject()(categoryDao: CategoryDao, cc: ControllerComponents)(implicit ec: ExecutionContext) extends AbstractController(cc) {
+class CategoryController @Inject()(categoryDao: CategoryDao, cc: ControllerComponents)
+                                  (implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def categories = Action.async { implicit request =>
     val categories = categoryDao.getAll()
@@ -17,7 +18,7 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: ControllerCompo
   def category(categoryId: String) = Action.async { implicit request =>
     val category = categoryDao.getWithId(categoryId)
     category.map(cat => {
-      if(cat == None) Ok(s"There is no category with id $categoryId")
+      if (cat == None) Ok(s"There is no category with id $categoryId")
       else Ok(views.html.categories.category(cat.get))
     })
   }
@@ -33,5 +34,4 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: ControllerCompo
   def delete(categoryId: String) = Action {
     Ok("")
   }
-
 }

@@ -10,18 +10,18 @@ class WishlistController @Inject()(cc: ControllerComponents, wishlistedProductDa
                                   (implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def wishItemsForUser(userId: String) = Action.async { implicit request =>
-    val wishItems = wishlistedProductDao.getAllForUser(userId)
-    wishItems.map(items => {
-      if(items.isEmpty) Ok(s"No wishlisted items for user with id $userId")
-      else Ok(views.html.wishlistedProducts.wishlistedProductsForUser(items))
+    val wishlistedProductsResult = wishlistedProductDao.getAllForUser(userId)
+    wishlistedProductsResult.map(wishlistedProducts => {
+      if (wishlistedProducts.isEmpty) Ok(s"No wishlisted items for user with id $userId")
+      else Ok(views.html.wishlistedProducts.wishlistedProductsForUser(wishlistedProducts))
     })
   }
 
   def wishItem(wishItemId: String) = Action.async { implicit request =>
-    val wishItem = wishlistedProductDao.getById(wishItemId)
-    wishItem.map(item => {
-      if(item == None) Ok(s"There is no wish item with id $wishItemId")
-      else Ok(views.html.wishlistedProducts.wishlistedProduct(item.get))
+    val wishlistedProductResult = wishlistedProductDao.getById(wishItemId)
+    wishlistedProductResult.map(wishlistedProduct => {
+      if (wishlistedProduct == None) Ok(s"There is no wish item with id $wishItemId")
+      else Ok(views.html.wishlistedProducts.wishlistedProduct(wishlistedProduct.get))
     })
   }
 
