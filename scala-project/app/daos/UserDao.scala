@@ -1,7 +1,5 @@
 package daos
 
-import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
 import models.{User, UserTable}
 import play.api.db.slick.DatabaseConfigProvider
@@ -16,12 +14,13 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   import dbConfig._
   import profile.api._
 
-  private val users = TableQuery[UserTable]
+  private val userTable = TableQuery[UserTable]
 
-  def list(): Future[Seq[User]] = db.run(users.result)
+  def getAll() = db.run(userTable.result)
 
-  def createUser(email: String, password: String, firstName: String, lastName: String) = db.run {
-    val id = UUID.randomUUID().toString()
-    users += User(id, email, password, firstName, lastName)
-  }
+  def getById(userId: String) = db.run(
+    userTable.filter(record => record.id === userId)
+      .result
+      .headOption
+  )
 }

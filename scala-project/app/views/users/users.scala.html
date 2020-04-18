@@ -1,0 +1,13 @@
+@import models.User
+@(users: Seq[User])
+
+<ul>
+    @for(user <- users) {
+        <li>
+            UserId: @user.id |
+            First Name: @user.firstName |
+            Last Name: @user.lastName |
+            Email: @user.email
+        </li>
+    }
+</ul>
