@@ -31,21 +31,22 @@ PUT           /notification/:notificationId         controllers.NotificationCont
 DELETE        /notification/:notificationId         controllers.NotificationController.delete(notificationId: String)
 
 # OpinionController
-GET           /opinions/:productId                  controllers.OpinionController.opinions(productId: String)
-GET           /opinion/:opinionId                   controllers.OpinionController.opinion(opinionId: String)
+GET           /opinions/:productId                  controllers.OpinionController.getAllForProduct(productId: String)
+GET           /opinion/:opinionId                   controllers.OpinionController.getById(opinionId: String)
 POST          /opinion                              controllers.OpinionController.create
 PUT           /opinion/:opinionId                   controllers.OpinionController.update(opinionId : String)
 DELETE        /opinione/:opinionId                  controllers.OpinionController.delete(opinionId: String)
 
 # OrderController
-GET           /orders/:userId                       controllers.OrderController.orders(userId: String)
-GET           /order/:orderId                       controllers.OrderController.order(orderId: String)
+GET           /orders                               controllers.OrderController.getAll
+GET           /order/user/:userId                       controllers.OrderController.getAllForUser(userId: String)
+GET           /order/:orderId                       controllers.OrderController.getById(orderId: String)
 POST          /order                                controllers.OrderController.create
 PUT           /order/:orderId                       controllers.OrderController.update(orderId : String)
 
 # PaymentController
-GET           /payments/:userId                     controllers.PaymentController.payments(userId: String)
-GET           /payment/:paymentId                   controllers.PaymentController.payment(paymentId: String)
+GET           /payments                             controllers.PaymentController.getAll
+GET           /payment/:paymentId                   controllers.PaymentController.getById(paymentId: String)
 POST          /payment                              controllers.PaymentController.create
 PUT           /payment/:paymentId                   controllers.PaymentController.update(paymentId : String)
 

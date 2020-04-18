@@ -23,8 +23,33 @@ class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   private val shippingInfoTable = TableQuery[ShippingInfoTable]
   private val paymentTable = TableQuery[PaymentTable]
 
-  def list() = db.run((for {
-    (product, category) <-
-      orderTable joinLeft userTable joinLeft shippingInfoTable joinLeft paymentTable
-  } yield (product, category)).result)
+  def getAll() = db.run((for {
+    (((order, user), shippingInfo), payment) <- orderTable joinLeft
+      userTable on ((x, y) => x.userId === y.id) joinLeft
+      shippingInfoTable on ((x, y) => x._1.shippingInfoId === y.id) joinLeft
+      paymentTable on ((x, y) => x._1._1.paymentId === y.id)
+  } yield (((order, user), shippingInfo), payment))
+    .result
+  )
+
+  def getAllForUser(userId: String) = db.run((for {
+    (((order, user), shippingInfo), payment) <- orderTable joinLeft
+      userTable on ((x, y) => x.userId === y.id) joinLeft
+      shippingInfoTable on ((x, y) => x._1.shippingInfoId === y.id) joinLeft
+      paymentTable on ((x, y) => x._1._1.paymentId === y.id)
+  } yield (((order, user), shippingInfo), payment))
+    .filter(record => record._1._1._1.userId === userId)
+    .result
+  )
+
+  def getById(orderId: String) = db.run((for {
+    (((order, user), shippingInfo), payment) <- orderTable joinLeft
+      userTable on ((x, y) => x.userId === y.id) joinLeft
+      shippingInfoTable on ((x, y) => x._1.shippingInfoId === y.id) joinLeft
+      paymentTable on ((x, y) => x._1._1.paymentId === y.id)
+  } yield (((order, user), shippingInfo), payment))
+    .filter(record => record._1._1._1.id === orderId)
+    .result
+    .headOption
+  )
 }
