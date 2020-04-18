@@ -1,0 +1,14 @@
+@import models.ShippingInfo
+@(shippingInfos: Seq[ShippingInfo])
+
+<ul>
+    @for(shippingInfo <- shippingInfos) {
+        <li>
+            ShippingInfoId: @shippingInfo.id |
+            Country: @shippingInfo.country |
+            City: @shippingInfo.city |
+            Address: @shippingInfo.address |
+            Zip/Postcode: @shippingInfo.zipOrPostcode
+        </li>
+    }
+</ul>

@@ -5,7 +5,7 @@ import models._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ShippingInfoDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
@@ -16,7 +16,13 @@ class ShippingInfoDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
 
   private val shippingInfoTable = TableQuery[ShippingInfoTable]
 
-  def list() = db.run {
+  def getAll() = db.run {
     shippingInfoTable.result
+  }
+
+  def getById(shippingInfoId: String) = db.run {
+    shippingInfoTable.filter(record => record.id === shippingInfoId)
+      .result
+      .headOption
   }
 }
