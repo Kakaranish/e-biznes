@@ -16,9 +16,9 @@
         @for(categoryWithIndex <- categories zipWithIndex) {
             <div>
                 @if(categoryWithIndex._2 == 0) {
-                    <input type="radio" id="huey" name="categoryId" value="@categoryWithIndex._1.id" checked>
+                    <input type="radio" name="categoryId" value="@categoryWithIndex._1.id" checked>
                 } else {
-                    <input type="radio" id="huey" name="categoryId" value="@categoryWithIndex._1.id">
+                    <input type="radio" name="categoryId" value="@categoryWithIndex._1.id">
                 }
                 <label for="@categoryWithIndex._1.id">@categoryWithIndex._1.name</label>
             </div>

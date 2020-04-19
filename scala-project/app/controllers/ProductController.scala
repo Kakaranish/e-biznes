@@ -2,7 +2,7 @@ package controllers
 
 import daos.{CategoryDao, ProductDao}
 import javax.inject._
-import models.{Category, Product}
+import models.Product
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.format.Formats._
@@ -43,8 +43,16 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
     Ok("")
   }
 
-  def update(productId: String) = Action {
-    Ok("")
+  def update(productId: String) = Action { implicit request =>
+    val productResult = Await.result(productDao.getById(productId), Duration.Inf)
+    if(productResult == None) Ok(s"There is no product with id $productId to update")
+    else {
+      val availableCategories = Await.result(categoryDao.getAll(), Duration.Inf)
+      val product = productResult.get
+      val updateFormToPass = updateForm.fill(UpdateProductForm(product._1.id, product._1.name, product._1.description,
+        product._1.price, product._1.quantity, product._1.categoryId))
+      Ok(views.html.products.updateProduct(updateFormToPass, availableCategories))
+    }
   }
 
   // Forms
@@ -57,6 +65,17 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
       "quantity" -> number,
       "categoryId" -> nonEmptyText
     )(CreateProductForm.apply)(CreateProductForm.unapply)
+  }
+
+  val updateForm = Form {
+    mapping(
+      "id" -> nonEmptyText,
+      "name" -> nonEmptyText,
+      "description" -> nonEmptyText,
+      "price" -> of(floatFormat),
+      "quantity" -> number,
+      "categoryId" -> nonEmptyText
+    )(UpdateProductForm.apply)(UpdateProductForm.unapply)
   }
 
   // Handlers
@@ -79,9 +98,35 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
       }
     )
   }
+
+  val updateHandler = Action.async { implicit request =>
+    val availableCategories = Await.result(categoryDao.getAll(), Duration.Inf)
+    updateForm.bindFromRequest().fold(
+      errorForm => {
+        Future.successful(
+          BadRequest(views.html.products.updateProduct(errorForm, availableCategories))
+        )
+      },
+      productForm => {
+        val productToUpdate = Product(productForm.id, productForm.name, productForm.description,
+          productForm.price, productForm.quantity, productForm.categoryId)
+        productDao.update(productToUpdate).map(_ =>
+          Redirect(routes.ProductController.update(productToUpdate.id))
+            .flashing("success" -> "Product updated.")
+        )
+      }
+    )
+  }
 }
 
 case class CreateProductForm(name: String,
+                             description: String,
+                             price: Float,
+                             quantity: Int,
+                             categoryId: String)
+
+case class UpdateProductForm(id: String,
+                             name: String,
                              description: String,
                              price: Float,
                              quantity: Int,

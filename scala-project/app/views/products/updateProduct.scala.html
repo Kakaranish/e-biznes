@@ -1,0 +1,33 @@
+@(productForm: Form[UpdateProductForm], categories: Seq[Category])(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Update product") {
+    @flash.get("success").getOrElse("")
+
+    @form(routes.ProductController.updateHandler()) {
+        @helper.CSRF.formField
+        <h3><b>Product to update: </b> @productForm("id").value</h3>
+
+        <input name="id" value="@productForm("id").value" hidden />
+
+        @inputText(productForm("name"), '_label -> "Name")
+        @inputText(productForm("description"), '_label -> "Description")
+        @inputText(productForm("price"), '_label -> "Price [PLN]")
+        @inputText(productForm("quantity"), '_label -> "Quantity", '_type -> "number")
+
+        @for(category <- categories) {
+            <div>
+                @if(category.id == productForm("categoryId").value.get) {
+                    <input type="radio" name="categoryId" value="@category.id" checked />
+                } else {
+                    <input type="radio" name="categoryId" value="@category.id" />
+                }
+                <label for="@category.id">@category.name</label>
+            </div>
+        }
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Update Product"/>
+        </div>
+    }
+}

@@ -17,7 +17,7 @@ GET           /categories                              controllers.CategoryContr
 GET           /categories/create                       controllers.CategoryController.create
 POST          /categories/create                       controllers.CategoryController.createHandler
 GET           /categories/update/:categoryId           controllers.CategoryController.update(categoryId: String)
-POST           /categories/update                       controllers.CategoryController.updateHandler
+POST          /categories/update                       controllers.CategoryController.updateHandler
 DELETE        /categories/:categoryId                  controllers.CategoryController.delete(categoryId: String)
 GET           /categories/:categoryId                  controllers.CategoryController.getById(categoryId: String)
 
@@ -53,10 +53,12 @@ PUT           /payment/:paymentId                      controllers.PaymentContro
 
 # ProductController
 GET           /products                                controllers.ProductController.products
-GET           /product/:productId                      controllers.ProductController.product(productId: String)
-POST          /product                                 controllers.ProductController.create
-PUT           /product/:productId                      controllers.ProductController.update(productId: String)
+GET           /products/create                         controllers.ProductController.create
+POST          /products/create                         controllers.ProductController.createHandler
+GET           /products/update/:productId              controllers.ProductController.update(productId: String)
+POST          /products/update                         controllers.ProductController.updateHandler
 DELETE        /product/:productId                      controllers.ProductController.delete(productId: String)
+GET           /products/:productId                     controllers.ProductController.product(productId: String)
 
 # UserController
 GET           /users                                   controllers.UserController.getAll

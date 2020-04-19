@@ -41,4 +41,9 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
     productTable += Product(id, product.name, product.description, product.price,
       product.quantity, product.categoryId)
   }
+
+  def update(productToUpdate: Product) = db.run {
+    productTable.filter(record => record.id === productToUpdate.id)
+        .update(productToUpdate)
+  }
 }
