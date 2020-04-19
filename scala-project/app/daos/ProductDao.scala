@@ -1,7 +1,9 @@
 package daos
 
+import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{Category, CategoryTable, ProductTable}
+import models.{Category, CategoryTable, Product, ProductTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -33,4 +35,10 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
     .result
     .headOption
   )
+
+  def create(product: Product) = db.run {
+    val id = UUID.randomUUID().toString()
+    productTable += Product(id, product.name, product.description, product.price,
+      product.quantity, product.categoryId)
+  }
 }

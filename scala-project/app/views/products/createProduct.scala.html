@@ -1,0 +1,31 @@
+@(productForm: Form[CreateProductForm], categories: Seq[Category])(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Create product") {
+    @flash.get("success").getOrElse("")
+
+    <h3>Create product</h3>
+    @form(routes.ProductController.createHandler()) {
+        @helper.CSRF.formField
+
+        @inputText(productForm("name"), '_label -> "Name")
+        @inputText(productForm("description"), '_label -> "Description")
+        @inputText(productForm("price"), '_label -> "Price [PLN]")
+        @inputText(productForm("quantity"), '_label -> "Quantity", '_type -> "number")
+
+        @for(categoryWithIndex <- categories zipWithIndex) {
+            <div>
+                @if(categoryWithIndex._2 == 0) {
+                    <input type="radio" id="huey" name="categoryId" value="@categoryWithIndex._1.id" checked>
+                } else {
+                    <input type="radio" id="huey" name="categoryId" value="@categoryWithIndex._1.id">
+                }
+                <label for="@categoryWithIndex._1.id">@categoryWithIndex._1.name</label>
+            </div>
+        }
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Add Product"/>
+        </div>
+    }
+}
