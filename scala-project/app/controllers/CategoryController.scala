@@ -90,7 +90,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
           BadRequest(views.html.categories.updateCategory(errorForm))
         )
       },
-      categoryForm => {
+      categoryForm  => {
         val categoryToUpdate = Category(categoryForm.id, categoryForm.name)
         categoryDao.update(categoryToUpdate).map { _ =>
           Redirect(routes.CategoryController.update(categoryToUpdate.id))

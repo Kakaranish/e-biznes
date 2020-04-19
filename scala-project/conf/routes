@@ -57,7 +57,7 @@ GET           /products/create                         controllers.ProductContro
 POST          /products/create                         controllers.ProductController.createHandler
 GET           /products/update/:productId              controllers.ProductController.update(productId: String)
 POST          /products/update                         controllers.ProductController.updateHandler
-DELETE        /product/:productId                      controllers.ProductController.delete(productId: String)
+DELETE        /products/:productId                     controllers.ProductController.delete(productId: String)
 GET           /products/:productId                     controllers.ProductController.product(productId: String)
 
 # UserController

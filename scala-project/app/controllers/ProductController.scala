@@ -39,10 +39,6 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
     Ok(views.html.products.createProduct(createForm, availableCategories))
   }
 
-  def delete(productId: String) = Action {
-    Ok("")
-  }
-
   def update(productId: String) = Action { implicit request =>
     val productResult = Await.result(productDao.getById(productId), Duration.Inf)
     if(productResult == None) Ok(s"There is no product with id $productId to update")
@@ -53,6 +49,14 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
         product._1.price, product._1.quantity, product._1.categoryId))
       Ok(views.html.products.updateProduct(updateFormToPass, availableCategories))
     }
+  }
+
+  def delete(productId: String) = Action.async { implicit request =>
+    val deleteResult = productDao.delete(productId)
+    deleteResult.map(result => {
+      if(result != 0) Ok(s"Product with id $productId has been deleted")
+      else Ok(s"There is no product with id $productId")
+    })
   }
 
   // Forms
