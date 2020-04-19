@@ -1,0 +1,31 @@
+@(userForm: Form[CreateUserForm], errors: Seq[String])(implicit request: MessagesRequestHeader, flash: Flash)
+    @import helper._
+
+@main("Create User") {
+
+    @if(errors.isEmpty == false) {
+
+        <span style="color: red">Create user failure</span>
+        <ul>
+        @for(error <- errors) {
+            <li>@error</li>
+        }
+        </ul>
+    }
+
+    @flash.get("success").getOrElse("")
+
+    @form(routes.UserController.createHandler()) {
+        @helper.CSRF.formField
+
+        @inputText(userForm("email"), '_label -> "Email")
+        @inputText(userForm("firstName"), '_label -> "First Name")
+        @inputText(userForm("lastName"), '_label -> "Last Name")
+        @inputPassword(userForm("password"), '_label -> "Password")
+        @inputPassword(userForm("confirmedPassword"), '_label -> "Confirmed Password")
+
+        <div class="buttons" style="margin-top: 10px;">
+            <input type="submit" value="Create User"/>
+        </div>
+    }
+}
