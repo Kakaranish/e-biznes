@@ -73,8 +73,9 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
           BadRequest(views.html.categories.createCategory(errorForm))
         )
       },
-      category => {
-        categoryDao.create(category.name).map(_ => {
+      categoryForm => {
+        val category = Category(null, categoryForm.name)
+        categoryDao.create(category).map(_ => {
           Redirect(routes.CategoryController.create())
             .flashing("success" -> "category.created")
         })
