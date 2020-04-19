@@ -50,8 +50,12 @@ class NotificationController @Inject()(cc: MessagesControllerComponents,
     }
   }
 
-  def delete(notificationId: String) = Action {
-    Ok("")
+  def delete(notificationId: String) = Action.async { implicit request =>
+    val deleteResult = notificationDao.delete(notificationId)
+    deleteResult.map(result => {
+      if (result != 0) Ok(s"Notification with id $notificationId has been deleted")
+      else Ok(s"There is no notification with id $notificationId")
+    })
   }
 
   // Forms
