@@ -3,11 +3,11 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{Category, CategoryTable, Product, ProductTable}
+import models.{CategoryTable, Product, ProductTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao: CategoryDao)
@@ -20,12 +20,17 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
   private val productTable = TableQuery[ProductTable]
   private val categoryTable = TableQuery[CategoryTable]
 
-  def getAll() = db.run((for {
-    (product, category) <- productTable joinLeft
-      categoryTable on ((x, y) => x.categoryId === y.id)
-  } yield (product, category))
-    .result
-  )
+  def getAll() = db.run {
+    (for {
+      (product, category) <- productTable joinLeft
+        categoryTable on ((x, y) => x.categoryId === y.id)
+    } yield (product, category))
+      .result
+  }
+
+  def getAllPreviews() = db.run {
+    productTable.map(record => (record.id, record.name)).result
+  }
 
   def getById(productId: String) = db.run((for {
     (product, category) <- productTable joinLeft
@@ -44,7 +49,7 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
 
   def update(productToUpdate: Product) = db.run {
     productTable.filter(record => record.id === productToUpdate.id)
-        .update(productToUpdate)
+      .update(productToUpdate)
   }
 
   def delete(productId: String) = db.run {

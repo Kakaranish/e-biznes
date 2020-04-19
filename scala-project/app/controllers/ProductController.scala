@@ -2,7 +2,7 @@ package controllers
 
 import daos.{CategoryDao, ProductDao}
 import javax.inject._
-import models.Product
+import models.{Product, ProductPreview}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.format.Formats._
@@ -18,7 +18,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
                                  (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
-  def products = Action.async { implicit request =>
+  def getAll() = Action.async { implicit request =>
     val productsResult = productDao.getAll()
     productsResult.map(products => {
       if (products.isEmpty) Ok("No products found")
@@ -26,7 +26,17 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
     })
   }
 
-  def product(productId: String) = Action.async { implicit request =>
+  def getAllPreviews() = Action.async { implicit request =>
+    val productsResult = productDao.getAllPreviews()
+    productsResult.map(products => {
+
+      if (products.isEmpty) Ok("No products found")
+      else Ok(views.html.products.productsPreviews(
+        products.map(product => ProductPreview(product._1, product._2))))
+    })
+  }
+
+  def getById(productId: String) = Action.async { implicit request =>
     val productResult = productDao.getById(productId)
     productResult.map(product => {
       if (product == None) Ok(s"There is no product with id $productId")
@@ -34,7 +44,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
     })
   }
 
-  def create = Action { implicit request =>
+  def create() = Action { implicit request =>
     val availableCategories = Await.result(categoryDao.getAll(), Duration.Inf)
     Ok(views.html.products.createProduct(createForm, availableCategories))
   }

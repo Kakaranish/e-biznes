@@ -52,13 +52,14 @@ POST          /payment                                 controllers.PaymentContro
 PUT           /payment/:paymentId                      controllers.PaymentController.update(paymentId : String)
 
 # ProductController
-GET           /products                                controllers.ProductController.products
+GET           /products                                controllers.ProductController.getAll
+GET           /products/previews                       controllers.ProductController.getAllPreviews
 GET           /products/create                         controllers.ProductController.create
 POST          /products/create                         controllers.ProductController.createHandler
 GET           /products/update/:productId              controllers.ProductController.update(productId: String)
 POST          /products/update                         controllers.ProductController.updateHandler
 DELETE        /products/:productId                     controllers.ProductController.delete(productId: String)
-GET           /products/:productId                     controllers.ProductController.product(productId: String)
+GET           /products/:productId                     controllers.ProductController.getById(productId: String)
 
 # UserController
 GET           /users                                   controllers.UserController.getAll

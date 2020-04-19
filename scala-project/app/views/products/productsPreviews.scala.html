@@ -1,0 +1,11 @@
+@import models.ProductPreview
+@(productsPreviews: Seq[ProductPreview])
+
+<h3>Products previews</h3>
+@main("Products previews") {
+    <ul>
+        @for(productPreview <- productsPreviews) {
+            <li>ProductId: @productPreview.id | Name: @productPreview.name</li>
+        }
+    </ul>
+}

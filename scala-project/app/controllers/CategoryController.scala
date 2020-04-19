@@ -14,7 +14,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao: CategoryDao)
                                   (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
-  def getAll = Action.async { implicit request =>
+  def getAll() = Action.async { implicit request =>
     val categories = categoryDao.getAll()
     categories.map(cats => Ok(views.html.categories.categories(cats)))
   }
@@ -27,7 +27,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
     })
   }
 
-  def create = Action { implicit request =>
+  def create() = Action { implicit request =>
     Ok(views.html.categories.createCategory(createForm))
   }
 
@@ -66,7 +66,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
 
   // Handlers section
 
-  def createHandler = Action.async { implicit request =>
+  def createHandler() = Action.async { implicit request =>
     createForm.bindFromRequest().fold(
       errorForm => {
         Future.successful(
@@ -83,7 +83,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
     )
   }
 
-  def updateHandler = Action.async { implicit request =>
+  def updateHandler() = Action.async { implicit request =>
     updateForm.bindFromRequest().fold(
       errorForm => {
         Future.successful(
