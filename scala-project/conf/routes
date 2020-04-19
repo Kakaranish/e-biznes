@@ -30,7 +30,7 @@ GET           /notifications/create                        controllers.Notificat
 POST          /notifications/create                        controllers.NotificationController.createHandler
 GET           /notifications/update/:notificationId        controllers.NotificationController.update(notificationId: String)
 POST          /notifications/update                        controllers.NotificationController.updateHandler
-DELETE        /notification/:notificationId                controllers.NotificationController.delete(notificationId: String)
+DELETE        /notifications/:notificationId                controllers.NotificationController.delete(notificationId: String)
 GET           /notifications/:notificationId               controllers.NotificationController.notification(notificationId: String)
 
 # OpinionController
