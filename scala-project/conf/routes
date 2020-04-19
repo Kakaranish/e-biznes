@@ -65,8 +65,9 @@ GET           /products/:productId                     controllers.ProductContro
 GET           /users                                   controllers.UserController.getAll
 GET           /users/create                            controllers.UserController.create
 POST          /users/create                            controllers.UserController.createHandler
-PUT           /user/:userId                             controllers.UserController.update(userId: String)
-DELETE        /user/:userId                             controllers.UserController.delete(userId: String)
+GET           /users/update/:userId                    controllers.UserController.update(userId: String)
+POST          /users/update                            controllers.UserController.updateHandler
+DELETE        /user/:userId                            controllers.UserController.delete(userId: String)
 GET           /users/:userId                           controllers.UserController.getById(userId: String)
 
 # WishlistController

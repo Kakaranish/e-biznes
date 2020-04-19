@@ -7,7 +7,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class UserController @Inject()(cc: MessagesControllerComponents, userDao: UserDao)
@@ -33,11 +34,17 @@ class UserController @Inject()(cc: MessagesControllerComponents, userDao: UserDa
     Ok(views.html.users.createUser(createForm, Seq.empty[String]))
   }
 
-  def delete(userId: String) = Action {
-    Ok("")
+  def update(userId: String) = Action { implicit request =>
+    val userResult = Await.result(userDao.getById(userId), Duration.Inf)
+    if (userResult == None) Ok(s"There is no user with id $userId to update")
+    else {
+      val user = userResult.get
+      val updateFormToPass = updateForm.fill(UpdateUserForm(user.id, user.firstName, user.lastName))
+      Ok(views.html.users.updateUser(updateFormToPass))
+    }
   }
 
-  def update(userId: String) = Action {
+  def delete(userId: String) = Action {
     Ok("")
   }
 
@@ -62,8 +69,6 @@ class UserController @Inject()(cc: MessagesControllerComponents, userDao: UserDa
   val updateForm = Form {
     mapping(
       "id" -> nonEmptyText,
-      "email" -> email,
-      "password" -> nonEmptyText,
       "firstName" -> nonEmptyText,
       "lastName" -> nonEmptyText
     )(UpdateUserForm.apply)(UpdateUserForm.unapply)
@@ -89,21 +94,22 @@ class UserController @Inject()(cc: MessagesControllerComponents, userDao: UserDa
     )
   }
 
-  //  val updateHandler = Action.async { implicit request =>
-  //    updateForm.bindFromRequest().fold(
-  //      errorForm => {
-  //        Future.successful(
-  //          BadRequest(views.html.index)
-  //        )
-  //      },
-  //      updateForm => {
-  //        // Placeholder for logic
-  //        Future.successful(
-  //          BadRequest(views.html.index)
-  //        )
-  //      }
-  //    )
-  //  }
+  val updateHandler = Action.async { implicit request =>
+    updateForm.bindFromRequest().fold(
+      errorForm => {
+        Future.successful(
+          BadRequest(views.html.users.updateUser(errorForm))
+        )
+      },
+      updateForm => {
+        val userToUpdate = User(updateForm.id, null, null, updateForm.firstName, updateForm.lastName)
+        userDao.update(userToUpdate).map(_ =>
+          Redirect(routes.UserController.update(updateForm.id))
+            .flashing("success" -> "User updated.")
+        )
+      }
+    )
+  }
 }
 
 case class CreateUserForm(email: String,
@@ -113,7 +119,5 @@ case class CreateUserForm(email: String,
                           lastName: String)
 
 case class UpdateUserForm(id: String,
-                          email: String,
-                          password: String,
                           firstName: String,
                           lastName: String)

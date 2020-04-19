@@ -33,7 +33,8 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
 
   def update(userToUpdate: User) = db.run {
     userTable.filter(record => record.id === userToUpdate.id)
-      .update(userToUpdate)
+      .map(record => (record.firstName, record.lastName))
+      .update((userToUpdate.firstName, userToUpdate.lastName))
   }
 
   def delete(userId: String) = db.run {
