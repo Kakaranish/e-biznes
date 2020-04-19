@@ -62,8 +62,12 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
     })
   }
 
-  def delete(opinionId: String) = Action {
-    Ok("")
+  def delete(opinionId: String) = Action.async { implicit request =>
+    val deleteResult = opinionDao.delete(opinionId)
+    deleteResult.map(result => {
+      if (result != 0) Ok(s"Opinion with id $opinionId has been deleted")
+      else Ok(s"There is no opinion with id $opinionId")
+    })
   }
 
   // Forms
