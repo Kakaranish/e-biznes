@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
-class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControllerComponents)
+class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao: CategoryDao)
                                   (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   def getAll = Action.async { implicit request =>
@@ -28,7 +28,7 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
   }
 
   def create = Action { implicit request =>
-    Ok(views.html.categories.createCategory(createCategoryForm))
+    Ok(views.html.categories.createCategory(createForm))
   }
 
   def update(categoryId: String) = Action { implicit request =>
@@ -36,7 +36,7 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
     if (categoryResult == None) Ok(s"There is no category with id $categoryId to update")
     else {
       val category = categoryResult.get
-      val categoryFormToPass = updateCategoryForm.fill(UpdateCategoryForm(category.id, category.name))
+      val categoryFormToPass = updateForm.fill(UpdateCategoryForm(category.id, category.name))
       Ok(views.html.categories.updateCategory(categoryFormToPass))
     }
   }
@@ -51,13 +51,13 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
 
   // Forms
 
-  val createCategoryForm = Form {
+  val createForm = Form {
     mapping(
       "name" -> nonEmptyText
     )(CreateCategoryForm.apply)(CreateCategoryForm.unapply)
   }
 
-  val updateCategoryForm = Form {
+  val updateForm = Form {
     mapping(
       "id" -> nonEmptyText,
       "name" -> nonEmptyText
@@ -67,7 +67,7 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
   // Handlers section
 
   def createHandler = Action.async { implicit request =>
-    createCategoryForm.bindFromRequest().fold(
+    createForm.bindFromRequest().fold(
       errorForm => {
         Future.successful(
           BadRequest(views.html.categories.createCategory(errorForm))
@@ -75,16 +75,16 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
       },
       categoryForm => {
         val category = Category(null, categoryForm.name)
-        categoryDao.create(category).map(_ => {
+        categoryDao.create(category).map(_ =>
           Redirect(routes.CategoryController.create())
-            .flashing("success" -> "category.created")
-        })
+            .flashing("success" -> "Category created.")
+        )
       }
     )
   }
 
   def updateHandler = Action.async { implicit request =>
-    updateCategoryForm.bindFromRequest().fold(
+    updateForm.bindFromRequest().fold(
       errorForm => {
         Future.successful(
           BadRequest(views.html.categories.updateCategory(errorForm))
