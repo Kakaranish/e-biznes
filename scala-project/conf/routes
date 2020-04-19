@@ -33,10 +33,11 @@ DELETE        /notification/:notificationId            controllers.NotificationC
 
 # OpinionController
 GET           /opinions/product/:productId             controllers.OpinionController.getAllForProduct(productId: String)
-GET           /opinion/:opinionId                      controllers.OpinionController.getById(opinionId: String)
-POST          /opinion                                 controllers.OpinionController.create
+GET           /opinions/create                         controllers.OpinionController.create
+POST          /opinions/create                         controllers.OpinionController.createHandler
 PUT           /opinion/:opinionId                      controllers.OpinionController.update(opinionId : String)
-DELETE        /opinione/:opinionId                     controllers.OpinionController.delete(opinionId: String)
+DELETE        /opinions/:opinionId                     controllers.OpinionController.delete(opinionId: String)
+GET           /opinions/:opinionId                     controllers.OpinionController.getById(opinionId: String)
 
 # OrderController
 GET           /orders                                  controllers.OrderController.getAll
@@ -67,7 +68,7 @@ GET           /users/create                            controllers.UserControlle
 POST          /users/create                            controllers.UserController.createHandler
 GET           /users/update/:userId                    controllers.UserController.update(userId: String)
 POST          /users/update                            controllers.UserController.updateHandler
-DELETE        /users/:userId                            controllers.UserController.delete(userId: String)
+DELETE        /users/:userId                           controllers.UserController.delete(userId: String)
 GET           /users/:userId                           controllers.UserController.getById(userId: String)
 
 # WishlistController

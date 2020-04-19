@@ -1,5 +1,6 @@
 package daos
 
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.db.slick.DatabaseConfigProvider
@@ -37,4 +38,19 @@ class OpinionDao @Inject()(dbConfigProvider: DatabaseConfigProvider, userDao: Us
     .result
     .headOption
   )
+
+  def create(opinion: Opinion) = db.run {
+    val id = UUID.randomUUID().toString()
+    opinionTable += Opinion(id, opinion.userId, opinion.productId, opinion.content)
+  }
+
+  def update(opinionToUpdate: Opinion) = db.run {
+    opinionTable.filter(record => record.id === opinionToUpdate.id)
+      .update(opinionToUpdate)
+  }
+
+  def delete(opinionId: String) = db.run {
+    opinionTable.filter(record => record.id === opinionId)
+      .delete
+  }
 }
