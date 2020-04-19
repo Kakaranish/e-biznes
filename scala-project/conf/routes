@@ -15,11 +15,11 @@ POST          /register                                controllers.AccountContro
 # CategoryController
 GET           /categories                              controllers.CategoryController.getAll
 GET           /categories/create                       controllers.CategoryController.create
-POST          /categories/create-handler               controllers.CategoryController.createHandler
-GET           /categories/:categoryId                  controllers.CategoryController.getById(categoryId: String)
-POST          /categories                              controllers.CategoryController.create
-PUT           /categories/:categoryId                  controllers.CategoryController.update(categoryId: String)
+POST          /categories/create                       controllers.CategoryController.createHandler
+GET           /categories/update/:categoryId           controllers.CategoryController.update(categoryId: String)
+POST           /categories/update                       controllers.CategoryController.updateHandler
 DELETE        /categories/:categoryId                  controllers.CategoryController.delete(categoryId: String)
+GET           /categories/:categoryId                  controllers.CategoryController.getById(categoryId: String)
 
 # FeaturedController
 GET           /featured/:productId                     controllers.FeaturedController.featured(productId: String)

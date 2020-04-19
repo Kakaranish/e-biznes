@@ -35,4 +35,9 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
     categoryTable.filter(record => record.id === categoryToUpdate.id)
       .update(categoryToUpdate)
   }
+
+  def delete(categoryId: String) = db.run {
+    categoryTable.filter(record => record.id === categoryId)
+      .delete
+  }
 }

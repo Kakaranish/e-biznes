@@ -41,8 +41,12 @@ class CategoryController @Inject()(categoryDao: CategoryDao, cc: MessagesControl
     }
   }
 
-  def delete(categoryId: String) = Action {
-    Ok("")
+  def delete(categoryId: String) = Action.async { implicit reqeust =>
+    val deleteResult = categoryDao.delete(categoryId)
+    deleteResult.map(result => {
+      if(result != 0) Ok(s"Category with id $categoryId has been deleted")
+      else Ok(s"There is no category with id $categoryId")
+    })
   }
 
   // Forms
