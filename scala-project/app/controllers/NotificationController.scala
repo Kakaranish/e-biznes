@@ -38,8 +38,16 @@ class NotificationController @Inject()(cc: MessagesControllerComponents,
     else Ok(views.html.notifications.createNotification(createForm, availableUsers))
   }
 
-  def update(notificationId: String) = Action {
-    Ok("")
+  def update(notificationId: String) = Action { implicit request =>
+    val notificationResult = Await.result(notificationDao.getById(notificationId), Duration.Inf)
+    if(notificationResult == None) Ok(s"There is no notification with id $notificationId")
+    else {
+      val notification = notificationResult.get._1
+      val user = notificationResult.get._2.get
+      val updateFormToPass = updateForm.fill(UpdateNotificationForm(
+        notificationId, notification.userId, notification.content, if(notification.isRead != 0) true else false))
+      Ok(views.html.notifications.updateNotification(updateFormToPass, user))
+    }
   }
 
   def delete(notificationId: String) = Action {
@@ -59,7 +67,7 @@ class NotificationController @Inject()(cc: MessagesControllerComponents,
       "id" -> nonEmptyText,
       "userId" -> nonEmptyText,
       "content" -> nonEmptyText,
-      "isRead" -> number
+      "isRead" -> boolean
     )(UpdateNotificationForm.apply)(UpdateNotificationForm.unapply)
   }
 
@@ -83,21 +91,23 @@ class NotificationController @Inject()(cc: MessagesControllerComponents,
     )
   }
 
-//  val updateHandler = Action.async { implicit request =>
-//    updateForm.bindFromRequest().fold(
-//      errorForm => {
-//        Future.successful(
-//          BadRequest(views.html.index)
-//        )
-//      },
-//      updateForm => {
-//        // Placeholder for logic
-//        Future.successful(
-//          BadRequest(views.html.index)
-//        )
-//      }
-//    )
-//  }
+  val updateHandler = Action.async { implicit request =>
+    updateForm.bindFromRequest().fold(
+      errorForm => {
+        val user = Await.result(userDao.getById(errorForm("userId").value.get), Duration.Inf).get
+        Future.successful(
+          BadRequest(views.html.notifications.updateNotification(errorForm, user))
+        )
+      },
+      updateForm => {
+        val notification = Notification(updateForm.id, updateForm.userId, updateForm.content, if(updateForm.isRead) 1 else 0)
+        notificationDao.update(notification).map(_ =>
+          Redirect(routes.NotificationController.update(notification.id))
+            .flashing("success" -> "Notification updated.")
+        )
+      }
+    )
+  }
 }
 
 case class CreateNotificationForm(userId: String,
@@ -106,4 +116,4 @@ case class CreateNotificationForm(userId: String,
 case class UpdateNotificationForm(id: String,
                                   userId: String,
                                   content: String,
-                                  isRead: Int)
+                                  isRead: Boolean)

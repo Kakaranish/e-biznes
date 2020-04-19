@@ -8,7 +8,7 @@
     @form(routes.NotificationController.createHandler()) {
         @helper.CSRF.formField
 
-        @inputText(notificationForm("content"), '_label -> "Name")
+        @inputText(notificationForm("content"), '_label -> "Content")
 
         <div>
             <label><b>User</b></label><br/>

@@ -4,93 +4,94 @@
 # ~~~~
 
 # Init routes
-GET           /                                        controllers.HomeController.index
+GET           /                                            controllers.HomeController.index
 #GET           /restricted                              controllers.HomeController.restricted
-GET           /assets/*file                            controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
 # AccountController
-POST          /login                                   controllers.AccountController.login
-POST          /register                                controllers.AccountController.register
+POST          /login                                       controllers.AccountController.login
+POST          /register                                    controllers.AccountController.register
 
 # CategoryController
-GET           /categories                              controllers.CategoryController.getAll
-GET           /categories/create                       controllers.CategoryController.create
-POST          /categories/create                       controllers.CategoryController.createHandler
-GET           /categories/update/:categoryId           controllers.CategoryController.update(categoryId: String)
-POST          /categories/update                       controllers.CategoryController.updateHandler
-DELETE        /categories/:categoryId                  controllers.CategoryController.delete(categoryId: String)
-GET           /categories/:categoryId                  controllers.CategoryController.getById(categoryId: String)
+GET           /categories                                  controllers.CategoryController.getAll
+GET           /categories/create                           controllers.CategoryController.create
+POST          /categories/create                           controllers.CategoryController.createHandler
+GET           /categories/update/:categoryId               controllers.CategoryController.update(categoryId: String)
+POST          /categories/update                           controllers.CategoryController.updateHandler
+DELETE        /categories/:categoryId                      controllers.CategoryController.delete(categoryId: String)
+GET           /categories/:categoryId                      controllers.CategoryController.getById(categoryId: String)
 
 # FeaturedController
-GET           /featured/:productId                     controllers.FeaturedController.featured(productId: String)
+GET           /featured/:productId                         controllers.FeaturedController.featured(productId: String)
 
 # NotificationController
-GET           /notifications/user/:userId              controllers.NotificationController.notifications(userId: String)
-GET           /notifications/create                    controllers.NotificationController.create
-POST          /notifications/create                    controllers.NotificationController.createHandler
-PUT           /notification/:notificationId            controllers.NotificationController.update(notificationId: String)
-DELETE        /notification/:notificationId            controllers.NotificationController.delete(notificationId: String)
-GET           /notifications/:notificationId           controllers.NotificationController.notification(notificationId: String)
+GET           /notifications/user/:userId                  controllers.NotificationController.notifications(userId: String)
+GET           /notifications/create                        controllers.NotificationController.create
+POST          /notifications/create                        controllers.NotificationController.createHandler
+GET           /notifications/update/:notificationId        controllers.NotificationController.update(notificationId: String)
+POST          /notifications/update                        controllers.NotificationController.updateHandler
+DELETE        /notification/:notificationId                controllers.NotificationController.delete(notificationId: String)
+GET           /notifications/:notificationId               controllers.NotificationController.notification(notificationId: String)
 
 # OpinionController
-GET           /opinions/product/:productId             controllers.OpinionController.getAllForProduct(productId: String)
-GET           /opinions/create                         controllers.OpinionController.create
-POST          /opinions/create                         controllers.OpinionController.createHandler
-GET           /opinions/update/:opinionId              controllers.OpinionController.update(opinionId: String)
-POST          /opinions/update                         controllers.OpinionController.updateHandler
-DELETE        /opinions/:opinionId                     controllers.OpinionController.delete(opinionId: String)
-GET           /opinions/:opinionId                     controllers.OpinionController.getById(opinionId: String)
+GET           /opinions/product/:productId                 controllers.OpinionController.getAllForProduct(productId: String)
+GET           /opinions/create                             controllers.OpinionController.create
+POST          /opinions/create                             controllers.OpinionController.createHandler
+GET           /opinions/update/:opinionId                  controllers.OpinionController.update(opinionId: String)
+POST          /opinions/update                             controllers.OpinionController.updateHandler
+DELETE        /opinions/:opinionId                         controllers.OpinionController.delete(opinionId: String)
+GET           /opinions/:opinionId                         controllers.OpinionController.getById(opinionId: String)
 
 # OrderController
-GET           /orders                                  controllers.OrderController.getAll
-GET           /order/user/:userId                      controllers.OrderController.getAllForUser(userId: String)
-GET           /order/:orderId                          controllers.OrderController.getById(orderId: String)
-POST          /order                                   controllers.OrderController.create
-PUT           /order/:orderId                          controllers.OrderController.update(orderId : String)
+GET           /orders                                      controllers.OrderController.getAll
+GET           /order/user/:userId                          controllers.OrderController.getAllForUser(userId: String)
+GET           /order/:orderId                              controllers.OrderController.getById(orderId: String)
+POST          /order                                       controllers.OrderController.create
+PUT           /order/:orderId                              controllers.OrderController.update(orderId : String)
 
 # PaymentController
-GET           /payments                                controllers.PaymentController.getAll
-GET           /payment/:paymentId                      controllers.PaymentController.getById(paymentId: String)
-POST          /payment                                 controllers.PaymentController.create
-PUT           /payment/:paymentId                      controllers.PaymentController.update(paymentId : String)
+GET           /payments                                    controllers.PaymentController.getAll
+GET           /payment/:paymentId                          controllers.PaymentController.getById(paymentId: String)
+POST          /payment                                     controllers.PaymentController.create
+PUT           /payment/:paymentId                          controllers.PaymentController.update(paymentId : String)
 
 # ProductController
-GET           /products                                controllers.ProductController.getAll
-GET           /products/previews                       controllers.ProductController.getAllPreviews
-GET           /products/create                         controllers.ProductController.create
-POST          /products/create                         controllers.ProductController.createHandler
-GET           /products/update/:productId              controllers.ProductController.update(productId: String)
-POST          /products/update                         controllers.ProductController.updateHandler
-DELETE        /products/:productId                     controllers.ProductController.delete(productId: String)
-GET           /products/:productId                     controllers.ProductController.getById(productId: String)
+GET           /products                                    controllers.ProductController.getAll
+GET           /products/previews                           controllers.ProductController.getAllPreviews
+GET           /products/create                             controllers.ProductController.create
+POST          /products/create                             controllers.ProductController.createHandler
+GET           /products/update/:productId                  controllers.ProductController.update(productId: String)
+POST          /products/update                             controllers.ProductController.updateHandler
+DELETE        /products/:productId                         controllers.ProductController.delete(productId: String)
+GET           /products/:productId                         controllers.ProductController.getById(productId: String)
 
 # UserController
-GET           /users                                   controllers.UserController.getAll
-GET           /users/create                            controllers.UserController.create
-POST          /users/create                            controllers.UserController.createHandler
-GET           /users/update/:userId                    controllers.UserController.update(userId: String)
-POST          /users/update                            controllers.UserController.updateHandler
-DELETE        /users/:userId                           controllers.UserController.delete(userId: String)
-GET           /users/:userId                           controllers.UserController.getById(userId: String)
+GET           /users                                       controllers.UserController.getAll
+GET           /users/create                                controllers.UserController.create
+POST          /users/create                                controllers.UserController.createHandler
+GET           /users/update/:userId                        controllers.UserController.update(userId: String)
+POST          /users/update                                controllers.UserController.updateHandler
+DELETE        /users/:userId                               controllers.UserController.delete(userId: String)
+GET           /users/:userId                               controllers.UserController.getById(userId: String)
 
 # WishlistController
-GET           /wishlist/:userId                        controllers.WishlistController.wishItemsForUser(userId: String)
-GET           /wishlist/item/:wishlistItemId           controllers.WishlistController.wishItem(wishlistItemId: String)
-POST          /wishlist                                controllers.WishlistController.create
-PUT           /wishlist/item/:wishlistItemId           controllers.WishlistController.update(wishlistItemId: String)
-DELETE        /wishlist/item/:wishlistItemId           controllers.WishlistController.delete(wishlistItemId: String)
+GET           /wishlist/:userId                            controllers.WishlistController.wishItemsForUser(userId: String)
+GET           /wishlist/item/:wishlistItemId               controllers.WishlistController.wishItem(wishlistItemId: String)
+POST          /wishlist                                    controllers.WishlistController.create
+PUT           /wishlist/item/:wishlistItemId               controllers.WishlistController.update(wishlistItemId: String)
+DELETE        /wishlist/item/:wishlistItemId               controllers.WishlistController.delete(wishlistItemId: String)
 
 # ShippingController
-GET           /shippinginfos                           controllers.ShippingController.getAll
-GET           /shippinginfo/:shippingInfoId            controllers.ShippingController.getById(shippingInfoId: String)
-POST          /shippinginfo                            controllers.ShippingController.create
-PUT           /shippinginfo:shippingInfoId             controllers.ShippingController.update(shippingInfoId: String)
-DELETE        /shippinginfo:shippingInfoId             controllers.ShippingController.delete(shippingInfoId: String)
+GET           /shippinginfos                               controllers.ShippingController.getAll
+GET           /shippinginfo/:shippingInfoId                controllers.ShippingController.getById(shippingInfoId: String)
+POST          /shippinginfo                                controllers.ShippingController.create
+PUT           /shippinginfo:shippingInfoId                 controllers.ShippingController.update(shippingInfoId: String)
+DELETE        /shippinginfo:shippingInfoId                 controllers.ShippingController.delete(shippingInfoId: String)
 
 # OrderedProductController
-GET           /orderedProducts                         controllers.OrderedProductController.getAll
-GET           /orderedProduct/:orderedProductId        controllers.OrderedProductController.getById(orderedProductId: String)
-GET           /orderedProducts/order/:orderId          controllers.OrderedProductController.getAllForOrder(orderId: String)
-POST          /orderedProduct                          controllers.OrderedProductController.create
-PUT           /orderedProduct/:orderedProductId        controllers.OrderedProductController.update(orderedProductId: String)
-DELETE        /orderedProduct/:orderedProductId        controllers.OrderedProductController.delete(orderedProductId: String)
+GET           /orderedProducts                             controllers.OrderedProductController.getAll
+GET           /orderedProduct/:orderedProductId            controllers.OrderedProductController.getById(orderedProductId: String)
+GET           /orderedProducts/order/:orderId              controllers.OrderedProductController.getAllForOrder(orderId: String)
+POST          /orderedProduct                              controllers.OrderedProductController.create
+PUT           /orderedProduct/:orderedProductId            controllers.OrderedProductController.update(orderedProductId: String)
+DELETE        /orderedProduct/:orderedProductId            controllers.OrderedProductController.delete(orderedProductId: String)

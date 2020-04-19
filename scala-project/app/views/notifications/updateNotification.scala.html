@@ -1,0 +1,33 @@
+@(notificationForm: Form[UpdateNotificationForm], user: User)(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Update notification") {
+    @flash.get("success").getOrElse("")
+
+    <h3>Update notification</h3>
+    @form(routes.NotificationController.updateHandler()) {
+        @helper.CSRF.formField
+
+        <h3><b>Notification to update: </b> @notificationForm("id").value</h3>
+
+        <input name="id" value="@notificationForm("id").value" hidden />
+
+        <input name="userId" value="@user.id" hidden />
+
+        <div>
+            <p>
+                <b>User:</b>@user.firstName @user.lastName
+            </p>
+        </div>
+
+        @inputText(notificationForm("content"), '_label -> "Content")
+
+        <div>
+            @checkbox(notificationForm("isRead"), '_label -> "Is Read?")
+        </div>
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Update Notification"/>
+        </div>
+    }
+}
