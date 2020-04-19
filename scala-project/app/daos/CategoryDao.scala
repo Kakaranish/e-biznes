@@ -16,18 +16,23 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
 
   private val categoryTable = TableQuery[CategoryTable]
 
+  def getAll() = db.run {
+    categoryTable.result
+  }
+
+  def getById(id: String) = db.run {
+    categoryTable.filter(category => category.id === id)
+      .result
+      .headOption
+  }
+
   def create(name: String) = db.run {
     val id = UUID.randomUUID().toString()
     categoryTable += Category(id, name)
   }
 
-  def getAll() = db.run {
-    categoryTable.result
-  }
-
-  def getWithId(id: String) = db.run {
-    categoryTable.filter(category => category.id === id)
-      .result
-      .headOption
+  def update(categoryToUpdate: Category) = db.run {
+    categoryTable.filter(record => record.id === categoryToUpdate.id)
+      .update(categoryToUpdate)
   }
 }

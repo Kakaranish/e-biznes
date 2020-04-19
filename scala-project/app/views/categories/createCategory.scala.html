@@ -1,14 +1,17 @@
-@(category: Form[CreateCategoryForm])(implicit request: MessagesRequestHeader, flash: Flash)
+@(categoryForm: Form[CreateCategoryForm])(implicit request: MessagesRequestHeader, flash: Flash)
 @import helper._
 
-@flash.get("success").getOrElse("")
+@main("Create category") {
+    @flash.get("success").getOrElse("")
 
-@form(routes.CategoryController.createHandler()) {
-    @helper.CSRF.formField
+    <h3>Create Category</h3>
+    @form(routes.CategoryController.createHandler()) {
+        @helper.CSRF.formField
 
-    @inputText(category("name"))
+        @inputText(categoryForm("name"), '_label -> "Name")
 
-    <div class="buttons">
-        <input type="submit" value="Add Product"/>
-    </div>
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Add Category"/>
+        </div>
+    }
 }
