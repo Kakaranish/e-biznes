@@ -1,0 +1,26 @@
+@(notificationForm: Form[CreateNotificationForm], users: Seq[User])(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Create notification") {
+    @flash.get("success").getOrElse("")
+
+    <h3>Create notification</h3>
+    @form(routes.NotificationController.createHandler()) {
+        @helper.CSRF.formField
+
+        @inputText(notificationForm("content"), '_label -> "Name")
+
+        <div>
+            <label><b>User</b></label><br/>
+            <select name="userId">
+            @for(user <- users) {
+                <option value="@user.id" name="userId">@user.email</option>
+            }
+            </select>
+        </div>
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Add Notification"/>
+        </div>
+    }
+}

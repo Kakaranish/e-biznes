@@ -1,5 +1,7 @@
 package daos
 
+import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.db.slick.DatabaseConfigProvider
@@ -33,4 +35,19 @@ class NotificationDao @Inject()(dbConfigProvider: DatabaseConfigProvider, userDa
     .result
     .headOption
   )
+
+  def create(notification: Notification) = db.run {
+    val id = UUID.randomUUID().toString()
+    notificationTable += Notification(id, notification.userId, notification.content, notification.isRead)
+  }
+
+  def update(notificationToUpdate: Notification) = db.run {
+    notificationTable.filter(record => record.id === notificationToUpdate.id)
+      .update(notificationToUpdate)
+  }
+
+  def delete(notificationId: String) = db.run {
+    notificationTable.filter(record => record.id === notificationId)
+      .delete
+  }
 }

@@ -1,7 +1,6 @@
 package daos
 
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
 import models.{CategoryTable, Product, ProductPreview, ProductTable}
 import play.api.db.slick.DatabaseConfigProvider

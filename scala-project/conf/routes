@@ -25,11 +25,12 @@ GET           /categories/:categoryId                  controllers.CategoryContr
 GET           /featured/:productId                     controllers.FeaturedController.featured(productId: String)
 
 # NotificationController
-GET           /notifications/:userId                   controllers.NotificationController.notifications(userId: String)
-GET           /notification/:notificationId            controllers.NotificationController.notification(notificationId: String)
-POST          /notification                            controllers.NotificationController.create
+GET           /notifications/user/:userId              controllers.NotificationController.notifications(userId: String)
+GET           /notifications/create                    controllers.NotificationController.create
+POST          /notifications/create                    controllers.NotificationController.createHandler
 PUT           /notification/:notificationId            controllers.NotificationController.update(notificationId: String)
 DELETE        /notification/:notificationId            controllers.NotificationController.delete(notificationId: String)
+GET           /notifications/:notificationId           controllers.NotificationController.notification(notificationId: String)
 
 # OpinionController
 GET           /opinions/product/:productId             controllers.OpinionController.getAllForProduct(productId: String)
