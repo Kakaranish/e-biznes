@@ -47,7 +47,7 @@ class UserController @Inject()(cc: MessagesControllerComponents, userDao: UserDa
   def delete(userId: String) = Action.async { implicit request =>
     val deleteResult = userDao.delete((userId))
     deleteResult.map(result => {
-      if(result != 0) Ok(s"User with id $userId has been deleted")
+      if (result != 0) Ok(s"User with id $userId has been deleted")
       else Ok(s"There is no user with id $userId")
     })
   }

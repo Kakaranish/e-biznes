@@ -3,7 +3,7 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{CategoryTable, Product, ProductTable}
+import models.{CategoryTable, Product, ProductPreview, ProductTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -29,7 +29,8 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
   }
 
   def getAllPreviews() = db.run {
-    productTable.map(record => (record.id, record.name)).result
+    productTable.map(record => (record.id, record.name))
+      .result
   }
 
   def getById(productId: String) = db.run((for {

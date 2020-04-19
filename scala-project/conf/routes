@@ -35,7 +35,8 @@ DELETE        /notification/:notificationId            controllers.NotificationC
 GET           /opinions/product/:productId             controllers.OpinionController.getAllForProduct(productId: String)
 GET           /opinions/create                         controllers.OpinionController.create
 POST          /opinions/create                         controllers.OpinionController.createHandler
-PUT           /opinion/:opinionId                      controllers.OpinionController.update(opinionId : String)
+GET           /opinions/update/:opinionId              controllers.OpinionController.update(opinionId: String)
+POST          /opinions/update                         controllers.OpinionController.updateHandler
 DELETE        /opinions/:opinionId                     controllers.OpinionController.delete(opinionId: String)
 GET           /opinions/:opinionId                     controllers.OpinionController.getById(opinionId: String)
 

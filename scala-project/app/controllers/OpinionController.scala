@@ -2,7 +2,7 @@ package controllers
 
 import daos.{OpinionDao, ProductDao, UserDao}
 import javax.inject._
-import models.{Opinion, ProductPreview}
+import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -47,8 +47,19 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
     Ok(views.html.opinions.createOpinion(createForm, availableUsers, availableProducts))
   }
 
-  def update(opinionId: String) = Action {
-    Ok("")
+  def update(opinionId: String) = Action.async { implicit request =>
+    val opinionResult = opinionDao.getById(opinionId)
+    opinionResult.map(opinion => {
+      if (opinion == None) Ok(s"There is no opinion with id $opinionId")
+      else {
+        val opinionObj = opinion.get._1._1
+        val user = opinion.get._1._2.get
+        val product = opinion.get._2.get
+        val updateFormToPass = updateForm.fill(UpdateOpinionForm(opinionObj.id,
+          opinionObj.userId, opinionObj.productId, opinionObj.content))
+        Ok(views.html.opinions.updateOpinion(updateFormToPass, user, product))
+      }
+    })
   }
 
   def delete(opinionId: String) = Action {
@@ -95,22 +106,27 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
     )
   }
 
-
-  //  val updateHandler = Action.async { implicit request =>
-  //    updateForm.bindFromRequest().fold(
-  //      errorForm => {
-  //        Future.successful(
-  //          BadRequest(views.html.index)
-  //        )
-  //      },
-  //      updateForm => {
-  //        // Placeholder for logic
-  //        Future.successful(
-  //          BadRequest(views.html.index)
-  //        )
-  //      }
-  //    )
-  //  }
+  val updateHandler = Action.async { implicit request =>
+    updateForm.bindFromRequest().fold(
+      errorForm => {
+        val opinionId = errorForm("id").value.get
+        val opinionResult = Await.result(opinionDao.getById(opinionId), Duration.Inf)
+        val user = opinionResult.get._1._2.get
+        val product = opinionResult.get._2.get
+        Future.successful(
+          BadRequest(views.html.opinions.updateOpinion(errorForm, user, product))
+        )
+      },
+      updateForm => {
+        val opinionToUpdate = Opinion(updateForm.id, updateForm.userId,
+          updateForm.productId, updateForm.content)
+        opinionDao.update(opinionToUpdate).map(_ => {
+          Redirect(routes.OpinionController.update(opinionToUpdate.id))
+            .flashing("success" -> "Opinion updated.")
+        })
+      }
+    )
+  }
 }
 
 case class CreateOpinionForm(userId: String,
