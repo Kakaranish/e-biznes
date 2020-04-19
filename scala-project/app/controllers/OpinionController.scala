@@ -1,20 +1,26 @@
 package controllers
 
-import daos.OpinionDao
+import daos.{OpinionDao, ProductDao}
 import javax.inject._
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext}
 
 @Singleton
-class OpinionController @Inject()(cc: ControllerComponents, opinionDao: OpinionDao)
+class OpinionController @Inject()(cc: ControllerComponents,
+                                  productDao: ProductDao,
+                                  opinionDao: OpinionDao)
                                  (implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def getAllForProduct(productId: String) = Action.async { implicit request =>
     val opinionsResult = opinionDao.getAllForProduct(productId)
     opinionsResult.map(opinions => {
       if (opinions.isEmpty) Ok(s"There are no opinions for product with id $productId")
-      else Ok(views.html.opinions.opinionsForProduct(opinions))
+      else {
+        val product = Await.result(productDao.getById(productId), Duration.Inf).get
+        Ok(views.html.opinions.opinionsForProduct(product._1, opinions))
+      }
     })
   }
 

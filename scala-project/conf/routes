@@ -32,7 +32,7 @@ PUT           /notification/:notificationId            controllers.NotificationC
 DELETE        /notification/:notificationId            controllers.NotificationController.delete(notificationId: String)
 
 # OpinionController
-GET           /opinions/:productId                     controllers.OpinionController.getAllForProduct(productId: String)
+GET           /opinions/product/:productId             controllers.OpinionController.getAllForProduct(productId: String)
 GET           /opinion/:opinionId                      controllers.OpinionController.getById(opinionId: String)
 POST          /opinion                                 controllers.OpinionController.create
 PUT           /opinion/:opinionId                      controllers.OpinionController.update(opinionId : String)

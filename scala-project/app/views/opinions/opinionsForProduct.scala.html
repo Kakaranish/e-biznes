@@ -1,13 +1,14 @@
-@import models.Opinion
-@(opinions: Seq[((Opinion, Option[User]), Option[Product])])
+@import models.{Opinion, Product}
+@(product: Product, opinions: Seq[((Opinion, Option[User]), Option[Product])])
 
+<h3>Opinions for '@product.name'</h3>
+<p>ProductId: @product.id</p>
 <ul>
     @for(opinion <- opinions) {
         <li>
             OpinionId: @opinion._1._1.id |
             User: @opinion._1._2.get.firstName @opinion._1._2.get.lastName |
-            Product: @opinion._2.get.name |
-            Content: @opinion._1._1.content |
+            Content: @opinion._1._1.content
         </li>
     }
 </ul>
