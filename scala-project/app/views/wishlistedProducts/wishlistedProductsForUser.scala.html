@@ -4,6 +4,7 @@
   <ul>
     @for(wishlistedProduct <- wishlistedProducts) {
       <li>
+        WishlistProductId: @wishlistedProduct._1._1.id |
         User: @wishlistedProduct._1._2.get.firstName @wishlistedProduct._1._2.get.lastName |
         ProductId: @wishlistedProduct._2.get.id |
         Product name: @wishlistedProduct._2.get.name

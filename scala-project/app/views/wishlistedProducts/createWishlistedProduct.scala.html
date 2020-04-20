@@ -1,0 +1,33 @@
+@(wishlistProductForm: Form[CreateWishlistedProductForm], users: Seq[UserPreview], products: Seq[ProductPreview])(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Create wishlist product") {
+    @flash.get("success").getOrElse("")
+
+    @form(routes.WishlistController.createHandler()) {
+        @helper.CSRF.formField
+        <h3>Create wishlist product</h3>
+
+        <div>
+            <label><b>User</b></label><br/>
+            <select name="userId">
+            @for(user <- users) {
+                <option value="@user.id" name="userId">@user.email</option>
+            }
+            </select>
+        </div>
+
+        <div>
+            <label><b>Product</b></label><br/>
+            <select name="productId">
+            @for(product <- products) {
+                <option value="@product.id" name="productId">@product.name</option>
+            }
+            </select>
+        </div>
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Create Wishlist Product"/>
+        </div>
+    }
+}

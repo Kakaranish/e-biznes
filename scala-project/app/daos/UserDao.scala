@@ -25,6 +25,11 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
       .headOption
   )
 
+  def getAllPreviews() = db.run {
+    userTable.map(record => (record.id, record.email))
+      .result
+  }
+
   def create(user: User) = db.run {
     val id = UUID.randomUUID().toString()
     // TODO: In the future add password encryption here

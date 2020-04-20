@@ -1,7 +1,9 @@
 package daos
 
+import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{ProductTable, UserTable, WishlistedProductTable}
+import models.{ProductTable, UserTable, WishlistedProduct, WishlistedProductTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -39,4 +41,15 @@ class WishlistedProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .result
     .headOption
   )
+
+  def create(wishlistedProduct: WishlistedProduct) = db.run {
+    val id = UUID.randomUUID().toString()
+    wishlistedProductTable += WishlistedProduct(id, wishlistedProduct.userId,
+      wishlistedProduct.productId)
+  }
+
+  def delete(wishlistedProductId: String) = db.run {
+    wishlistedProductTable.filter(record => record.id === wishlistedProductId)
+      .delete
+  }
 }

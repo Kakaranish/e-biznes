@@ -5,6 +5,8 @@ import slick.jdbc.SQLiteProfile.api._
 
 case class User(id: String, email: String, password: String, firstName: String, lastName: String)
 
+case class UserPreview(id: String, email: String)
+
 object User {
   implicit val userFormat = Json.format[User]
 }
