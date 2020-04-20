@@ -5,8 +5,12 @@
     @for(payment <- payments) {
         <li>
             PaymentId: @payment.id |
+            OrderId: @payment.orderId |
             Method Code: @payment.methodCode |
-            DateTime: @payment.dateTime
+            Date created: @payment.dateCreated |
+            Date updated: @payment.dateUpdated |
+            State: @payment.state |
+            AmountOfMoney: @payment.amountOfMoney
         </li>
     }
 </ul>

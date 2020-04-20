@@ -30,12 +30,12 @@ class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
 
   def create(payment: Payment) = db.run {
     val id = UUID.randomUUID().toString()
-    paymentTable += Payment(id, payment.methodCode, payment.dateTime)
+    paymentTable += Payment(id, payment.orderId, payment.methodCode, payment.dateCreated,
+      payment.dateUpdated, payment.state, payment.amountOfMoney)
   }
 
   def update(paymentToUpdate: Payment) = db.run {
     paymentTable.filter(record => record.id === paymentToUpdate.id)
-      .map(record => (record.methodCode))
-      .update((paymentToUpdate.methodCode))
+      .update(paymentToUpdate)
   }
 }

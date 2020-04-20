@@ -1,4 +1,4 @@
-@(paymentForm: Form[CreatePaymentForm])(implicit request: MessagesRequestHeader, flash: Flash)
+@(paymentForm: Form[CreatePaymentForm], orderIds: Seq[String])(implicit request: MessagesRequestHeader, flash: Flash)
 @import helper._
 
 @main("Create payment") {
@@ -8,7 +8,20 @@
         @helper.CSRF.formField
         <h3>Create payment</h3>
 
+        <div>
+            <label><b>Order</b></label><br/>
+            <select name="orderId">
+            @for(orderId <- orderIds) {
+                <option value="@orderId" name="orderId">@orderId</option>
+            }
+            </select>
+        </div>
+
         @inputText(paymentForm("methodCode"), '_label -> "Method Code")
+
+        @inputText(paymentForm("state"), '_label -> "State")
+
+        @inputText(paymentForm("amountOfMoney"), '_label -> "Amount of money")
 
         <div class="buttons" style="margin-top: 10px">
             <input type="submit" value="Create Payment"/>

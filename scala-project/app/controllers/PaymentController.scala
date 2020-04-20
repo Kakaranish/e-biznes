@@ -1,19 +1,22 @@
 package controllers
 
-import daos.PaymentDao
+import daos.{OrderDao, PaymentDao}
 import javax.inject._
 import models.Payment
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.format.Formats.floatFormat
 import play.api.mvc._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
-class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: PaymentDao)
+class PaymentController @Inject()(cc: MessagesControllerComponents,
+                                  paymentDao: PaymentDao,
+                                  orderDao: OrderDao)
                                  (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
@@ -34,15 +37,19 @@ class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: 
   }
 
   def create = Action { implicit request =>
-    Ok(views.html.payments.createPayment(createForm))
+    val ordersIds = Await.result(orderDao.getAllIds(), Duration.Inf)
+    if(ordersIds.isEmpty) Ok("Unable to create payment - there are no orders")
+    Ok(views.html.payments.createPayment(createForm, ordersIds))
   }
 
   def update(paymentId: String) = Action { implicit reqeust =>
     val paymentResult = Await.result(paymentDao.getById(paymentId), Duration.Inf)
-    if(paymentResult == None) Ok(s"There is no payment with id $paymentId")
+    if (paymentResult == None) Ok(s"There is no payment with id $paymentId")
     else {
       val payment = paymentResult.get
-      val updateFormToPass = updateForm.fill(UpdatePaymentForm(payment.id, payment.methodCode, payment.dateTime))
+      val updateFormToPass = updateForm.fill(UpdatePaymentForm(
+        payment.id, payment.orderId, payment.methodCode, payment.dateCreated,
+        payment.dateUpdated, payment.state, payment.amountOfMoney))
       Ok(views.html.payments.updatePayment(updateFormToPass))
     }
   }
@@ -51,15 +58,22 @@ class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: 
 
   val createForm = Form {
     mapping(
-      "methodCode" -> nonEmptyText
+      "orderId" -> nonEmptyText,
+      "methodCode" -> nonEmptyText,
+      "state" -> nonEmptyText,
+      "amountOfMoney" -> of(floatFormat)
     )(CreatePaymentForm.apply)(CreatePaymentForm.unapply)
   }
 
   val updateForm = Form {
     mapping(
       "id" -> nonEmptyText,
+      "orderId" -> nonEmptyText,
       "methodCode" -> nonEmptyText,
-      "dateTime" -> nonEmptyText
+      "dateCreated" -> nonEmptyText,
+      "dateUpdated" -> nonEmptyText,
+      "state" -> nonEmptyText,
+      "amountOfMoney" -> of(floatFormat)
     )(UpdatePaymentForm.apply)(UpdatePaymentForm.unapply)
   }
 
@@ -68,14 +82,17 @@ class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: 
   val createHandler = Action.async { implicit request =>
     createForm.bindFromRequest().fold(
       errorForm => {
+        val ordersIds = Await.result(orderDao.getAllIds(), Duration.Inf)
         Future.successful(
-          BadRequest(views.html.payments.createPayment(errorForm))
+          BadRequest(views.html.payments.createPayment(errorForm, ordersIds))
         )
       },
       createForm => {
-        val dateTime = new DateTime().toString(DateTimeFormat
+        val nowIso = new DateTime().toString(DateTimeFormat
           .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-        val payment = Payment(null, createForm.methodCode, dateTime)
+        val payment = Payment(null, createForm.orderId, createForm.methodCode,
+         nowIso, nowIso, createForm.state, createForm.amountOfMoney)
+
         paymentDao.create(payment).map(_ =>
           Redirect(routes.PaymentController.create())
             .flashing("success" -> "Payment created.")
@@ -92,7 +109,11 @@ class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: 
         )
       },
       updateForm => {
-        val payment = Payment(updateForm.id, updateForm.methodCode, updateForm.dateTime)
+        val nowIso = new DateTime().toString(DateTimeFormat
+          .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+        val payment = Payment(updateForm.id, updateForm.orderId, updateForm.methodCode,
+          updateForm.dateCreated, nowIso, updateForm.state, updateForm.amountOfMoney)
+
         paymentDao.update(payment).map(_ =>
           Redirect(routes.PaymentController.update(payment.id))
             .flashing("success" -> "Payment updated.")
@@ -102,8 +123,15 @@ class PaymentController @Inject()(cc: MessagesControllerComponents, paymentDao: 
   }
 }
 
-case class CreatePaymentForm(methodCode: String)
+case class CreatePaymentForm(orderId: String,
+                             methodCode: String,
+                             state: String,
+                             amountOfMoney: Float)
 
 case class UpdatePaymentForm(id: String,
+                             orderId: String,
                              methodCode: String,
-                             dateTime: String)
+                             dateCreated: String,
+                             dateUpdated: String,
+                             state: String,
+                             amountOfMoney: Float)

@@ -44,10 +44,10 @@ GET           /opinions/:opinionId                         controllers.OpinionCo
 
 # OrderController
 GET           /orders                                      controllers.OrderController.getAll
-GET           /order/user/:userId                          controllers.OrderController.getAllForUser(userId: String)
-GET           /order/:orderId                              controllers.OrderController.getById(orderId: String)
+GET           /orders/user/:userId                         controllers.OrderController.getAllForUser(userId: String)
 POST          /order                                       controllers.OrderController.create
 PUT           /order/:orderId                              controllers.OrderController.update(orderId : String)
+GET           /orders/:orderId                             controllers.OrderController.getById(orderId: String)
 
 # PaymentController
 GET           /payments                                    controllers.PaymentController.getAll
