@@ -7,7 +7,7 @@ CREATE TABLE "Order" (
 	"DateCreated"	TEXT NOT NULL,
 	PRIMARY KEY("Id"),
 	FOREIGN KEY("UserId") REFERENCES "User"("Id"),
-	FOREIGN KEY("ShippingInfoId") REFERENCES "ShippingInfo"("Id"),
+	FOREIGN KEY("ShippingInfoId") REFERENCES "ShippingInfo"("Id")
 );
 
 -- !Downs
