@@ -30,7 +30,7 @@ GET           /notifications/create                        controllers.Notificat
 POST          /notifications/create                        controllers.NotificationController.createHandler
 GET           /notifications/update/:notificationId        controllers.NotificationController.update(notificationId: String)
 POST          /notifications/update                        controllers.NotificationController.updateHandler
-DELETE        /notifications/:notificationId                controllers.NotificationController.delete(notificationId: String)
+DELETE        /notifications/:notificationId               controllers.NotificationController.delete(notificationId: String)
 GET           /notifications/:notificationId               controllers.NotificationController.notification(notificationId: String)
 
 # OpinionController
@@ -51,9 +51,11 @@ PUT           /order/:orderId                              controllers.OrderCont
 
 # PaymentController
 GET           /payments                                    controllers.PaymentController.getAll
-GET           /payment/:paymentId                          controllers.PaymentController.getById(paymentId: String)
-POST          /payment                                     controllers.PaymentController.create
-PUT           /payment/:paymentId                          controllers.PaymentController.update(paymentId : String)
+GET           /payments/create                             controllers.PaymentController.create
+POST          /payments/create                             controllers.PaymentController.createHandler
+GET           /payments/update/:paymentId                  controllers.PaymentController.update(paymentId: String)
+POST          /payments/update                             controllers.PaymentController.updateHandler
+GET           /payments/:paymentId                         controllers.PaymentController.getById(paymentId: String)
 
 # ProductController
 GET           /products                                    controllers.ProductController.getAll

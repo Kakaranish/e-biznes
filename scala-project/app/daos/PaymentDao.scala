@@ -1,7 +1,9 @@
 package daos
 
+import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.PaymentTable
+import models.{Payment, PaymentTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -24,5 +26,16 @@ class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
     paymentTable.filter(record => record.id === paymentId)
       .result
       .headOption
+  }
+
+  def create(payment: Payment) = db.run {
+    val id = UUID.randomUUID().toString()
+    paymentTable += Payment(id, payment.methodCode, payment.dateTime)
+  }
+
+  def update(paymentToUpdate: Payment) = db.run {
+    paymentTable.filter(record => record.id === paymentToUpdate.id)
+      .map(record => (record.methodCode))
+      .update((paymentToUpdate.methodCode))
   }
 }
