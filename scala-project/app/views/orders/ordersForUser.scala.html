@@ -1,15 +1,15 @@
-@import models.Order
-@(orders: Seq[(((Order, Option[User]), Option[ShippingInfo]), Option[Payment])])
+@import models.{Order, User}
+@(orders: Seq[(Order, Option[ShippingInfo])], user: User)
+
+<h3>Orders for user: @user.id</h3>
+<p>User full name: @user.firstName @user.lastName</p>
 
 <ul>
     @for(order <- orders) {
         <li>
-            OrderId: @order._1._1._1.id |
-            User: @order._1._1._2.get.firstName @order._1._1._2.get.lastName |
-            UserId: @order._1._1._2.get.id |
-            ShippingId: @order._1._2.get.id |
-            PaymentId: @order._2.get.id |
-            Date Created: @order._1._1._1.dateCreated
+            OrderId: @order._1.id |
+            ShippingId: @order._2.get.id |
+            Date Created: @order._1..dateCreated
         </li>
     }
 </ul>
