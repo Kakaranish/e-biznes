@@ -85,10 +85,12 @@ GET           /wishlist/item/:wishItemId                   controllers.WishlistC
 
 # ShippingController
 GET           /shippinginfos                               controllers.ShippingController.getAll
-GET           /shippinginfo/:shippingInfoId                controllers.ShippingController.getById(shippingInfoId: String)
-POST          /shippinginfo                                controllers.ShippingController.create
-PUT           /shippinginfo:shippingInfoId                 controllers.ShippingController.update(shippingInfoId: String)
-DELETE        /shippinginfo:shippingInfoId                 controllers.ShippingController.delete(shippingInfoId: String)
+GET           /shippinginfos/create                        controllers.ShippingController.create
+POST          /shippinginfos/create                        controllers.ShippingController.createHandler
+GET           /shippinginfos/update/:shippingInfoId        controllers.ShippingController.update(shippingInfoId: String)
+GET           /shippinginfos/update                        controllers.ShippingController.updateHandler
+DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingController.delete(shippingInfoId: String)
+GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
 # OrderedProductController
 GET           /orderedProducts                             controllers.OrderedProductController.getAll

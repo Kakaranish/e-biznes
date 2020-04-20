@@ -1,0 +1,20 @@
+@(shippingInfoForm: Form[CreateShippingInfoForm])(implicit request: MessagesRequestHeader, flash: Flash)
+@import helper._
+
+@main("Create Shipping Info") {
+    @flash.get("success").getOrElse("")
+
+    <h3>Create Shipping Info</h3>
+    @form(routes.ShippingController.createHandler()) {
+        @helper.CSRF.formField
+
+        @inputText(shippingInfoForm("country"), '_label -> "Country")
+        @inputText(shippingInfoForm("city"), '_label -> "City")
+        @inputText(shippingInfoForm("address"), '_label -> "Address")
+        @inputText(shippingInfoForm("zipOrPostcode"), '_label -> "Zip or postcode")
+
+        <div class="buttons" style="margin-top: 10px">
+            <input type="submit" value="Create Shipping Info"/>
+        </div>
+    }
+}
