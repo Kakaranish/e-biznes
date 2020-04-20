@@ -78,10 +78,10 @@ GET           /users/:userId                               controllers.UserContr
 
 # WishlistController
 GET           /wishlist/user/:userId                       controllers.WishlistController.wishItemsForUser(userId: String)
-GET           /wishlist/create-item                        controllers.WishlistController.create
-POST          /wishlist/create-item                        controllers.WishlistController.createHandler
+GET           /wishlist/item/create                        controllers.WishlistController.create
+POST          /wishlist/item/create                        controllers.WishlistController.createHandler
 DELETE        /wishlist/item/:wishItemId                   controllers.WishlistController.delete(wishItemId: String)
-GET           /wishlist/:wishItemId                        controllers.WishlistController.wishItem(wishItemId: String)
+GET           /wishlist/item/:wishItemId                   controllers.WishlistController.wishItem(wishItemId: String)
 
 # ShippingController
 GET           /shippinginfos                               controllers.ShippingController.getAll

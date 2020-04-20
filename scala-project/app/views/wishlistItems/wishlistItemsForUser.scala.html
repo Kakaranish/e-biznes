@@ -1,0 +1,13 @@
+@import models.WishlistItem
+@(wishlistItems: Seq[((WishlistItem, Option[User]), Option[models.Product])])
+
+  <ul>
+    @for(wishlistItem <- wishlistItems) {
+      <li>
+        WishlistItemId: @wishlistItem._1._1.id |
+        User: @wishlistItem._1._2.get.firstName @wishlistItem._1._2.get.lastName |
+        ProductId: @wishlistItem._2.get.id |
+        Product name: @wishlistItem._2.get.name
+      </li>
+    }
+  </ul>

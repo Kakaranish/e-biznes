@@ -1,6 +1,6 @@
 -- !Ups
 
-CREATE TABLE "WishlistedProduct" (
+CREATE TABLE "WishlistItem" (
 	"Id"	TEXT NOT NULL UNIQUE,
 	"UserId"	TEXT NOT NULL,
 	"ProductId"	TEXT NOT NULL,
@@ -11,4 +11,4 @@ CREATE TABLE "WishlistedProduct" (
 
 -- !Downs
 
-DROP TABLE IF EXISTS "WishlistedProduct";
+DROP TABLE IF EXISTS "WishlistItem";
