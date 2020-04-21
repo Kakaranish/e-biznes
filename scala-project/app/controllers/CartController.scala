@@ -103,6 +103,14 @@ class CartController @Inject()(cc: MessagesControllerComponents,
     }
   }
 
+  def setFinalized(cartId: String) = Action.async { implicit request =>
+    val setResult = cartDao.setFinalized(cartId)
+    setResult.map(result => {
+      if (result != 0) Ok(s"Cart id $cartId has been finalized")
+      else Ok(s"There is no cart with id $cartId")
+    })
+  }
+
   // Forms
 
   val addItemToCartForm = Form {
