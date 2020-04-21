@@ -101,4 +101,5 @@ PUT           /orderedProduct/:orderedProductId            controllers.CartItemC
 DELETE        /orderedProduct/:orderedProductId            controllers.CartItemController.delete(orderedProductId: String)
 
 # Cart
-GET /cart/:cartId controllers.CartController.getById(cartId: String)
+GET           /cart/:cartId                                controllers.CartController.getById(cartId: String)
+GET           /cart/create/user/:userId                    controllers.CartController.createForUser(userId: String)

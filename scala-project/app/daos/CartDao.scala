@@ -34,6 +34,10 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
     cartTable += Cart(id, cart.userId, cart.isFinalized, cart.updateDate)
   }
 
+  def createWithId(cart: Cart) = db.run {
+    cartTable += Cart(cart.id, cart.userId, cart.isFinalized, cart.updateDate)
+  }
+
   def update(cartToUpdate: Cart) = db.run {
     cartTable.filter(record => record.id === cartToUpdate.id)
       .update(cartToUpdate)
