@@ -89,11 +89,18 @@ class CartController @Inject()(cc: MessagesControllerComponents,
   }
 
   def deleteCartItem(cartItemId: String) = Action.async { implicit request =>
-    val deleteResult = cartItemDao.delete(cartItemId)
-    deleteResult.map(result => {
-      if (result != 0) Ok(s"Cart item with id $cartItemId has been deleted")
-      else Ok(s"There is no cart item with id $cartItemId")
-    })
+    val cartItem = Await.result(cartItemDao.getById(cartItemId), Duration.Inf)
+    if (cartItem == None) Future(Ok(s"There is no cart item with id $cartItemId"))
+    else {
+      val deleteResult = cartItemDao.delete(cartItemId)
+      deleteResult.map(result => {
+        if (result != 0) {
+          cartDao.setUpdateDateToNow(cartItem.get._1._1.cartId)
+          Ok(s"Cart item with id $cartItemId has been deleted")
+        }
+        else Ok(s"There is no cart item with id $cartItemId")
+      })
+    }
   }
 
   // Forms
@@ -119,10 +126,11 @@ class CartController @Inject()(cc: MessagesControllerComponents,
       },
       cartForm => {
         val cartItem = CartItem(null, cartForm.cartId, cartForm.productId, cartForm.quantity)
-        cartItemDao.create(cartItem).map(_ =>
+        cartItemDao.create(cartItem).map(_ => {
+          cartDao.setUpdateDateToNow(cartForm.cartId)
           Redirect(routes.CartController.addToCart(cartForm.cartId))
             .flashing("success" -> "Item added to cart.")
-        )
+        })
       }
     )
   }
