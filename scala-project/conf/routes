@@ -103,4 +103,6 @@ DELETE        /orderedProduct/:orderedProductId            controllers.CartItemC
 # Cart
 GET           /cart/:cartId                                controllers.CartController.getById(cartId: String)
 GET           /cart/create/user/:userId                    controllers.CartController.createForUser(userId: String)
-GET           /cart/delete/:cartId                    controllers.CartController.delete(cartId: String)
+GET           /cart/delete/:cartId                         controllers.CartController.delete(cartId: String)
+GET           /cart/:cartId/item/add                            controllers.CartController.addToCart(cartId: String)
+POST          /cart/item/add                                    controllers.CartController.addToCartHandler

@@ -4,6 +4,8 @@ import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
 import models._
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -43,7 +45,21 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
       .update(cartToUpdate)
   }
 
-  def delete(cartId: String) = db.run {
+  def setUpdateDateToNow(cartId: String) = db.run {
+    val nowIso = new DateTime().toString(DateTimeFormat
+      .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    cartTable.filter(record => record.id === cartId)
+      .map(record => (record.updateDate))
+      .update(nowIso)
+  }
+
+  def setFinalized(cartId: String) = db.run {
+    cartTable.filter(record => record.id === cartId)
+      .map(record => (record.isFinalized))
+      .update((true))
+  }
+
+    def delete(cartId: String) = db.run {
     cartTable.filter(record => record.id === cartId)
       .delete
   }
