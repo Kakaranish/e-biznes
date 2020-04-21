@@ -106,4 +106,5 @@ GET           /cart/create/user/:userId                    controllers.CartContr
 GET           /cart/delete/:cartId                         controllers.CartController.delete(cartId: String)
 GET           /cart/:cartId/item/add                       controllers.CartController.addToCart(cartId: String)
 POST          /cart/item/add                               controllers.CartController.addToCartHandler
+POST          /cart/:cartId/finalize                       controllers.CartController.setFinalized(cartId: String)
 DELETE        /cart/item/:cartItemId                       controllers.CartController.deleteCartItem(cartItemId: String)
