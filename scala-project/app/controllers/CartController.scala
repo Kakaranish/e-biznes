@@ -1,6 +1,7 @@
 package controllers
 
 import java.util.UUID
+
 import daos.{CartDao, CartItemDao, ProductDao, UserDao}
 import javax.inject.{Inject, Singleton}
 import models.Cart
@@ -55,6 +56,22 @@ class CartController @Inject()(cc: MessagesControllerComponents,
       val createResult = Await.result(cartDao.createWithId(cart), Duration.Inf)
       if (createResult == 0) Ok(s"Unable to create cart for user $userId")
       else Ok(s"Cart with id $id created.")
+    }
+  }
+
+  def delete(cartId: String) = Action {
+    val cartResult = Await.result(cartDao.getById(cartId), Duration.Inf)
+    if (cartResult == None) {
+      Ok(s"There is no cart with id $cartId")
+    } else {
+      val cart = cartResult.get
+      if (cart._1.isFinalized) {
+        Ok(s"Cart with id $cartId is already finalized so it can't be removed")
+      } else {
+        val deleteResult = Await.result(cartDao.delete(cartId), Duration.Inf)
+        if (deleteResult != 0) Ok(s"Cart with id $cartId has been deleted")
+        else Ok(s"Unable to remove cart with id $cartId")
+      }
     }
   }
 }
