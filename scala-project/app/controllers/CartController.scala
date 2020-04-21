@@ -88,6 +88,14 @@ class CartController @Inject()(cc: MessagesControllerComponents,
     }
   }
 
+  def deleteCartItem(cartItemId: String) = Action.async { implicit request =>
+    val deleteResult = cartItemDao.delete(cartItemId)
+    deleteResult.map(result => {
+      if (result != 0) Ok(s"Cart item with id $cartItemId has been deleted")
+      else Ok(s"There is no cart item with id $cartItemId")
+    })
+  }
+
   // Forms
 
   val addItemToCartForm = Form {

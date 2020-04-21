@@ -1,8 +1,9 @@
 package daos
 
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{CartItem, CartItemTable, Order, OrderTable, Product, ProductTable}
+import models._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -52,5 +53,10 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   def create(cartItem: CartItem) = db.run {
     val id = UUID.randomUUID().toString()
     cartItemTable += CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
+  }
+
+  def delete(cartItemId: String) = db.run {
+    cartItemTable.filter(record => record.id === cartItemId)
+      .delete
   }
 }
