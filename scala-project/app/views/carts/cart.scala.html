@@ -1,0 +1,18 @@
+@import models.Cart
+@(cart: Cart, userPreview: User, cartItems: Seq[(CartItem, Product)])
+
+<p>CartId: @cart.id</p>
+<p>Is Finalized?: @cart.isFinalized</p>
+<p>Last update date: @cart.updateDate</p>
+<p>Owner of cart: @userPreview.email</p>
+
+<p>Products in:</p>
+<ul>
+    @for(cartItem <- cartItems) {
+        <li>
+            Name: @cartItem._2.name |
+            Quantity: @cartItem._1.quantity |
+            Price: @cartItem._2.price PLN
+        </li>
+    }
+</ul>

@@ -8,6 +8,7 @@
     @for(order <- orders) {
         <li>
             OrderId: @order._1.id |
+            CartId: @order._1.cartId |
             ShippingId: @order._2.get.id |
             Date Created: @order._1.dateCreated
         </li>

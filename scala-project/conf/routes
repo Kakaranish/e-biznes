@@ -99,3 +99,6 @@ GET           /orderedProducts/order/:orderId              controllers.CartItemC
 POST          /orderedProduct                              controllers.CartItemController.create
 PUT           /orderedProduct/:orderedProductId            controllers.CartItemController.update(orderedProductId: String)
 DELETE        /orderedProduct/:orderedProductId            controllers.CartItemController.delete(orderedProductId: String)
+
+# Cart
+GET /cart/:cartId controllers.CartController.getById(cartId: String)

@@ -1,6 +1,7 @@
 package daos
 
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
 import models._
 import play.api.db.slick.DatabaseConfigProvider
@@ -16,16 +17,21 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   import profile.api._
 
   private val cartTable = TableQuery[CartTable]
+  private val userTable = TableQuery[UserTable]
 
   def getById(cartId: String) = db.run {
-    cartTable.filter(record => record.id === cartId)
+    (for {
+      (cart, user) <- cartTable joinLeft
+        userTable on ((x, y) => x.userId === y.id)
+    } yield (cart, user))
+      .filter(record => record._1.id === cartId)
       .result
       .headOption
   }
 
   def create(cart: Cart) = db.run {
     val id = UUID.randomUUID().toString()
-    cartTable += Cart(id, cart.isFinalized, cart.updateDate)
+    cartTable += Cart(id, cart.userId, cart.isFinalized, cart.updateDate)
   }
 
   def update(cartToUpdate: Cart) = db.run {

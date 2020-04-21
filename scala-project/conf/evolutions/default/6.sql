@@ -2,9 +2,11 @@
 
 CREATE TABLE "Cart" (
 	"Id"	TEXT NOT NULL UNIQUE,
+	"UserId"	TEXT NOT NULL,
 	"IsFinalized"	INTEGER NOT NULL,
 	"UpdateDate"	TEXT NOT NULL,
-	PRIMARY KEY("Id")
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("UserId") REFERENCES "User"("Id")
 );
 
 CREATE TABLE "CartItem" (

@@ -5,6 +5,7 @@
     @for(order <- orders) {
         <li>
             OrderId: @order._1._1.id |
+            CartId: @order._1._1.cartId |
             User: @order._1._2.get.firstName @order._1._2.get.lastName |
             UserId: @order._1._1.userId |
             ShippingId: @order._2.get.id |
