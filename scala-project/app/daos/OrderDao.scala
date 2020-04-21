@@ -1,7 +1,7 @@
 package daos
 
 import javax.inject.{Inject, Singleton}
-import models.{OrderTable, PaymentTable, ShippingInfoTable, UserTable}
+import models.{OrderTable, ShippingInfoTable, UserTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -10,8 +10,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
                          userDao: UserDao,
-                         shippingInfoDao: ShippingInfoDao,
-                         paymentDao: PaymentDao)
+                         shippingInfoDao: ShippingInfoDao)
                         (implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 

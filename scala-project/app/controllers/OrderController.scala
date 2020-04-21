@@ -1,6 +1,6 @@
 package controllers
 
-import daos.{OrderDao, UserDao}
+import daos.{CartItemDao, OrderDao, UserDao}
 import javax.inject._
 import play.api.mvc._
 
@@ -10,7 +10,8 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 @Singleton
 class OrderController @Inject()(cc: ControllerComponents,
                                 orderDao: OrderDao,
-                                userDao: UserDao)
+                                userDao: UserDao,
+                                cartItemDao: CartItemDao)
                                (implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
@@ -25,7 +26,7 @@ class OrderController @Inject()(cc: ControllerComponents,
   def getAllForUser(userId: String) = Action.async { implicit request =>
     val userResult = userDao.getById(userId)
     userResult.map(user => {
-      if(user == None) Ok(s"There is no user with id $userId")
+      if (user == None) Ok(s"There is no user with id $userId")
       else {
         val orders = Await.result(orderDao.getAllForUser(userId), Duration.Inf)
         if (orders.isEmpty) Ok(s"There are no orders for user with id $userId")
@@ -35,11 +36,18 @@ class OrderController @Inject()(cc: ControllerComponents,
   }
 
   def getById(orderId: String) = Action.async { implicit request =>
-    val orderResult = orderDao.getById(orderId)
-    orderResult.map(order => {
-      if (order == None) Ok(s"There is no order with id $orderId")
-      else Ok(views.html.orders.order(order.get))
-    })
+    val orderResult = Await.result(orderDao.getById(orderId), Duration.Inf)
+    if (orderResult == None) Future(Ok(s"There is no order with id $orderId"))
+    else {
+      val order = orderResult.get
+      val cartId = order._1._1.cartId
+      val orderedProductsResult = cartItemDao.getAllForCart(cartId)
+
+      orderedProductsResult.map(orderedProducts =>
+        Ok(views.html.orders.order(order, orderedProducts.map(
+          orderedItem => (orderedItem._1._1, orderedItem._2.get))))
+      )
+    }
   }
 
   def create = Action {

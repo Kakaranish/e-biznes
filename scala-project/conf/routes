@@ -93,9 +93,9 @@ DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingC
 GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
 # OrderedProductController
-GET           /orderedProducts                             controllers.OrderedProductController.getAll
-GET           /orderedProduct/:orderedProductId            controllers.OrderedProductController.getById(orderedProductId: String)
-GET           /orderedProducts/order/:orderId              controllers.OrderedProductController.getAllForOrder(orderId: String)
-POST          /orderedProduct                              controllers.OrderedProductController.create
-PUT           /orderedProduct/:orderedProductId            controllers.OrderedProductController.update(orderedProductId: String)
-DELETE        /orderedProduct/:orderedProductId            controllers.OrderedProductController.delete(orderedProductId: String)
+GET           /orderedProducts                             controllers.CartItemController.getAll
+GET           /orderedProduct/:orderedProductId            controllers.CartItemController.getById(orderedProductId: String)
+GET           /orderedProducts/order/:orderId              controllers.CartItemController.getAllForOrder(orderId: String)
+POST          /orderedProduct                              controllers.CartItemController.create
+PUT           /orderedProduct/:orderedProductId            controllers.CartItemController.update(orderedProductId: String)
+DELETE        /orderedProduct/:orderedProductId            controllers.CartItemController.delete(orderedProductId: String)

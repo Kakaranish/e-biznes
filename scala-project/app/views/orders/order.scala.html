@@ -1,8 +1,19 @@
 @import models.Order
-@(order: (((Order, Option[User]), Option[ShippingInfo])))
+@(order: (((Order, Option[User]), Option[ShippingInfo])), cartItems: Seq[(CartItem, Product)])
 
 <p>OrderId: @order._1._1.id</p>
 <p>User: @order._1._2.get.firstName @order._1._2.get.lastName</p>
 <p>UserId: @order._1._2.get.id</p>
 <p>ShippingId: @order._2.get.id</p>
 <p>Date Created: @order._1._1.dateCreated</p>
+
+<p>Products in order:</p>
+<ul>
+@for(cartItem <- cartItems) {
+    <li>
+        Name: @cartItem._2.name |
+        Quantity: @cartItem._1.quantity |
+        Price: @cartItem._2.price PLN
+    </li>
+}
+</ul>
