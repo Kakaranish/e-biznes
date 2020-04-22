@@ -45,7 +45,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
         val cartItemsResult = cartItemDao.getAllForCart(cartId)
         cartItemsResult.map(cartItems =>
           Ok(views.html.carts.cart(cart, user, cartItems.map(
-            cartItem => (cartItem._1._1, cartItem._2.get))))
+            cartItem => (cartItem._1, cartItem._2.get))))
         )
       }
     }
@@ -60,7 +60,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
         val cart = cartTuple.get._1
         val cartItems = Await.result(cartItemDao.getAllForCart(cart.id), Duration.Inf)
         Ok(views.html.carts.cartForUser(cart, user,
-          cartItems.map(cartItem => (cartItem._1._1, cartItem._2.get)))
+          cartItems.map(cartItem => (cartItem._1, cartItem._2.get)))
         )
       }
     })
@@ -118,14 +118,20 @@ class CartController @Inject()(cc: MessagesControllerComponents,
     val cartItem = Await.result(cartItemDao.getById(cartItemId), Duration.Inf)
     if (cartItem == None) Future(Ok(s"There is no cart item with id $cartItemId"))
     else {
-      val deleteResult = cartItemDao.delete(cartItemId)
-      deleteResult.map(result => {
-        if (result != 0) {
-          cartDao.setUpdateDateToNow(cartItem.get._1._1.cartId)
-          Ok(s"Cart item with id $cartItemId has been deleted")
-        }
-        else Ok(s"There is no cart item with id $cartItemId")
-      })
+      val cartId = cartItem.get._1._1.cartId
+      val finalizationResult = Await.result(cartDao.getFinalizationStatus(cartId), Duration.Inf)
+      if(finalizationResult == None) Future(Ok(s"Failed: There is no cart with id $cartId"))
+      else if(finalizationResult.get) Future(Ok(s"Failed: Cart with id $cartId is already finalized"))
+      else {
+        val deleteResult = cartItemDao.delete(cartItemId)
+        deleteResult.map(result => {
+          if (result != 0) {
+            cartDao.setUpdateDateToNow(cartItem.get._1._1.cartId)
+            Ok(s"Cart item with id $cartItemId has been deleted")
+          }
+          else Ok(s"There is no cart item with id $cartItemId")
+        })
+      }
     }
   }
 

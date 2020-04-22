@@ -49,24 +49,24 @@ class OrderController @Inject()(cc: MessagesControllerComponents,
 
       orderedProductsResult.map(orderedProducts =>
         Ok(views.html.orders.order(order, orderedProducts.map(
-          orderedItem => (orderedItem._1._1, orderedItem._2.get))))
+          orderedItem => (orderedItem._1, orderedItem._2.get))))
       )
     }
   }
 
   def create(cartId: String) = Action.async { implicit request =>
     val cartResult = Await.result(cartDao.getById(cartId), Duration.Inf)
-    if(cartResult == None) {
+    if (cartResult == None) {
       Future(Ok(s"There is no cart with id $cartId"))
     } else {
       val cart = cartResult.get._1
-      if(cart.isFinalized) Future(Ok(s"Failed: Cart with id $cartId is already finalized"))
+      if (cart.isFinalized) Future(Ok(s"Failed: Cart with id $cartId is already finalized"))
       else {
         val userId = cartResult.get._2.get.id
         val orderId = UUID.randomUUID().toString()
         val order = Order(orderId, cart.id, userId, null, null)
         orderDao.createWithId(order).map(createResult => {
-          if(createResult != 0){
+          if (createResult != 0) {
             cartDao.setFinalized(cartId)
             Ok(s"Success. Order with id $orderId has been created")
           }

@@ -7,7 +7,7 @@ import models._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
@@ -24,19 +24,17 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   private val productTable = TableQuery[ProductTable]
 
   def getAll() = db.run((for {
-    ((cartItem, order), product) <- cartItemTable joinLeft
-      orderTable on ((x, y) => x.cartId === y.id) joinLeft
-      productTable on ((x, y) => x._1.productId === y.id)
-  } yield ((cartItem, order), product))
+    (cartItem, product) <- cartItemTable joinLeft
+      productTable on ((x, y) => x.productId === y.id)
+  } yield (cartItem, product))
     .result
   )
 
   def getAllForCart(cartId: String) = db.run((for {
-    ((cartItem, order), product) <- cartItemTable joinLeft
-      orderTable on ((x, y) => x.cartId === y.id) joinLeft
-      productTable on ((x, y) => x._1.productId === y.id)
-  } yield ((cartItem, order), product))
-    .filter(record => record._1._1.cartId === cartId)
+    (cartItem, product) <- cartItemTable joinLeft
+      productTable on ((x, y) => x.productId === y.id)
+  } yield (cartItem, product))
+    .filter(record => record._1.cartId === cartId)
     .result
   )
 
