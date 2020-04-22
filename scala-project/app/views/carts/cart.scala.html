@@ -1,6 +1,8 @@
 @import models.Cart
 @(cart: Cart, userPreview: User, cartItems: Seq[(CartItem, Product)])
 
+<h3>Cart info</h3>
+
 <p>CartId: @cart.id</p>
 <p>Is Finalized?: @cart.isFinalized</p>
 <p>Last update date: @cart.updateDate</p>

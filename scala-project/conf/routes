@@ -92,19 +92,12 @@ GET           /shippinginfos/update                        controllers.ShippingC
 DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingController.delete(shippingInfoId: String)
 GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
-# OrderedProductController
-GET           /orderedProducts                             controllers.CartItemController.getAll
-GET           /orderedProduct/:orderedProductId            controllers.CartItemController.getById(orderedProductId: String)
-GET           /orderedProducts/order/:orderId              controllers.CartItemController.getAllForOrder(orderId: String)
-POST          /orderedProduct                              controllers.CartItemController.create
-PUT           /orderedProduct/:orderedProductId            controllers.CartItemController.update(orderedProductId: String)
-DELETE        /orderedProduct/:orderedProductId            controllers.CartItemController.delete(orderedProductId: String)
-
 # Cart
-GET           /cart/:cartId                                controllers.CartController.getById(cartId: String)
+GET           /cart/user/:userId                           controllers.CartController.getByUserId(userId: String)
 GET           /cart/create/user/:userId                    controllers.CartController.createForUser(userId: String)
 GET           /cart/delete/:cartId                         controllers.CartController.delete(cartId: String)
 GET           /cart/:cartId/item/add                       controllers.CartController.addToCart(cartId: String)
 POST          /cart/item/add                               controllers.CartController.addToCartHandler
 POST          /cart/:cartId/finalize                       controllers.CartController.setFinalized(cartId: String)
 DELETE        /cart/item/:cartItemId                       controllers.CartController.deleteCartItem(cartItemId: String)
+GET           /cart/:cartId                                controllers.CartController.getById(cartId: String)

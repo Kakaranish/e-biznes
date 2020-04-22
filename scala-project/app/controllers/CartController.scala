@@ -4,7 +4,7 @@ import java.util.UUID
 
 import daos.{CartDao, CartItemDao, ProductDao, UserDao}
 import javax.inject.{Inject, Singleton}
-import models.{Cart, CartItem, ProductPreview}
+import models._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
@@ -26,7 +26,6 @@ class CartController @Inject()(cc: MessagesControllerComponents,
   def getById(cartId: String) = Action.async { implicit request =>
     val cartResult = Await.result(cartDao.getById(cartId), Duration.Inf)
     if (cartResult == None) Future(Ok(s"There is no cart with id $cartId"))
-
     else {
       val cart = cartResult.get._1
 
@@ -35,14 +34,28 @@ class CartController @Inject()(cc: MessagesControllerComponents,
         Future.successful(Ok("There is no user"))
       } else {
         val user = userResult.get
-
-        val orderedProductsResult = cartItemDao.getAllForCart(cartId)
-        orderedProductsResult.map(orderedProducts =>
-          Ok(views.html.carts.cart(cart, user, orderedProducts.map(
-            orderedItem => (orderedItem._1._1, orderedItem._2.get))))
+        val cartItemsResult = cartItemDao.getAllForCart(cartId)
+        cartItemsResult.map(cartItems =>
+          Ok(views.html.carts.cart(cart, user, cartItems.map(
+            cartItem => (cartItem._1._1, cartItem._2.get))))
         )
       }
     }
+  }
+
+  def getByUserId(userId: String) = Action.async { implicit request =>
+    val cartResult = cartDao.getByUserId(userId)
+    cartResult.map(cartTuple => {
+      if(cartTuple == None) Ok(s"There is no cart for user $userId")
+      else {
+        val user = cartTuple.get._2.get
+        val cart = cartTuple.get._1
+        val cartItems = Await.result(cartItemDao.getAllForCart(cart.id), Duration.Inf)
+        Ok(views.html.carts.cartForUser(cart, user,
+          cartItems.map(cartItem => (cartItem._1._1, cartItem._2.get)))
+        )
+      }
+    })
   }
 
   def createForUser(userId: String) = Action {

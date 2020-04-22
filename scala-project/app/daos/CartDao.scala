@@ -31,6 +31,15 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
       .headOption
   }
 
+  def getByUserId(userId: String) = db.run {
+    (for {
+      (cart, user) <- cartTable filter(record => record.userId === userId) joinLeft
+        userTable on ((x, y) => x.userId === y.id)
+    } yield (cart, user))
+      .result
+      .headOption
+  }
+
   def create(cart: Cart) = db.run {
     val id = UUID.randomUUID().toString()
     cartTable += Cart(id, cart.userId, cart.isFinalized, cart.updateDate)

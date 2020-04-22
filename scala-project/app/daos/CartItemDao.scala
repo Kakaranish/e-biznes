@@ -31,7 +31,7 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .result
   )
 
-  def getAllForCart(cartId: String): Future[Seq[((CartItem, Option[Order]), Option[Product])]] = db.run((for {
+  def getAllForCart(cartId: String) = db.run((for {
     ((cartItem, order), product) <- cartItemTable joinLeft
       orderTable on ((x, y) => x.cartId === y.id) joinLeft
       productTable on ((x, y) => x._1.productId === y.id)

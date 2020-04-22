@@ -1,0 +1,20 @@
+@(cart: Cart, user: User, cartItems: Seq[(CartItem, Product)])
+
+<h3>Cart info</h3>
+
+<p>CartId: @cart.id</p>
+<p>Is finalized?: @cart.isFinalized</p>
+<p>Last update date: @cart.updateDate</p>
+<p>Cart owner's email: @user.email</p>
+<p>Cart owner's full name: @user.firstName @user.lastName</p>
+
+<p>Products in:</p>
+<ul>
+@for(cartItem <- cartItems) {
+    <li>
+        Name: @cartItem._2.name |
+        Quantity: @cartItem._1.quantity |
+        Price: @cartItem._2.price PLN
+    </li>
+}
+</ul>
