@@ -1,4 +1,4 @@
-@(shippingInfoForm: Form[CreateShippingInfoForm])(implicit request: MessagesRequestHeader, flash: Flash)
+@(shippingInfoForm: Form[CreateShippingInfoForm], ordersIds: Seq[String])(implicit request: MessagesRequestHeader, flash: Flash)
 @import helper._
 
 @main("Create Shipping Info") {
@@ -12,6 +12,15 @@
         @inputText(shippingInfoForm("city"), '_label -> "City")
         @inputText(shippingInfoForm("address"), '_label -> "Address")
         @inputText(shippingInfoForm("zipOrPostcode"), '_label -> "Zip or postcode")
+
+        <div>
+            <label><b>Order</b></label><br/>
+            <select name="orderId">
+            @for(orderId <- ordersIds) {
+                <option value="@orderId" name="orderId">@orderId</option>
+            }
+            </select>
+        </div>
 
         <div class="buttons" style="margin-top: 10px">
             <input type="submit" value="Create Shipping Info"/>

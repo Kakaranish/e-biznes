@@ -38,6 +38,12 @@ class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
       .result
   }
 
+  def getIdsForAllWithoutShippingInfo() = db.run {
+    orderTable.filter(record => record.shippingInfoId.isEmpty)
+      .map(record => (record.id))
+      .result
+  }
+
   def getAllForUser(userId: String) = db.run((for {
     (order, shippingInfo) <- orderTable joinLeft
       shippingInfoTable on ((x, y) => x.shippingInfoId === y.id)
@@ -67,5 +73,11 @@ class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     val nowIso = new DateTime().toString(DateTimeFormat
       .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
     orderTable += Order(order.id, order.cartId, order.userId, null, nowIso)
+  }
+
+  def updateShippingInfo(orderId: String, shippingInfoId: String) = db.run {
+    orderTable.filter(record => record.id === orderId)
+      .map(record => (record.shippingInfoId))
+      .update((Option[String](shippingInfoId)))
   }
 }

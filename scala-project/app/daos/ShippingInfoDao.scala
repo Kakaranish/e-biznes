@@ -33,6 +33,11 @@ class ShippingInfoDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
       shippingInfo.city, shippingInfo.address, shippingInfo.zipOrPostcode)
   }
 
+  def createWithId(shippingInfo: ShippingInfo) = db.run {
+    shippingInfoTable += ShippingInfo(shippingInfo.id, shippingInfo.country,
+      shippingInfo.city, shippingInfo.address, shippingInfo.zipOrPostcode)
+  }
+
   def update(shippingInfoToUpdate: ShippingInfo) = db.run {
     shippingInfoTable.filter(record => record.id === shippingInfoToUpdate.id)
       .update(shippingInfoToUpdate)
