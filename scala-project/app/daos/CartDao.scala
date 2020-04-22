@@ -21,6 +21,10 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   private val cartTable = TableQuery[CartTable]
   private val userTable = TableQuery[UserTable]
 
+  def getAllPreviews() = db.run {
+    cartTable.result
+  }
+
   def getById(cartId: String) = db.run {
     (for {
       (cart, user) <- cartTable joinLeft

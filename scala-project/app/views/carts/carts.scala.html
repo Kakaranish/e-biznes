@@ -1,0 +1,13 @@
+@(carts: Seq[Cart])
+
+<h3>Carts</h3>
+
+<ul>
+    @for(cart <- carts) {
+        <li>
+            CartId: @cart.id |
+            UserId: @cart.userId |
+            UpdateDate: @cart.updateDate
+        </li>
+    }
+</ul>

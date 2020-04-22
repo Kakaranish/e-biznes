@@ -1,19 +1,23 @@
 package controllers
 
-import daos.{CartItemDao, OrderDao, UserDao}
+import java.util.UUID
+
+import daos.{CartDao, CartItemDao, OrderDao, UserDao}
 import javax.inject._
+import models.Order
 import play.api.mvc._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
-class OrderController @Inject()(cc: ControllerComponents,
+class OrderController @Inject()(cc: MessagesControllerComponents,
                                 orderDao: OrderDao,
                                 userDao: UserDao,
-                                cartItemDao: CartItemDao)
+                                cartItemDao: CartItemDao,
+                                cartDao: CartDao)
                                (implicit ec: ExecutionContext)
-  extends AbstractController(cc) {
+  extends MessagesAbstractController(cc) {
 
   def getAll() = Action.async { implicit request =>
     val ordersResult = orderDao.getAll()
@@ -50,8 +54,26 @@ class OrderController @Inject()(cc: ControllerComponents,
     }
   }
 
-  def create = Action {
-    Ok("")
+  def create(cartId: String) = Action.async { implicit request =>
+    val cartResult = Await.result(cartDao.getById(cartId), Duration.Inf)
+    if(cartResult == None) {
+      Future(Ok(s"There is no cart with id $cartId"))
+    } else {
+      val cart = cartResult.get._1
+      if(cart.isFinalized) Future(Ok(s"Failed: Cart with id $cartId is already finalized"))
+      else {
+        val userId = cartResult.get._2.get.id
+        val orderId = UUID.randomUUID().toString()
+        val order = Order(orderId, cart.id, userId, null, null)
+        orderDao.createWithId(order).map(createResult => {
+          if(createResult != 0){
+            cartDao.setFinalized(cartId)
+            Ok(s"Success. Order with id $orderId has been created")
+          }
+          else Ok("Creating order failed")
+        })
+      }
+    }
   }
 
   def update(orderId: String) = Action {

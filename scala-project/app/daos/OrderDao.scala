@@ -1,11 +1,15 @@
 package daos
 
+import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{OrderTable, ShippingInfoTable, UserTable}
+import models.{Order, OrderTable, ShippingInfoTable, UserTable}
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
@@ -51,4 +55,17 @@ class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .result
     .headOption
   )
+
+  def create(order: Order) = db.run {
+    val id = UUID.randomUUID().toString()
+    val nowIso = new DateTime().toString(DateTimeFormat
+      .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    orderTable += Order(id, order.cartId, order.userId, null, nowIso)
+  }
+
+  def createWithId(order: Order) = db.run {
+    val nowIso = new DateTime().toString(DateTimeFormat
+      .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    orderTable += Order(order.id, order.cartId, order.userId, null, nowIso)
+  }
 }

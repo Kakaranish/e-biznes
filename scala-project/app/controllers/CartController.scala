@@ -23,6 +23,14 @@ class CartController @Inject()(cc: MessagesControllerComponents,
                               (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  def getAllPreviews() = Action.async { implicit request =>
+    val cartsResult = cartDao.getAllPreviews()
+    cartsResult.map(carts => {
+      if(carts.isEmpty) Ok("There are no carts found")
+      else Ok(views.html.carts.carts(carts))
+    })
+  }
+
   def getById(cartId: String) = Action.async { implicit request =>
     val cartResult = Await.result(cartDao.getById(cartId), Duration.Inf)
     if (cartResult == None) Future(Ok(s"There is no cart with id $cartId"))
