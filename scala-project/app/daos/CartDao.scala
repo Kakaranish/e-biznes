@@ -72,6 +72,13 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
       .update((true))
   }
 
+  def getFinalizationStatus(cartId: String) = db.run {
+    cartTable.filter(record => record.id === cartId)
+      .map(record => (record.isFinalized))
+      .result
+      .headOption
+  }
+
     def delete(cartId: String) = db.run {
     cartTable.filter(record => record.id === cartId)
       .delete

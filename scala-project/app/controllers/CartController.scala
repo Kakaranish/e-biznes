@@ -83,13 +83,18 @@ class CartController @Inject()(cc: MessagesControllerComponents,
   }
 
   def addToCart(cartId: String) = Action.async { implicit request =>
-    val availableProducts = Await.result(productDao.getAllPreviews(), Duration.Inf)
-    if (availableProducts.isEmpty) Future(Ok("There are no products found"))
+    val finalizationResult = Await.result(cartDao.getFinalizationStatus(cartId), Duration.Inf)
+    if(finalizationResult == None) Future(Ok(s"Failed: There is no cart with id $cartId"))
+    else if(finalizationResult.get) Future(Ok(s"Failed: Cart with id $cartId is already finalized"))
     else {
-      val formToPass = addItemToCartForm.fill(AddToCartForm(cartId, null, 0))
-      val productsPreviews = availableProducts.map(product =>
-        ProductPreview(product._1, product._2))
-      Future(Ok(views.html.carts.addToCart(formToPass, productsPreviews)))
+      val availableProducts = Await.result(productDao.getAllPreviews(), Duration.Inf)
+      if (availableProducts.isEmpty) Future(Ok("There are no products found"))
+      else {
+        val formToPass = addItemToCartForm.fill(AddToCartForm(cartId, null, 0))
+        val productsPreviews = availableProducts.map(product =>
+          ProductPreview(product._1, product._2))
+        Future(Ok(views.html.carts.addToCart(formToPass, productsPreviews)))
+      }
     }
   }
 
