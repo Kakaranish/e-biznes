@@ -6,7 +6,7 @@ import slick.jdbc.SQLiteProfile.api._
 case class Order(id: String,
                  cartId: String,
                  userId: String,
-                 shippingInfoId: String,
+                 shippingInfoId: Option[String],
                  dateCreated: String)
 
 object Order {
@@ -20,7 +20,7 @@ class OrderTable(tag: Tag) extends Table[Order](tag, "Order") {
 
   def userId = column[String]("UserId")
 
-  def shippingInfoId = column[String]("ShippingInfoId")
+  def shippingInfoId = column[Option[String]]("ShippingInfoId")
 
   def dateCreated = column[String]("DateCreated")
 

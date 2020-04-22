@@ -8,7 +8,9 @@
             CartId: @order._1._1.cartId |
             User: @order._1._2.get.firstName @order._1._2.get.lastName |
             UserId: @order._1._1.userId |
-            ShippingId: @order._2.get.id |
+            @if(order._2.isDefined) {
+                ShippingId: @order._2.get.id |
+            }
             Date Created: @order._1._1.dateCreated
         </li>
     }
