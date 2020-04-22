@@ -22,7 +22,9 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "4.0.0",
   "com.typesafe.play" %% "play-slick-evolutions" % "4.0.0",
-  "org.xerial" % "sqlite-jdbc" % "3.7.2"
+  "org.xerial" % "sqlite-jdbc" % "3.7.2",
+  "com.jason-goodwin" %% "authentikat-jwt" % "0.4.5",
+  "com.github.t3hnar" %% "scala-bcrypt" % "4.1"
 )
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
