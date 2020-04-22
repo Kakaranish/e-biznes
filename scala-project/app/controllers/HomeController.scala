@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.concurrent.TimeUnit
+import authentikat.jwt.{JsonWebToken, JwtClaimsSet, JwtHeader}
 import javax.inject._
 import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc._
@@ -17,7 +19,29 @@ class HomeController @Inject()(cc: ControllerComponents)(implicit exec: Executio
     implicit val personFormat = Json.format[Person]
   }
 
+  // Auth section
+
+  private val tokenExpiryPeriodInDays = 1
+  private val secretKey = "awesomeSecretKey"
+  private val header = JwtHeader("HS256")
+
+  def setClaims(username: String, expiryPeriodInDays: Long) = JwtClaimsSet(
+    Map(
+      "user" -> username,
+      "expiredAt" -> (System.currentTimeMillis() + TimeUnit.DAYS.toMillis(expiryPeriodInDays))
+    )
+  )
+
   def index = Action(parse.json) { implicit request =>
+    val jwt = JsonWebToken(header, setClaims("sgruz", 1), secretKey)
+    Ok(JsObject(
+      Seq(
+        "jwt" -> JsString(jwt)
+      )
+    ))
+  }
+
+  def index2 = Action(parse.json) { implicit request =>
     val message = (request.body \ "message").asOpt[String]
     val password = (request.body \ "password").asOpt[String]
 
