@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const CategoriesPage = () => {
-
 	const [categories, setCategories] = useState(null);
 	useEffect(() => {
 		const getMessage = async () => {

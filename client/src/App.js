@@ -1,23 +1,23 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import MainPage from './pages/MainPage';
-import CategoriesPage from './pages/CategoriesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import MainLayoutRoute from './MainLayoutRoute';
+import CategoryRoutes from './pages/Categories/CategoryRoutes';
 
 const App = () => {
   return (
-      <BrowserRouter>
+      <Router>
         <Switch>
           <MainLayoutRoute path='/' component={MainPage} exact />
-          <MainLayoutRoute path='/categories' component={CategoriesPage} />
+          <CategoryRoutes />
 
           <Route component={NotFoundPage} />
         </Switch>
-      </BrowserRouter>
+      </Router>
   )
 };
 

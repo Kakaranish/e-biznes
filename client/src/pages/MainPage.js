@@ -2,8 +2,10 @@ import React from 'react';
 
 const MainPage = () => {
 	return (
-		<p>Main page</p>
-	)
+		<>
+			Main Page
+		</>
+	);
 };
 
 export default MainPage;
