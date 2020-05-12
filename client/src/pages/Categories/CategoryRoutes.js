@@ -1,11 +1,11 @@
 import React from 'react';
-import MainLayoutRoute from '../../MainLayoutRoute';
 import CategoriesPage from '../CategoriesPage';
+import { Route } from 'react-router-dom';
 
 const CategoryRoutes = () => {
     return (
         <>
-            <MainLayoutRoute path='/categories' component={CategoriesPage} />
+            <Route path='/' component={CategoriesPage} />
         </>
     );
 };

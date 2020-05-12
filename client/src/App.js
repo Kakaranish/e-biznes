@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
@@ -13,9 +13,9 @@ const App = () => {
       <Router>
         <Switch>
           <MainLayoutRoute path='/' component={MainPage} exact />
-          <CategoryRoutes />
-
-          <Route component={NotFoundPage} />
+          <MainLayoutRoute path='/categories' component={CategoryRoutes} />
+          
+          <MainLayoutRoute component={NotFoundPage} />
         </Switch>
       </Router>
   )

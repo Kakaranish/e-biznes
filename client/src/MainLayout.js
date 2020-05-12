@@ -9,7 +9,7 @@ const MainLayout = (props) => {
 			<Sidebar />
 			<div id="page-content-wrapper">
 				<Navbar />
-				<div class="container-fluid">
+				<div class="container-fluid p-3">
 					{props.children}
 				</div>
 			</div>
