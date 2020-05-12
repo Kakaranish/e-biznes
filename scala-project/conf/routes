@@ -13,6 +13,8 @@ POST          /login                                       controllers.AccountCo
 POST          /register                                    controllers.AccountController.register
 
 # CategoryController
+GET           /api/categories                              controllers.CategoryControllerApi.getAll
+GET           /api/categories/:id                          controllers.CategoryControllerApi.getById(id: String)
 GET           /categories                                  controllers.CategoryController.getAll
 GET           /categories/create                           controllers.CategoryController.create
 POST          /categories/create                           controllers.CategoryController.createHandler

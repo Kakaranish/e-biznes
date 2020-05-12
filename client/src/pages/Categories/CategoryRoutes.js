@@ -1,11 +1,13 @@
 import React from 'react';
-import CategoriesPage from '../CategoriesPage';
 import { Route } from 'react-router-dom';
+import CategoriesPage from './CategoriesPage';
+import CategoryPage from './CategoryPage';
 
 const CategoryRoutes = () => {
     return (
         <>
-            <Route path='/' component={CategoriesPage} />
+            <Route path='/categories' component={CategoriesPage} exact/>
+            <Route path='/categories/:id' component={CategoryPage} />
         </>
     );
 };

@@ -5,11 +5,11 @@ import Navbar from './Navbar';
 
 const MainLayout = (props) => {
 	return (
-		<div class="d-flex" id="wrapper">
+		<div className="d-flex" id="wrapper">
 			<Sidebar />
 			<div id="page-content-wrapper">
 				<Navbar />
-				<div class="container-fluid p-3">
+				<div className="container-fluid p-3">
 					{props.children}
 				</div>
 			</div>
