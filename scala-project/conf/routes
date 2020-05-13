@@ -15,6 +15,8 @@ POST          /register                                    controllers.AccountCo
 # CategoryController
 GET           /api/categories                              controllers.CategoryControllerApi.getAll
 GET           /api/categories/:id                          controllers.CategoryControllerApi.getById(id: String)
+POST          /api/categories                              controllers.CategoryControllerApi.create
+PUT           /api/categories                              controllers.CategoryControllerApi.update
 GET           /categories                                  controllers.CategoryController.getAll
 GET           /categories/create                           controllers.CategoryController.create
 POST          /categories/create                           controllers.CategoryController.createHandler

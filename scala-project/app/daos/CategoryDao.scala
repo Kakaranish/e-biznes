@@ -26,7 +26,16 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
       .headOption
   }
 
+  def getByName(name: String) = db.run {
+    categoryTable.filter(category => category.name === name).exists.result
+  }
+
   def create(category: Category) = db.run {
+    val id = UUID.randomUUID().toString()
+    categoryTable += Category(id, category.name)
+  }
+
+  def createIfPossible(category: Category) = db.run {
     val id = UUID.randomUUID().toString()
     categoryTable += Category(id, category.name)
   }

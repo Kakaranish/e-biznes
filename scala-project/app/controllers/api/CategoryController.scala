@@ -2,10 +2,13 @@ package controllers
 
 import daos.CategoryDao
 import javax.inject._
-import play.api.libs.json.Json
+import models.Category
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc._
-
-import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, categoryDao: CategoryDao)
@@ -19,5 +22,49 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
   def getById(categoryId: String) = Action.async { implicit request =>
     val categoryResult = categoryDao.getById(categoryId)
     categoryResult.map(category => Ok(Json.toJson(category)))
+  }
+
+  def create() = Action.async(parse.json) { implicit request =>
+    implicit val categoryRead: Reads[String] = (JsPath \ "name").read[String]
+      .filter(JsonValidationError("must be non-empty"))(_.length > 0)
+
+    val validation = request.body.validate[String](categoryRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[String] => {
+        categoryDao.getByName(s.value).map(exists => {
+          exists match {
+            case true => Status(BAD_REQUEST)(JsError.toJson(JsError("category with such name exists")))
+            case _ => {
+              categoryDao.create(Category(null, s.value))
+              Ok
+            }
+          }
+        })
+      }
+    }
+  }
+
+  case class CategoryUpdateDto(id: String, name: String)
+  def update() = Action.async(parse.json) { implicit request =>
+    implicit val categoryUpdateRead = (
+      (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "name").read[String].filter(JsonValidationError("must be non-empty"))(_.length > 0)
+    )(CategoryUpdateDto.apply _)
+
+    val validation = request.body.validate[CategoryUpdateDto](categoryUpdateRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[CategoryUpdateDto] => {
+        categoryDao.getById(s.value.id).map(category => {
+          if(category.getOrElse(null) == null) {
+            Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
+          } else {
+            categoryDao.update(Category(s.value.id, s.value.name))
+            Ok
+          }
+        })
+      }
+    }
   }
 }
