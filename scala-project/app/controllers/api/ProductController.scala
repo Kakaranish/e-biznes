@@ -2,11 +2,10 @@ package controllers.api
 
 import daos.{CategoryDao, ProductDao}
 import javax.inject.{Inject, Singleton}
-import models.Product
+import models.{Category, Product}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{MessagesControllerComponents, _}
-
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
@@ -31,7 +30,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
   case class CreateProductDto(name: String, description: String, price: Float, quantity: Int, categoryId: String)
 
   def create() = Action.async(parse.json) { implicit request =>
-    implicit val categoryUpdateRead = (
+    implicit val categoryRead = (
       (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "price").read[Float].filter(JsonValidationError("must be greater > 0"))(x => x != null && x > 0) and
@@ -39,7 +38,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
         (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
       ) (CreateProductDto.apply _)
 
-    val validation = request.body.validate[CreateProductDto](categoryUpdateRead)
+    val validation = request.body.validate[CreateProductDto](categoryRead)
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[CreateProductDto] => {
@@ -55,6 +54,35 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
             }
           }
         })
+      }
+    }
+  }
+
+  case class UpdateProductDto(id: String, name: String, description: String, price: Float, quantity: Int, categoryId: String)
+
+  def update() = Action.async(parse.json) { implicit request =>
+    implicit val categoryRead = (
+      (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "price").read[Float].filter(JsonValidationError("must be greater > 0"))(x => x != null && x > 0) and
+        (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
+        (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      ) (UpdateProductDto.apply _)
+
+    val validation = request.body.validate[UpdateProductDto](categoryRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[UpdateProductDto] => {
+        val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getById(s.value.id), Duration.Inf)
+        productResult match {
+          case Some(prod) => {
+            val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId)
+            productDao.update(updatedProduct)
+            Future(Ok)
+          }
+          case _ => Future(Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id"))))
+        }
       }
     }
   }

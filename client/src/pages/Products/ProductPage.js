@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../Modal';
 import { isValidUUID } from '../../common';
 
 const ProductPage = (props) => {
+
+    const history = useHistory();
     const productId = props.match.params.id;
+
+    const onEdit = () => history.push(`/products/${productId}/edit`);
 
     const [state, setState] = useState({ loading: true, product: null });
     useEffect(() => {
@@ -56,7 +61,7 @@ const ProductPage = (props) => {
                 <b>Category:</b> {state.product.category?.name ?? 'None'}
             </p>
 
-            <button type="button" className="btn btn-primary w-25 mr-2" onClick={() => { }}>
+            <button type="button" className="btn btn-primary w-25 mr-2" onClick={onEdit}>
                 Edit
 			</button>
 

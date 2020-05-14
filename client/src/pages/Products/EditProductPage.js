@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { isValidUUID } from '../../common';
 import axios from 'axios';
+import { getFormDataJsonFromEvent } from '../../common';
 
 const EditProductPage = (props) => {
+	
+	const history = useHistory();
 	const productId = props.match.params.id;
+
+	const onSubmit = async event => {
+		event.preventDefault();
+		let formData = getFormDataJsonFromEvent(event);
+		formData.price = parseFloat(formData.price);
+		formData.quantity = parseInt(formData.quantity);
+
+		const result = await axios.put('/api/products', formData, { validateStatus: false });
+		if (result.status !== 200) {
+			alert('Some error occured');
+			console.log(result);
+			return;
+		}
+
+		history.push(`/products/${productId}`);
+	};
 
 	const [state, setState] = useState({
 		loading: true, categories: null,
@@ -24,7 +44,6 @@ const EditProductPage = (props) => {
 				setState({ loading: false, error: 'Failed loading product' });
 				return;
 			}
-			console.log(productResult.data)
 
 			const categoriesResult = await axios.get('/api/categories',
 				{ validateStatus: false });
@@ -44,7 +63,6 @@ const EditProductPage = (props) => {
 		if (isValidUUID(productId)) fetchData();
 	}, []);
 
-
 	if (!isValidUUID(productId)) return <h3>Product Id '{productId}' is invalid UUID</h3>
 	else if (state.loading) return <></>
 	else {
@@ -54,10 +72,10 @@ const EditProductPage = (props) => {
 		else return (
 			<>
 				<h3>Edit product</h3>
-				<form>
+				<form onSubmit={onSubmit}>
 					<div className="form-group">
 						<label>Id</label>
-						<input name="name" type="text" className="form-control" id="idInput" value={state.product.id} readOnly />
+						<input name="id" type="text" className="form-control" id="idInput" value={state.product.id} readOnly />
 					</div>
 
 					<div className="form-group">
