@@ -49,14 +49,14 @@ const ProductPage = (props) => {
             </p>
 
             <p>
-                <b>Quantity:</b> {state.product.product.quntity}
+                <b>Quantity:</b> {state.product.product.quantity}
             </p>
 
             <p>
-                <b>Category:</b> {state.product.category.name}
+                <b>Category:</b> {state.product.category?.name ?? 'None'}
             </p>
 
-            <button type="button" className="btn btn-primary w-25 mr-2" onClick={() => {}}>
+            <button type="button" className="btn btn-primary w-25 mr-2" onClick={() => { }}>
                 Edit
 			</button>
 
@@ -66,7 +66,7 @@ const ProductPage = (props) => {
                 modalTitle={"Are you sure?"}
                 modalPrimaryBtnText={"Delete"}
                 modalPrimaryBtnClasses={"btn btn-danger"}
-                onModalPrimaryBtnClick={() => {}}
+                onModalPrimaryBtnClick={() => { }}
                 modalSecondaryBtnText={"Cancel"}
                 modalSecondaryBtnClasses={"btn btn-secondary"}
             />

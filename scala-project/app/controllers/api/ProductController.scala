@@ -21,7 +21,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       case Some(prod) => {
         Ok(Json.obj(
           "product" -> prod._1,
-          "category" -> prod._2.getOrElse(null)
+          "category" -> prod._2
         ))
       }
       case _ => Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
@@ -29,6 +29,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   case class CreateProductDto(name: String, description: String, price: Float, quantity: Int, categoryId: String)
+
   def create() = Action.async(parse.json) { implicit request =>
     implicit val categoryUpdateRead = (
       (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
