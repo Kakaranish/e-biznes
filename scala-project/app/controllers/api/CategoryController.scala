@@ -1,18 +1,22 @@
 package controllers.api
 
-import daos.CategoryDao
+import daos.{CategoryDao, ProductDao}
 import javax.inject._
 import models.Category
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
+
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
-class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, categoryDao: CategoryDao)
-                                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
+class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
+                                      categoryDao: CategoryDao,
+                                      productDao: ProductDao)
+                                     (implicit ec: ExecutionContext)
+  extends MessagesAbstractController(cc) {
 
   def getAll() = Action.async { implicit request =>
     val categoriesResult = categoryDao.getAll()
@@ -88,8 +92,14 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
           if (category.getOrElse(null) == null) {
             Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
           } else {
-            val x: Int = Await.result(categoryDao.delete(s.value), Duration.Inf)
-            Ok
+            val productWithCategoryExists = Await.result(productDao.existsAnyWithCategoryId(s.value), Duration.Inf)
+            productWithCategoryExists match {
+              case true => Status(BAD_REQUEST)(JsError.toJson(JsError("cannot remove because category is assigned to at least one product")))
+              case _ => {
+                Await.result(categoryDao.delete(s.value), Duration.Inf)
+                Ok
+              }
+            }
           }
         })
       }

@@ -79,7 +79,7 @@ const CreateProductPage = () => {
 
 				<button className="btn btn-success w-25" type="submit">
 					Create
-                </button>
+				</button>
 			</form>
 		</>
 	);

@@ -41,6 +41,10 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
     .headOption
   )
 
+  def existsAnyWithCategoryId(categoryId: String) = db.run {
+    productTable.filter(record => record.categoryId === categoryId).exists.result
+  }
+
   def create(product: Product) = db.run {
     val id = UUID.randomUUID().toString()
     productTable += Product(id, product.name, product.description, product.price,
