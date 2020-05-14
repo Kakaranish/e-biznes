@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import MainLayoutRoute from './MainLayoutRoute';
 import CategoryRoutes from './pages/Categories/CategoryRoutes';
 import ProductRoutes from './pages/Products/ProductRoutes';
+import UserRoutes from './pages/Users/UserRoutes';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <MainLayoutRoute path='/' component={MainPage} exact />
           <MainLayoutRoute path='/categories' component={CategoryRoutes} />
           <MainLayoutRoute path='/products' component={ProductRoutes} />
+          <MainLayoutRoute path='/users' component={UserRoutes} />
           
           <MainLayoutRoute component={NotFoundPage} />
         </Switch>
