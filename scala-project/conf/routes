@@ -79,6 +79,7 @@ GET           /products/:productId                         controllers.ProductCo
 
 # UserController
 GET           /api/users                                   controllers.api.UserControllerApi.getAll
+GET           /api/users/:id                               controllers.api.UserControllerApi.getById(id: String)
 GET           /users                                       controllers.UserController.getAll
 GET           /users/create                                controllers.UserController.create
 POST          /users/create                                controllers.UserController.createHandler
