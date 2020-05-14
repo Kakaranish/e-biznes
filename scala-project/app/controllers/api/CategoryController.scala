@@ -3,8 +3,8 @@ package controllers
 import daos.CategoryDao
 import javax.inject._
 import models.Category
-import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import scala.concurrent.duration.Duration
@@ -34,7 +34,7 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
       case s: JsSuccess[String] => {
         categoryDao.getByName(s.value).map(exists => {
           exists match {
-            case true => Status(BAD_REQUEST)(JsError.toJson(JsError("category with such name exists")))
+            case Some(x) => Status(BAD_REQUEST)(JsError.toJson(JsError("category with such name exists")))
             case _ => {
               categoryDao.create(Category(null, s.value))
               Ok
@@ -46,22 +46,31 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
   }
 
   case class CategoryUpdateDto(id: String, name: String)
+
   def update() = Action.async(parse.json) { implicit request =>
     implicit val categoryUpdateRead = (
       (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "name").read[String].filter(JsonValidationError("must be non-empty"))(_.length > 0)
-    )(CategoryUpdateDto.apply _)
+      ) (CategoryUpdateDto.apply _)
 
     val validation = request.body.validate[CategoryUpdateDto](categoryUpdateRead)
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[CategoryUpdateDto] => {
         categoryDao.getById(s.value.id).map(category => {
-          if(category.getOrElse(null) == null) {
+          if (category.getOrElse(null) == null) {
             Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
-          } else {
-            categoryDao.update(Category(s.value.id, s.value.name))
+          } else if (category.get.name == s.value.name) {
             Ok
+          } else {
+            val otherCategoryResult = Await.result(categoryDao.getByName(s.value.name), Duration.Inf)
+            otherCategoryResult match {
+              case Some(cat) => Status(BAD_REQUEST)(JsError.toJson(JsError("other category has such name")))
+              case None => {
+                categoryDao.update(Category(s.value.id, s.value.name))
+                Ok
+              }
+            }
           }
         })
       }
@@ -76,7 +85,7 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
         categoryDao.getById(s.value).map(category => {
-          if(category.getOrElse(null) == null) {
+          if (category.getOrElse(null) == null) {
             Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
           } else {
             val x: Int = Await.result(categoryDao.delete(s.value), Duration.Inf)

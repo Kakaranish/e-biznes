@@ -62,7 +62,6 @@ const CategoryPage = (props) => {
 				onModalPrimaryBtnClick={onDelete}
 				modalSecondaryBtnText={"Cancel"}
 				modalSecondaryBtnClasses={"btn btn-secondary"}
-				onModalSecondaryBtnClick={() => { alert("XD") }}
 			/>
 		</>
 	}

@@ -1,12 +1,12 @@
 package daos
 
 import java.util.UUID
+
 import javax.inject.Inject
 import models.{Category, CategoryTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
@@ -27,7 +27,7 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
   }
 
   def getByName(name: String) = db.run {
-    categoryTable.filter(category => category.name === name).exists.result
+    categoryTable.filter(category => category.name === name).result.headOption
   }
 
   def create(category: Category) = db.run {
