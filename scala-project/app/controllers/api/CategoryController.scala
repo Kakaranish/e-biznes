@@ -1,4 +1,4 @@
-package controllers
+package controllers.api
 
 import daos.CategoryDao
 import javax.inject._

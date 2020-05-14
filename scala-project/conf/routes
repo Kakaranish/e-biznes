@@ -13,11 +13,11 @@ POST          /login                                       controllers.AccountCo
 POST          /register                                    controllers.AccountController.register
 
 # CategoryController
-GET           /api/categories                              controllers.CategoryControllerApi.getAll
-GET           /api/categories/:id                          controllers.CategoryControllerApi.getById(id: String)
-POST          /api/categories                              controllers.CategoryControllerApi.create
-PUT           /api/categories                              controllers.CategoryControllerApi.update
-DELETE        /api/categories                              controllers.CategoryControllerApi.delete
+GET           /api/categories                              controllers.api.CategoryControllerApi.getAll
+GET           /api/categories/:id                          controllers.api.CategoryControllerApi.getById(id: String)
+POST          /api/categories                              controllers.api.CategoryControllerApi.create
+PUT           /api/categories                              controllers.api.CategoryControllerApi.update
+DELETE        /api/categories                              controllers.api.CategoryControllerApi.delete
 GET           /categories                                  controllers.CategoryController.getAll
 GET           /categories/create                           controllers.CategoryController.create
 POST          /categories/create                           controllers.CategoryController.createHandler
@@ -63,6 +63,7 @@ POST          /payments/update                             controllers.PaymentCo
 GET           /payments/:paymentId                         controllers.PaymentController.getById(paymentId: String)
 
 # ProductController
+GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
 GET           /products                                    controllers.ProductController.getAll
 GET           /products/previews                           controllers.ProductController.getAllPreviews
 GET           /products/create                             controllers.ProductController.create

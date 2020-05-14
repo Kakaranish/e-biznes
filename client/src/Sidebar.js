@@ -16,6 +16,11 @@ const Sidebar = () => {
                         Categories
                     </Link>
                 </div>
+                <div className="list-group list-group-flush">
+                    <Link to={'/products'} className="list-group-item list-group-item-action bg-light">
+                        Products
+                    </Link>
+                </div>
             </div>
         </>
     );
