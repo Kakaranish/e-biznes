@@ -67,4 +67,23 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents, category
       }
     }
   }
+
+  def delete() = Action.async(parse.json) { implicit request =>
+    implicit val categoryRead: Reads[String] = (JsPath \ "id").read[String]
+      .filter(JsonValidationError("must be non-empty"))(_.length > 0)
+    val validation = request.body.validate[String](categoryRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[String] => {
+        categoryDao.getById(s.value).map(category => {
+          if(category.getOrElse(null) == null) {
+            Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
+          } else {
+            val x: Int = Await.result(categoryDao.delete(s.value), Duration.Inf)
+            Ok
+          }
+        })
+      }
+    }
+  }
 }

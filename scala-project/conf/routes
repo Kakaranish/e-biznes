@@ -17,6 +17,7 @@ GET           /api/categories                              controllers.CategoryC
 GET           /api/categories/:id                          controllers.CategoryControllerApi.getById(id: String)
 POST          /api/categories                              controllers.CategoryControllerApi.create
 PUT           /api/categories                              controllers.CategoryControllerApi.update
+DELETE        /api/categories                              controllers.CategoryControllerApi.delete
 GET           /categories                                  controllers.CategoryController.getAll
 GET           /categories/create                           controllers.CategoryController.create
 POST          /categories/create                           controllers.CategoryController.createHandler

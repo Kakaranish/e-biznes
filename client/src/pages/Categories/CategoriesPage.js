@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 const CategoriesPage = () => {
+	const history = useHistory();
+
 	const [state, setState] = useState({ loading: true, categories: null });
 	useEffect(() => {
 		const getMessage = async () => {
@@ -25,7 +27,7 @@ const CategoriesPage = () => {
 			<ul>
 				{
 					state.categories.map((c, i) =>
-						<Link to={`/categories/${c.id}`}>
+						<Link to={`/categories/${c.id}`} key={`link-${i}`}>
 							<li key={`cat-${i}`}>
 								{c.name}
 							</li>
@@ -33,6 +35,10 @@ const CategoriesPage = () => {
 					)
 				}
 			</ul>
+			<button type="button" className="btn btn-success w-25"
+				onClick={() => history.push('/categories/create')}>
+				Create
+			</button>
 		</>
 	);
 };
