@@ -10,7 +10,7 @@ const CreateCategoryPage = () => {
 
 	const onSubmit = async event => {
 		event.preventDefault();
-		const formData = getFormDataJsonFromEvent(event);
+		let formData = getFormDataJsonFromEvent(event);
 		const result = await axios.post('/api/categories', formData,
 			{ validateStatus: false });
 		if (result.status !== 200) {

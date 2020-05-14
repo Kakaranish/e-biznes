@@ -64,6 +64,7 @@ GET           /payments/:paymentId                         controllers.PaymentCo
 
 # ProductController
 GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
+POST          /api/products                                controllers.api.ProductControllerApi.create
 GET           /products                                    controllers.ProductController.getAll
 GET           /products/previews                           controllers.ProductController.getAllPreviews
 GET           /products/create                             controllers.ProductController.create
