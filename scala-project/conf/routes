@@ -63,9 +63,11 @@ POST          /payments/update                             controllers.PaymentCo
 GET           /payments/:paymentId                         controllers.PaymentController.getById(paymentId: String)
 
 # ProductController
+GET           /api/products                                controllers.api.ProductControllerApi.getAll
 GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
 POST          /api/products                                controllers.api.ProductControllerApi.create
 PUT           /api/products                                controllers.api.ProductControllerApi.update
+DELETE        /api/products                                controllers.api.ProductControllerApi.delete
 GET           /products                                    controllers.ProductController.getAll
 GET           /products/previews                           controllers.ProductController.getAllPreviews
 GET           /products/create                             controllers.ProductController.create

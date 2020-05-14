@@ -105,9 +105,9 @@ const EditProductPage = (props) => {
 						<label>Category</label>
 						<select name="categoryId" className="custom-select" size="6" required>
 							{
-								state.categories.map((cat, i) =>
-									<option selected={cat.id == state.product.categoryId} key={`opt-${cat.id}`} value={cat.id}>
-										{cat.name}
+								state.categories.map((prod, i) =>
+									<option selected={prod.id == state.product.categoryId} key={`opt-${prod.id}`} value={prod.id}>
+										{prod.name}
 									</option>
 								)
 							}

@@ -15,6 +15,7 @@ const CategoryPage = (props) => {
 			{ validateStatus: false, data: { id: categoryId } })
 		if (result.status === 500) {
 			alert('Some error occured');
+			console.log(result);
 			return;
 		}
 		if (result.status !== 200) {

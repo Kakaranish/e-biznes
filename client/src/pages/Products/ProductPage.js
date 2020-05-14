@@ -10,7 +10,25 @@ const ProductPage = (props) => {
     const productId = props.match.params.id;
 
     const onEdit = () => history.push(`/products/${productId}/edit`);
-
+    const onDelete = async () => {
+        const result = await axios.delete('/api/products',
+            { validateStatus: false, data: { id: productId } });
+        if (result.status === 500) {
+            alert('Some error occured');
+            console.log(result);
+            return;
+        }
+        if (result.status === 404) {
+            const validationErrors = result.data.obj.map(e => e.msg[0]);
+            setValidationErrors(validationErrors);
+            return;
+        }
+        alert('Removed');
+        setValidationErrors(null);
+        history.push('/products');
+    }
+    
+    const [validationErrors, setValidationErrors] = useState(null);
     const [state, setState] = useState({ loading: true, product: null });
     useEffect(() => {
         const fetchProduct = async () => {
@@ -71,10 +89,26 @@ const ProductPage = (props) => {
                 modalTitle={"Are you sure?"}
                 modalPrimaryBtnText={"Delete"}
                 modalPrimaryBtnClasses={"btn btn-danger"}
-                onModalPrimaryBtnClick={() => { }}
+                onModalPrimaryBtnClick={onDelete}
                 modalSecondaryBtnText={"Cancel"}
                 modalSecondaryBtnClasses={"btn btn-secondary"}
             />
+
+            {
+                validationErrors &&
+                <div className="col-12 mt-2">
+                    <p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
+                        Validation errors
+                        </p>
+                    <ul style={{ paddingTop: "0" }, { marginTop: "0px" }}>
+                        {
+                            validationErrors.map((error, i) => {
+                                return <li key={`val-err-${i}`} className="text-danger">{error}</li>
+                            })
+                        }
+                    </ul>
+                </div>
+            }
         </>
     }
 };
