@@ -23,7 +23,7 @@ import play.api.mvc.{AbstractController, ControllerComponents}
 
 
 @Singleton
-class SignUpController @Inject()(cc: ControllerComponents)
+class SignUpController @Inject()(cc: ControllerComponents, silhouette: Silhouette[DefaultEnv])
   extends AbstractController(cc)
     with I18nSupport {
 

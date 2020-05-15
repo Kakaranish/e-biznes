@@ -5,7 +5,6 @@ import net.ceedubs.ficus.Ficus._
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
 import com.mohiva.play.silhouette.api.crypto.{Crypter, CrypterAuthenticatorEncoder}
-import com.mohiva.play.silhouette.crypto.{JcaCrypter, JcaCrypterSettings}
 import com.mohiva.play.silhouette.api.services.AuthenticatorService
 import com.mohiva.play.silhouette.api.util.{Clock, IDGenerator}
 import com.mohiva.play.silhouette.api.{Environment, EventBus, Silhouette, SilhouetteProvider}
@@ -14,7 +13,6 @@ import com.mohiva.play.silhouette.impl.authenticators.{JWTAuthenticator, JWTAuth
 import com.mohiva.play.silhouette.impl.util.SecureRandomIDGenerator
 import controllers.misc.{DefaultEnv, UserService, UserServiceImpl}
 import net.codingwell.scalaguice.ScalaModule
-//import play.api.Configuration
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import play.api._
 
@@ -60,5 +58,4 @@ class MiscModule extends AbstractModule with ScalaModule {
 
     new JcaCrypter(config)
   }
-
 }
