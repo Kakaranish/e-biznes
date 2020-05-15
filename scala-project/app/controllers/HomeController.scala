@@ -2,11 +2,12 @@ package controllers
 
 import daos.CategoryDao
 import javax.inject._
-import play.api.libs.json.Json
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
+import play.api.libs.json.{JsError, JsPath, JsSuccess, JsonValidationError}
 import play.api.mvc._
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -22,13 +23,22 @@ class HomeController @Inject()(cc: MessagesControllerComponents, categoryDao: Ca
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index = Action.async { implicit request =>
 
-    Future {
-      val categories = Await.result(categoryDao.getAll(), Duration.Inf);
-      val categoriesAsJson = Json.toJson(categories);
-      Ok(categoriesAsJson);
+
+  def index = Action(parse.json) { implicit request =>
+    val read1 = (JsPath \ "name").read[String] and
+      (JsPath \ "age").read[Long]
+
+    implicit val read2 = ((JsPath \ "name").read[String].filter(JsonValidationError("length must be > 2"))(_.length > 2) and
+      (JsPath \ "age").read[Long]) (SomeClass.apply _)
+
+    val validation = request.body.validate[SomeClass](read2)
+
+    validation match {
+      case s: JsSuccess[SomeClass] => Ok(s.value.name)
+      case e: JsError => Ok(JsError.toJson(e))
     }
   }
-
 }
+case class SomeClass(name: String, age: Long)
+
