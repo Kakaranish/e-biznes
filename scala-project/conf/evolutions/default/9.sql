@@ -10,8 +10,7 @@ CREATE TABLE "AppUser" (
 	"Id"	TEXT NOT NULL UNIQUE,
 	"FirstName"	TEXT NOT NULL,
 	"LastName"	TEXT NOT NULL,
-	"Email"	TEXT NOT NULL,
-	"Password"	TEXT NOT NULL
+	"Email"	TEXT NOT NULL
 );
 
 CREATE TABLE "AppUserLoginInfo" (
@@ -19,6 +18,22 @@ CREATE TABLE "AppUserLoginInfo" (
 	"LoginInfoId"	TEXT NOT NULL,
 	FOREIGN KEY("UserId") REFERENCES "AppUser"("Id"),
 	FOREIGN KEY("LoginInfoId") REFERENCES "LoginInfo"("Id")
+);
+
+CREATE TABLE "PasswordInfo" (
+	"Hasher"	TEXT NOT NULL,
+	"Password"	TEXT NOT NULL,
+	"Salt"	TEXT,
+	"LoginInfoId"	TEXT NOT NULL,
+	FOREIGN KEY("LoginInfoId") REFERENCES "LoginInfo"("Id")
+);
+
+CREATE TABLE "Token" (
+	"Id"	TEXT NOT NULL,
+	"UserId"	TEXT NOT NULL,
+	"Expiry"	TEXT NOT NULL,
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("UserId") REFERENCES "AppUser"("Id")
 );
 
 -- !Downs
