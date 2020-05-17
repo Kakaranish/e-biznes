@@ -57,7 +57,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
         for {
           user <- userService.save(appUser)
           _ <- loginInfoDao.saveUserLoginInfo(user.id, loginInfo)
-//          authInfo <- authInfoRepository.add(loginInfo, authInfo)
+          _ <- authInfoRepository.add(loginInfo, authInfo)
           authenticator <- silhouette.env.authenticatorService.create(loginInfo)
           token <- silhouette.env.authenticatorService.init(authenticator)
           result <- silhouette.env.authenticatorService.embed(token, Ok(

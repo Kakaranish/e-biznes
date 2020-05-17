@@ -24,13 +24,13 @@ class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
 
   override def saveUserLoginInfo(userID: String, loginInfo: LoginInfo) = {
     val id = UUID.randomUUID().toString
-    val dbLoginInfo = LoginInfoDb(id, loginInfo.providerKey, loginInfo.providerID)
+    val dbLoginInfo = LoginInfoDb(id, loginInfo.providerID, loginInfo.providerKey)
 
-    val actions = (for {
+    val actions = for {
       _ <- loginInfoTable += dbLoginInfo
       userLoginInfo = UserLoginInfoDb(userID, dbLoginInfo.id)
       _ <- userLoginInfoTable += userLoginInfo
-    } yield ())
+    } yield ()
     db.run(actions)
   }
 }

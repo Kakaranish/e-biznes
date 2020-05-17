@@ -1,6 +1,5 @@
 package modules
 
-import play.api.db.slick.DatabaseConfigProvider
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
@@ -51,8 +50,16 @@ class PasswordInfoDao @Inject()(protected val dbConfigProvider: DatabaseConfigPr
       PasswordInfo(dbPwd.hasher, dbPwd.password, dbPwd.salt)))
   }
 
-  override def add(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = db.run {
-    addAction(loginInfo, authInfo).map(_ => authInfo)
+  override def add(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
+    val action = loginInfoTable.filter(dbLoginInfo => dbLoginInfo.providerId === loginInfo.providerID &&
+      dbLoginInfo.providerKey === loginInfo.providerKey)
+      .result
+      .headOption
+      .flatMap { dbLoginInfo =>
+        passwordInfoTable += PasswordInfoDb(authInfo.hasher, authInfo.password, authInfo.salt, dbLoginInfo.get.id)
+      }.transactionally
+
+    db.run(action).map(_ => authInfo)
   }
 
   override def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = db.run {
