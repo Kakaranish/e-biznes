@@ -67,10 +67,4 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
 
   case class SignUpRequest(email: String, firstName: String, lastName: String, password: String)
 
-  sealed trait SignUpResult
-
-  case object UserAlreadyExists extends SignUpResult
-
-  case class UserCreated(user: AppUser) extends SignUpResult
-
 }
