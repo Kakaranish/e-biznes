@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../common';
 
-const LoginPage = () => {
+const LoginPage = (props) => {
 
     const history = useHistory();
 
@@ -21,26 +21,6 @@ const LoginPage = () => {
 
         history.push('/');
     }
-
-    useEffect(() => {
-        const verifyIfLogged = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-            const result = await axios.post('/auth/verify', {}, {
-                headers: {
-                    'X-Auth-Token': localStorage.getItem('token')
-                },
-                validateStatus: false
-            });
-            if(result.status === 200) {
-                alert("You' are already logged in");
-                history.push('/');
-                return;
-            }
-            localStorage.removeItem('token');
-        };
-        verifyIfLogged();
-    }, []);
 
     return <>
         <h3>Sign In</h3>

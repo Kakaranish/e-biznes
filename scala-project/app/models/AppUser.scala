@@ -8,7 +8,8 @@ import play.api.libs.json.Json
 case class AppUser(id: String = UUID.randomUUID.toString,
                    email: String,
                    firstName: String,
-                   lastName: String) extends Identity
+                   lastName: String,
+                   role: String) extends Identity
 object AppUser {
   implicit val appUserFormat = Json.format[AppUser]
 }

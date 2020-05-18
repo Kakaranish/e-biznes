@@ -8,9 +8,10 @@ CREATE TABLE "LoginInfo" (
 
 CREATE TABLE "AppUser" (
 	"Id"	TEXT NOT NULL UNIQUE,
+	"Email"	TEXT NOT NULL,
 	"FirstName"	TEXT NOT NULL,
 	"LastName"	TEXT NOT NULL,
-	"Email"	TEXT NOT NULL
+	"Role"	TEXT NOT NULL
 );
 
 CREATE TABLE "AppUserLoginInfo" (

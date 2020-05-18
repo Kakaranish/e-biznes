@@ -18,7 +18,7 @@ class AppUserDaoImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   import profile.api._
 
   def save(user: AppUser) = db.run {
-    val dbUser = AppUserDb(user.id, user.email, user.firstName, user.lastName)
+    val dbUser = AppUserDb(user.id, user.email, user.firstName, user.lastName, user.role)
     appUserTable.insertOrUpdate(dbUser).map(_ => user)
   }
 
@@ -30,7 +30,7 @@ class AppUserDaoImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     } yield dbUser
     db.run(query.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        AppUser(user.id, user.email, user.firstName, user.lastName)
+        AppUser(user.id, user.email, user.firstName, user.lastName, user.role)
       }
     }
   }

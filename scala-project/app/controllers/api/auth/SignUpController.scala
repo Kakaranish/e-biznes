@@ -45,7 +45,8 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
         userService.retrieve(loginInfo).flatMap {
           case Some(user) => Future(Status(CONFLICT)(s"email '${user.email}' is already in use"))
           case None => {
-            val userToCreate = AppUser(email = s.value.email, firstName = s.value.firstName, lastName = s.value.lastName)
+            val userToCreate = AppUser(email = s.value.email, firstName = s.value.firstName,
+              lastName = s.value.lastName, role = "USER")
             for {
               user <- userService.save(userToCreate)
               _ <- loginInfoDao.saveUserLoginInfo(user.id, loginInfo)

@@ -8,7 +8,8 @@ import slick.lifted.Tag
 case class AppUserDb(id: String = UUID.randomUUID.toString,
                      email: String,
                      firstName: String,
-                     lastName: String)
+                     lastName: String,
+                     role: String)
 
 class AppUserTable(tag: Tag) extends Table[AppUserDb](tag, "AppUser") {
   def id = column[String]("Id", O.PrimaryKey, O.Unique)
@@ -19,5 +20,7 @@ class AppUserTable(tag: Tag) extends Table[AppUserDb](tag, "AppUser") {
 
   def lastName = column[String]("LastName")
 
-  override def * = (id, email, firstName, lastName) <> ((AppUserDb.apply _).tupled, AppUserDb.unapply)
+  def role = column[String]("Role")
+
+  override def * = (id, email, firstName, lastName, role) <> ((AppUserDb.apply _).tupled, AppUserDb.unapply)
 }

@@ -21,7 +21,8 @@ class AuthController @Inject()(cc: MessagesControllerComponents,
     Future.successful(Ok(Json.obj(
       "email" -> user.email,
       "firstName" -> user.firstName,
-      "lastName" -> user.lastName
+      "lastName" -> user.lastName,
+      "role" -> user.role
     )))
   }
 }
