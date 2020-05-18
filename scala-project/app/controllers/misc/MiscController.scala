@@ -4,7 +4,7 @@ import java.time.Instant
 
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.{Credentials, PasswordHasherRegistry}
-import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
+import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, LogoutEvent, SignUpEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.exceptions.{IdentityNotFoundException, InvalidPasswordException}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.{Inject, Singleton}
@@ -67,7 +67,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
           token <- silhouette.env.authenticatorService.init(authenticator)
           result <- silhouette.env.authenticatorService.embed(token, Ok(
             Json.obj(
-              "email" -> s.value.firstName,
+              "email" -> data.email,
               "token" -> token
             )))
         } yield {
@@ -93,19 +93,20 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[SignInForm] => {
         val data = s.value
-        val credentials = Credentials(data.email, data.password)
-
         authenticateWithCredentials(data.email, data.password).flatMap {
           case Success(user) => {
             val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
-            silhouette.env.authenticatorService.create(loginInfo).flatMap { authenticator =>
-              silhouette.env.eventBus.publish(LoginEvent(user, request))
-              silhouette.env.authenticatorService.init(authenticator).flatMap {token =>
-                silhouette.env.authenticatorService.embed(token, Ok(Json.obj(
-                  "firstName" -> data.email,
+            for {
+              authenticator <- silhouette.env.authenticatorService.create(loginInfo)
+              token <- silhouette.env.authenticatorService.init(authenticator)
+              result <- silhouette.env.authenticatorService.embed(token, Ok(
+                Json.obj(
+                  "email" -> data.email,
                   "token" -> token
                 )))
-              }
+            } yield {
+              silhouette.env.eventBus.publish(LoginEvent(user, request))
+              result
             }
           }
           case InvalidPassword =>

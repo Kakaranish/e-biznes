@@ -62,7 +62,7 @@ class AppUserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     } yield dbUser
     db.run(query.result.headOption).map { dbUserOption =>
       dbUserOption.map { user =>
-        AppUser(user.id, user.firstName, user.lastName, user.email)
+        AppUser(user.id, user.email, user.firstName, user.lastName)
       }
     }
   }
