@@ -5,13 +5,15 @@ import java.util.UUID
 import com.mohiva.play.silhouette.api
 import com.mohiva.play.silhouette.api.LoginInfo
 import javax.inject.Inject
+import modules.{AppUserDAO, AppUserDAOImpl}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class UserServiceImpl @Inject()(appUserDao: AppUserDAOImpl)
+class UserServiceImpl @Inject()(appUserDao: AppUserDAOImpl,
+                                appUserDAO: AppUserDAO)
                                (implicit ec: ExecutionContext) extends UserService {
 
-  override def retrieve(loginInfo: LoginInfo): Future[Option[AppUser]] = ???
+  override def retrieve(loginInfo: LoginInfo): Future[Option[AppUser]] = appUserDao.find(loginInfo)
 
   def save(user: AppUser) = {
     appUserDao.save(user)

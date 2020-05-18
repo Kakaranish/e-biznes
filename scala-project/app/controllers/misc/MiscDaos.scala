@@ -79,14 +79,3 @@ import scala.concurrent.ExecutionContext
 //  }
 //}
 
-class AppUserDAOImpl @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends TableDefinitions {
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
-
-  import dbConfig._
-  import profile.api._
-
-  def save(user: AppUser) = db.run {
-    val dbUser = AppUserDb(user.id, user.email, user.firstName, user.lastName)
-    appUserTable.insertOrUpdate(dbUser).map(_ => user)
-  }
-}
