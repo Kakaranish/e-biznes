@@ -9,19 +9,21 @@ import MainLayoutRoute from './MainLayoutRoute';
 import CategoryRoutes from './pages/Categories/CategoryRoutes';
 import ProductRoutes from './pages/Products/ProductRoutes';
 import UserRoutes from './pages/Users/UserRoutes';
+import AuthRoutes from './pages/Auth/AuthRoutes';
 
 const App = () => {
   return (
-      <Router>
-        <Switch>
-          <MainLayoutRoute path='/' component={MainPage} exact />
-          <MainLayoutRoute path='/categories' component={CategoryRoutes} />
-          <MainLayoutRoute path='/products' component={ProductRoutes} />
-          <MainLayoutRoute path='/users' component={UserRoutes} />
-          
-          <MainLayoutRoute component={NotFoundPage} />
-        </Switch>
-      </Router>
+    <Router>
+      <Switch>
+        <MainLayoutRoute path='/' component={MainPage} exact />
+        <MainLayoutRoute path='/categories' component={CategoryRoutes} />
+        <MainLayoutRoute path='/products' component={ProductRoutes} />
+        <MainLayoutRoute path='/users' component={UserRoutes} />
+        <MainLayoutRoute path='/auth' component={AuthRoutes} />
+
+        <MainLayoutRoute component={NotFoundPage} />
+      </Switch>
+    </Router>
   )
 };
 

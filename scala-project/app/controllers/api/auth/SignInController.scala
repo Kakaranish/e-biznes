@@ -52,9 +52,9 @@ class SignInController @Inject()(cc: MessagesControllerComponents,
             }
           }
           case InvalidPassword =>
-            Future.successful(Forbidden(Json.obj("errorCode" -> "InvalidPassword")))
+            Future.successful(Forbidden(Json.obj("msg" -> "invalid email/password")))
           case UserNotFound =>
-            Future.successful(Forbidden(Json.obj("errorCode" -> "UserNotFound")))
+            Future.successful(Forbidden(Json.obj("msg" -> "invalid email/password")))
         }
       }
     }

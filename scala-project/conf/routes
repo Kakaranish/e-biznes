@@ -6,8 +6,10 @@
 # Init routes
 GET           /xD                                          controllers.HomeController.index
 GET           /special/secured                             controllers.misc.MiscController.restricted
-GET           /special/signup                              controllers.api.auth.SignUpController.submit
-GET           /special/signin                              controllers.api.auth.SignInController.submit
+POST          /auth/login                                  controllers.api.auth.SignInController.submit
+POST          /auth/register                               controllers.api.auth.SignUpController.submit
+POST          /auth/verify                                 controllers.api.auth.AuthController.verify
+GET           /special/user-aware                          controllers.misc.MiscController.userAware
 #GET           /restricted                              controllers.HomeController.restricted
 GET           /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
 
