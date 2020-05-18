@@ -47,35 +47,37 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[SignUpForm] => {
-
         val data = s.value
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
-        val authInfo = passwordHasherRegistry.current.hash(data.password)
 
+        userService.retrieve(loginInfo).flatMap {
+          case Some(user) =>  Future(Status(CONFLICT)(s"email '${user.email}' is already in use"))
+          case None => {
+            val authInfo = passwordHasherRegistry.current.hash(data.password)
+            val appUser = AppUser(
+              email = s.value.email,
+              firstName = s.value.firstName,
+              lastName = s.value.lastName,
+            )
 
-        val appUser = AppUser(
-          email = s.value.email,
-          firstName = s.value.firstName,
-          lastName = s.value.lastName,
-        )
-
-        for {
-          user <- userService.save(appUser)
-          _ <- loginInfoDao.saveUserLoginInfo(user.id, loginInfo)
-          _ <- authInfoRepository.add(loginInfo, authInfo)
-          authenticator <- silhouette.env.authenticatorService.create(loginInfo)
-          token <- silhouette.env.authenticatorService.init(authenticator)
-          result <- silhouette.env.authenticatorService.embed(token, Ok(
-            Json.obj(
-              "email" -> data.email,
-              "token" -> token
-            )))
-        } yield {
-          silhouette.env.eventBus.publish(SignUpEvent(user, request))
-          silhouette.env.eventBus.publish(LoginEvent(user, request))
-          result
+            for {
+              user <- userService.save(appUser)
+              _ <- loginInfoDao.saveUserLoginInfo(user.id, loginInfo)
+              _ <- authInfoRepository.add(loginInfo, authInfo)
+              authenticator <- silhouette.env.authenticatorService.create(loginInfo)
+              token <- silhouette.env.authenticatorService.init(authenticator)
+              result <- silhouette.env.authenticatorService.embed(token, Ok(
+                Json.obj(
+                  "email" -> data.email,
+                  "token" -> token
+                )))
+            } yield {
+              silhouette.env.eventBus.publish(SignUpEvent(user, request))
+              silhouette.env.eventBus.publish(LoginEvent(user, request))
+              result
+            }
+          }
         }
-
       }
     }
   }
@@ -137,3 +139,7 @@ sealed trait AuthenticateResult
 case class Success(user: AppUser) extends AuthenticateResult
 object InvalidPassword extends AuthenticateResult
 object UserNotFound extends AuthenticateResult
+
+sealed trait SignUpResult
+case object UserAlreadyExists extends SignUpResult
+case class UserCreated(user: AppUser) extends SignUpResult

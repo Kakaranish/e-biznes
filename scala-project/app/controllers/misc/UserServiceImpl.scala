@@ -13,7 +13,9 @@ class UserServiceImpl @Inject()(appUserDao: AppUserDAOImpl,
                                 appUserDAO: AppUserDAO)
                                (implicit ec: ExecutionContext) extends UserService {
 
-  override def retrieve(loginInfo: LoginInfo): Future[Option[AppUser]] = appUserDao.find(loginInfo)
+  override def retrieve(loginInfo: LoginInfo): Future[Option[AppUser]] = {
+    appUserDao.find(loginInfo)
+  }
 
   def save(user: AppUser) = {
     appUserDao.save(user)
