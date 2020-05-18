@@ -1,10 +1,10 @@
-package modules
+package daos
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
-import controllers.misc.{PasswordInfoDb, TableDefinitions}
 import javax.inject.Inject
+import models.{PasswordInfoDb, TableDefinitions}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -70,8 +70,8 @@ class PasswordInfoDao @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     val query = findLoginInfoQuery(loginInfo)
       .joinLeft(passwordInfoTable).on(_.id === _.loginInfoId)
     val action = query.result.head.flatMap {
-      case (dbLoginInfo, Some(dbPasswordInfo)) => updateAction(loginInfo, authInfo)
-      case (dbLoginInfo, None) => addAction(loginInfo, authInfo)
+      case (_, Some(_)) => updateAction(loginInfo, authInfo)
+      case (_, None) => addAction(loginInfo, authInfo)
     }
     db.run(action).map(_ => authInfo)
   }

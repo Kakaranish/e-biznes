@@ -28,14 +28,6 @@ CREATE TABLE "PasswordInfo" (
 	FOREIGN KEY("LoginInfoId") REFERENCES "LoginInfo"("Id")
 );
 
-CREATE TABLE "Token" (
-	"Id"	TEXT NOT NULL,
-	"UserId"	TEXT NOT NULL,
-	"Expiry"	TEXT NOT NULL,
-	PRIMARY KEY("Id"),
-	FOREIGN KEY("UserId") REFERENCES "AppUser"("Id")
-);
-
 -- !Downs
 
 DROP TABLE IF EXISTS "LoginInfo";
