@@ -42,7 +42,7 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
                     lastName = profile.lastName.getOrElse(""), role = "USER")
 
                   for {
-                    user <- userService.createOrUpdate(userToCreate, profile.loginInfo)
+                    user <- userService.saveOrUpdate(userToCreate, profile.loginInfo)
                     _ <- authInfoRepository.add(profile.loginInfo, authInfo)
 
                     authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)

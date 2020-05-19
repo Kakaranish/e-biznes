@@ -7,7 +7,5 @@ import models.AppUser
 import scala.concurrent.Future
 
 trait UserService extends IdentityService[AppUser] {
-  def save(user: AppUser, loginInfo: LoginInfo): Future[AppUser]
-
-  def createOrUpdate(user: AppUser, loginInfo: LoginInfo): Future[AppUser]
+  def saveOrUpdate(user: AppUser, loginInfo: LoginInfo): Future[AppUser]
 }

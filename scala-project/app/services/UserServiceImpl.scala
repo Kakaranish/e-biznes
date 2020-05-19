@@ -15,17 +15,17 @@ class UserServiceImpl @Inject()(appUserDao: AppUserDao,
     appUserDao.find(loginInfo)
   }
 
+  def saveOrUpdate(user: AppUser, loginInfo: LoginInfo): Future[AppUser] = {
+    appUserDao.find(loginInfo).flatMap {
+      case Some(_) => appUserDao.update(user)
+      case None => save(user, loginInfo)
+    }
+  }
+
   def save(user: AppUser, loginInfo: LoginInfo) = {
     for {
       savedUser <- appUserDao.save(user)
       _ <- loginInfoDao.saveUserLoginInfo(savedUser.id, loginInfo)
     } yield savedUser
-  }
-
-  def createOrUpdate(user: AppUser, loginInfo: LoginInfo): Future[AppUser] = {
-    appUserDao.find(loginInfo).flatMap {
-      case Some(_) => appUserDao.update(user)
-      case None => save(user, loginInfo)
-    }
   }
 }

@@ -28,8 +28,10 @@ class AppUserDaoImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   }
 
   def find(loginInfo: LoginInfo) = {
+    val findLoginInfoQuery = loginInfoTable.filter(dbLoginInfo =>
+      dbLoginInfo.providerId === loginInfo.providerID &&  dbLoginInfo.providerKey === loginInfo.providerKey)
     val query = for {
-      dbLoginInfo <- findLoginInfoQuery(loginInfo)
+      dbLoginInfo <- findLoginInfoQuery
       dbUserLoginInfo <- userLoginInfoTable.filter(_.loginInfoId === dbLoginInfo.id)
       dbUser <- appUserTable.filter(_.id === dbUserLoginInfo.userId)
     } yield dbUser
@@ -38,10 +40,5 @@ class AppUserDaoImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
         AppUser(user.id, user.email, user.firstName, user.lastName, user.role)
       }
     }
-  }
-
-  def findLoginInfoQuery(loginInfo: LoginInfo) = {
-    loginInfoTable.filter(dbLoginInfo => dbLoginInfo.providerId === loginInfo.providerID &&
-      dbLoginInfo.providerKey === loginInfo.providerKey)
   }
 }

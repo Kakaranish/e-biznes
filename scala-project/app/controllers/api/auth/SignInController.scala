@@ -21,8 +21,7 @@ class SignInController @Inject()(cc: MessagesControllerComponents,
                                  userService: UserService,
                                  credentialsProvider: CredentialsProvider)
                                 (implicit ec: ExecutionContext)
-  extends MessagesAbstractController(cc)
-    with I18nSupport {
+  extends MessagesAbstractController(cc) with I18nSupport {
 
   def submit() = silhouette.UnsecuredAction(parse.json).async { implicit request =>
     implicit val signInRead = (

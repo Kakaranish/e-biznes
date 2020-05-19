@@ -47,9 +47,10 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
             val userToCreate = AppUser(email = s.value.email, firstName = s.value.firstName,
               lastName = s.value.lastName, role = "USER")
             for {
-              user <- userService.save(userToCreate, loginInfo)
+              user <- userService.saveOrUpdate(userToCreate, loginInfo)
               authInfo = passwordHasherRegistry.current.hash(data.password)
               _ <- authInfoRepository.add(loginInfo, authInfo)
+
               authenticator <- silhouette.env.authenticatorService.create(loginInfo)
               token <- silhouette.env.authenticatorService.init(authenticator)
               result <- silhouette.env.authenticatorService.embed(
