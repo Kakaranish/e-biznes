@@ -1,7 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar = (props) => {
+    
+    const onClickLogout = () => {
+        localStorage.removeItem('token');
+    }
+    
     return (
         <>
             <div className="bg-light border-right" id="sidebar-wrapper">
@@ -29,6 +34,31 @@ const Sidebar = () => {
                         Users
                     </Link>
                 </div>
+
+
+                <div className='items-separator'></div>
+
+                {
+                    !props.user
+                        ? <>
+                            <div className="list-group list-group-flush">
+                                <Link to={'/auth/login'} className="list-group-item list-group-item-action bg-light">
+                                    Login
+                                </Link>
+                            </div>
+
+                            <div className="list-group list-group-flush">
+                                <Link to={'/auth/register'} className="list-group-item list-group-item-action bg-light">
+                                    Register
+                                </Link>
+                            </div>
+                        </>
+                        : <div className="list-group list-group-flush">
+                            <Link to={'/'} className="list-group-item list-group-item-action bg-light" onClick={onClickLogout}>
+                                Logout
+                            </Link>
+                        </div>
+                }
             </div>
         </>
     );

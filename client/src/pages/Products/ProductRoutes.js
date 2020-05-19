@@ -4,16 +4,15 @@ import ProductPage from './ProductPage';
 import CreateProductPage from './CreateProductPage';
 import EditProductPage from './EditProductPage';
 import ProductsPage from './ProductsPage';
+import MainLayoutRoute from '../../routes/MainLayoutRoute';
 
 const ProductRoutes = () => {
-    return (
-        <Switch>
-            <Route path='/products' component={ProductsPage} exact/>
-            <Route path='/products/create' component={CreateProductPage} />
-            <Route path='/products/:id/edit' component={EditProductPage} />
-            <Route path='/products/:id' component={ProductPage} exact />
-        </Switch>
-    );
+    return <Switch>
+        <MainLayoutRoute path='/products' component={ProductsPage} exact />
+        <MainLayoutRoute path='/products/create' component={CreateProductPage} />
+        <MainLayoutRoute path='/products/:id/edit' component={EditProductPage} />
+        <MainLayoutRoute path='/products/:id' component={ProductPage} exact />
+    </Switch>
 };
 
 export default ProductRoutes;

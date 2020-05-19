@@ -33,7 +33,7 @@ class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   def create(user: User) = db.run {
     val id = UUID.randomUUID().toString()
     // TODO: In the future add password encryption here
-    userTable += User(id, user.email, user.password, user.firstName, user.lastName)
+    userTable += User(id, user.email, user.firstName, user.lastName, user.role)
   }
 
   def update(userToUpdate: User) = db.run {
