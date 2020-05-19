@@ -33,7 +33,6 @@ class PasswordInfoDao @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   def addAction(loginInfo: LoginInfo, authInfo: PasswordInfo) =
     findLoginInfoQuery(loginInfo).result.head.flatMap { dbLoginInfo =>
-      val x = "XD"
       passwordInfoTable += PasswordInfoDb(authInfo.hasher, authInfo.password, authInfo.salt, dbLoginInfo.id)
     }.transactionally
 

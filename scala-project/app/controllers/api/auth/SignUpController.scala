@@ -1,11 +1,9 @@
 package controllers.api.auth
 
-import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
-import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfileBuilder, CredentialsProvider, SocialProvider, SocialProviderRegistry}
-import daos.LoginInfoDao
+import com.mohiva.play.silhouette.impl.providers.{CredentialsProvider, SocialProviderRegistry}
 import javax.inject.{Inject, Singleton}
 import models.AppUser
 import play.api.i18n.I18nSupport
@@ -21,7 +19,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class SignUpController @Inject()(cc: MessagesControllerComponents,
                                  silhouette: Silhouette[DefaultEnv],
                                  userService: UserService,
-                                 loginInfoDao: LoginInfoDao,
                                  authInfoRepository: AuthInfoRepository,
                                  passwordHasherRegistry: PasswordHasherRegistry,
                                  socialProviderRegistry: SocialProviderRegistry)
@@ -50,8 +47,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
             val userToCreate = AppUser(email = s.value.email, firstName = s.value.firstName,
               lastName = s.value.lastName, role = "USER")
             for {
-              user <- userService.save(userToCreate)
-              _ <- loginInfoDao.saveUserLoginInfo(user.id, loginInfo)
+              user <- userService.save(userToCreate, loginInfo)
               authInfo = passwordHasherRegistry.current.hash(data.password)
               _ <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- silhouette.env.authenticatorService.create(loginInfo)

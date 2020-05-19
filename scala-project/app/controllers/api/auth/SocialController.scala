@@ -36,14 +36,15 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
             p.retrieveProfile(authInfo).flatMap { profile =>
               loginInfoDao.getAuthenticationProviders(profile.email.get).flatMap { providers =>
                 if (providers.contains(provider) || providers.isEmpty) {
+
                   val userToCreate = AppUser(email = profile.email.getOrElse(""),
                     firstName = profile.firstName.getOrElse(""),
-                    lastName = profile.lastName.getOrElse(""),
-                    role = "USER")
+                    lastName = profile.lastName.getOrElse(""), role = "USER")
+
                   for {
-                    user <- userService.save(userToCreate)
-                    _ <- loginInfoDao.saveUserLoginInfo(user.id, profile.loginInfo)
+                    user <- userService.createOrUpdate(userToCreate, profile.loginInfo)
                     _ <- authInfoRepository.add(profile.loginInfo, authInfo)
+
                     authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
                     token <- silhouette.env.authenticatorService.init(authenticator)
                     result <- silhouette.env.authenticatorService.embed(

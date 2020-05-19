@@ -15,7 +15,7 @@ import scala.reflect.ClassTag
 
 class OAuth2InfoDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
                              (implicit ec: ExecutionContext, val classTag: ClassTag[OAuth2Info])
-  extends DelegableAuthInfoDAO[OAuth2Info] with TableDefinitions{
+  extends DelegableAuthInfoDAO[OAuth2Info] with TableDefinitions {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -25,15 +25,24 @@ class OAuth2InfoDao @Inject()(protected val dbConfigProvider: DatabaseConfigProv
   override def find(loginInfo: LoginInfo): Future[Option[OAuth2Info]] = ???
 
   override def add(loginInfo: LoginInfo, authInfo: OAuth2Info): Future[OAuth2Info] = {
-    val action = loginInfoTable.filter(dbLoginInfo => dbLoginInfo.providerId === loginInfo.providerID &&
-      dbLoginInfo.providerKey === loginInfo.providerKey)
-      .result
-      .headOption
-      .flatMap { dbLoginInfo =>
-        val id = UUID.randomUUID().toString
-        oauth2InfoTable += OAuth2InfoDb(id, authInfo.accessToken, authInfo.tokenType, authInfo.expiresIn,
-          authInfo.refreshToken, dbLoginInfo.get.id)
-      }.transactionally
+    val foundLoginInfo = loginInfoTable.filter(dbLoginInfo => dbLoginInfo.providerId === loginInfo.providerID &&
+      dbLoginInfo.providerKey === loginInfo.providerKey).result.headOption;
+
+    val action = foundLoginInfo.flatMap { dbLoginInfo =>
+      oauth2InfoTable.filter(_.loginInfoId === dbLoginInfo.get.id).result.headOption.flatMap {
+        case Some(o) => {
+          oauth2InfoTable.filter(_.id === o.id).update(OAuth2InfoDb(
+            o.id, authInfo.accessToken, authInfo.tokenType, authInfo.expiresIn,
+            authInfo.refreshToken, dbLoginInfo.get.id
+          ))
+        }
+        case None => {
+          val id = UUID.randomUUID().toString
+          oauth2InfoTable += OAuth2InfoDb(id, authInfo.accessToken, authInfo.tokenType, authInfo.expiresIn,
+            authInfo.refreshToken, dbLoginInfo.get.id)
+        }
+      }
+    }.transactionally
 
     db.run(action).map(_ => authInfo)
   }

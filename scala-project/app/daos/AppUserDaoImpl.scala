@@ -22,6 +22,11 @@ class AppUserDaoImpl @Inject()(protected val dbConfigProvider: DatabaseConfigPro
     appUserTable.insertOrUpdate(dbUser).map(_ => user)
   }
 
+  def update(user: AppUser) = db.run {
+    val dbUser = AppUserDb(user.id, user.email, user.firstName, user.lastName, user.role)
+    appUserTable.filter(_.id === user.id).update(dbUser).map(_ => user)
+  }
+
   def find(loginInfo: LoginInfo) = {
     val query = for {
       dbLoginInfo <- findLoginInfoQuery(loginInfo)

@@ -48,12 +48,13 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
 
   override def configure() {
     bind[Silhouette[DefaultEnv]].to[SilhouetteProvider[DefaultEnv]]
+
     bind[UserService].to[UserServiceImpl]
     bind[AppUserDao].to[AppUserDaoImpl]
     bind[LoginInfoDao].to[LoginInfoDaoImpl]
+
     bind[EventBus].toInstance(EventBus())
     bind[Clock].toInstance(Clock())
-
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
   }
