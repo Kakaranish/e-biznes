@@ -6,7 +6,7 @@
 # Init routes
 GET           /xD                                          controllers.HomeController.index
 GET           /special/secured                             controllers.misc.MiscController.restricted
-GET           /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
+GET          /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
 POST          /auth/login                                  controllers.api.auth.SignInController.submit
 POST          /auth/register                               controllers.api.auth.SignUpController.submit
 POST          /auth/verify                                 controllers.api.auth.AuthController.verify

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../common';
+import facebookIcon from '../../assets/img/facebook.svg';
+import googleIcon from '../../assets/img/google.svg';
 
 const LoginPage = (props) => {
 
@@ -22,8 +24,25 @@ const LoginPage = (props) => {
         history.push('/');
     }
 
+    const logWithGoogleOnClick = () => {
+        window.location = 'http://localhost:9000/auth/provider/google';
+    }
+
+    const logWithFacebookOnClick = () => {
+        window.location = 'http://localhost:9000/auth/provider/facebook';
+    }
+
     return <>
         <h3>Sign In</h3>
+
+        <button className="btn btn-primary" onClick={logWithGoogleOnClick}>
+            Google
+        </button>
+
+        <button className="btn btn-primary" onClick={logWithFacebookOnClick}>
+            Facebook
+        </button>
+
         <form onSubmit={onSubmit}>
             <div className="form-group">
                 <input name="email" type="email" className="form-control" id="emailInput" placeholder="Email..." required />

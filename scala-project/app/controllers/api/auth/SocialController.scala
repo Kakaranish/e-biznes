@@ -47,18 +47,16 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
 
                     authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
                     token <- silhouette.env.authenticatorService.init(authenticator)
+                    queryParams = s"token=$token&email=${profile.email.get}&expiryDatetime=${authenticator.expirationDateTime.toString()}}"
                     result <- silhouette.env.authenticatorService.embed(
-                      token, Ok(Json.obj(
-                        "token" -> token,
-                        "email" -> profile.email,
-                        "expiryDatetime" -> authenticator.expirationDateTime.toString()
-                      )))
+                      token, Redirect(s"http://localhost:3000/auth/successful?$queryParams"))
                   } yield {
                     silhouette.env.eventBus.publish(LoginEvent(user, request))
                     result
                   }
                 } else {
-                  Future.successful(Conflict(Json.obj("error" -> "associated with account email is already take", "providers" -> providers)))
+                  val errorCode="XD403" // Email is bounded to other provider
+                  Future.successful(Redirect(s"http://localhost:3000/auth/failure?errorCode=$errorCode"))
                 }
               }
             }
@@ -67,7 +65,10 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
       }
       case None => Future.successful(Status(BAD_REQUEST)(Json.obj("error" -> s"No '$provider' provider")))
     }).recover {
-      case _: ProviderException => Unauthorized(Json.obj("message" -> "could.not.authenticate"))
+      case _: ProviderException => {
+        val errorCode = "XD500" // Unknown error
+        Redirect(s"http://localhost:3000/auth/failure?errorCode=$errorCode")
+      }
     }
   }
 }
