@@ -5,7 +5,7 @@ import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, Silhouette}
 import com.mohiva.play.silhouette.impl.exceptions.{IdentityNotFoundException, InvalidPasswordException}
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import javax.inject.{Inject, Singleton}
-import models.AppUser
+import models.UserIdentity
 import play.api.i18n.I18nSupport
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -78,7 +78,7 @@ class SignInController @Inject()(cc: MessagesControllerComponents,
 
   sealed trait AuthenticateResult
 
-  case class Success(user: AppUser) extends AuthenticateResult
+  case class Success(user: UserIdentity) extends AuthenticateResult
 
   object InvalidPassword extends AuthenticateResult
 

@@ -2,9 +2,9 @@ package silhouette
 
 import com.mohiva.play.silhouette.api.Env
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
-import models.AppUser
+import models.UserIdentity
 
 trait DefaultEnv extends Env {
-  type I = AppUser
+  type I = UserIdentity
   type A = JWTAuthenticator
 }

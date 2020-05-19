@@ -7,7 +7,7 @@ import com.mohiva.play.silhouette.api.{LoginEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.providers.{CommonSocialProfileBuilder, SocialProvider, SocialProviderRegistry}
 import daos.LoginInfoDao
 import javax.inject.Inject
-import models.AppUser
+import models.UserIdentity
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
@@ -37,7 +37,7 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
               loginInfoDao.getAuthenticationProviders(profile.email.get).flatMap { providers =>
                 if (providers.contains(provider) || providers.isEmpty) {
 
-                  val userToCreate = AppUser(email = profile.email.getOrElse(""),
+                  val userToCreate = UserIdentity(email = profile.email.getOrElse(""),
                     firstName = profile.firstName.getOrElse(""),
                     lastName = profile.lastName.getOrElse(""), role = "USER")
 

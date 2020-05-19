@@ -5,7 +5,7 @@ import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.providers.{CredentialsProvider, SocialProviderRegistry}
 import javax.inject.{Inject, Singleton}
-import models.AppUser
+import models.UserIdentity
 import play.api.i18n.I18nSupport
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -44,7 +44,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
         userService.retrieve(loginInfo).flatMap {
           case Some(user) => Future(Status(CONFLICT)(s"email '${user.email}' is already in use"))
           case None => {
-            val userToCreate = AppUser(email = s.value.email, firstName = s.value.firstName,
+            val userToCreate = UserIdentity(email = s.value.email, firstName = s.value.firstName,
               lastName = s.value.lastName, role = "USER")
             for {
               user <- userService.saveOrUpdate(userToCreate, loginInfo)

@@ -32,7 +32,7 @@ class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
 
   def getAuthenticationProviders(email: String) = {
     val action = for {
-      ((_, _), loginInfo) <- appUserTable.filter(_.email === email)
+      ((_, _), loginInfo) <- userTable.filter(_.email === email)
         .join(userLoginInfoTable).on(_.id === _.userId)
         .join(loginInfoTable).on(_._2.loginInfoId === _.id)
     } yield loginInfo.providerId

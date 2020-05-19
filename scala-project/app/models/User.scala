@@ -1,11 +1,15 @@
 package models
 
+import java.util.UUID
+
 import play.api.libs.json.Json
 import slick.jdbc.SQLiteProfile.api._
 
-case class User(id: String, email: String, password: String, firstName: String, lastName: String)
-
-case class UserPreview(id: String, email: String)
+case class User(id: String = UUID.randomUUID.toString,
+                email: String,
+                firstName: String,
+                lastName: String,
+                role: String = "USER")
 
 object User {
   implicit val userFormat = Json.format[User]
@@ -16,11 +20,13 @@ class UserTable(tag: Tag) extends Table[User](tag, "User") {
 
   def email = column[String]("Email", O.Unique)
 
-  def password = column[String]("Password")
-
   def firstName = column[String]("FirstName")
 
   def lastName = column[String]("LastName")
 
-  def * = (id, email, password, firstName, lastName) <> ((User.apply _).tupled, User.unapply)
+  def role = column[String]("Role")
+
+  def * = (id, email, firstName, lastName, role) <> ((User.apply _).tupled, User.unapply)
 }
+
+case class UserPreview(id: String, email: String)
