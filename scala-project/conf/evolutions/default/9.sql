@@ -29,6 +29,17 @@ CREATE TABLE "PasswordInfo" (
 	FOREIGN KEY("LoginInfoId") REFERENCES "LoginInfo"("Id")
 );
 
+CREATE TABLE "OAuth2Info" (
+	"Id"	TEXT NOT NULL UNIQUE,
+	"AccessToken"	TEXT NOT NULL,
+	"TokenType"	TEXT,
+	"ExpiresIn"	INTEGER,
+	"RefreshToken"	TEXT,
+	"LoginInfoId"	TEXT NOT NULL,
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("LoginInfoId") REFERENCES "LoginInfo"("Id")
+);
+
 -- !Downs
 
 DROP TABLE IF EXISTS "LoginInfo";
@@ -36,3 +47,5 @@ DROP TABLE IF EXISTS "LoginInfo";
 DROP TABLE IF EXISTS "AppUser";
 
 DROP TABLE IF EXISTS "AppUserLoginInfo";
+
+DROP TABLE IF EXISTS "OAuth2Info";

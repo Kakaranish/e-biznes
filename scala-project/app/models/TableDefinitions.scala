@@ -18,4 +18,5 @@ trait TableDefinitions {
   val passwordInfoTable = TableQuery[PasswordInfoTable]
   val loginInfoTable = TableQuery[LoginInfoTable]
   val userLoginInfoTable = TableQuery[UserLoginInfoTable]
+  val oauth2InfoTable = TableQuery[OAuth2InfoTable]
 }

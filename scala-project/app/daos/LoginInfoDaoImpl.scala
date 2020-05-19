@@ -8,7 +8,7 @@ import models.{LoginInfoDb, TableDefinitions, UserLoginInfoDb}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
@@ -28,5 +28,15 @@ class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
       _ <- userLoginInfoTable += userLoginInfo
     } yield ()
     db.run(actions)
+  }
+
+  def getAuthenticationProviders(email: String) = {
+    val action = for {
+      ((_, _), loginInfo) <- appUserTable.filter(_.email === email)
+        .join(userLoginInfoTable).on(_.id === _.userId)
+        .join(loginInfoTable).on(_._2.loginInfoId === _.id)
+    } yield loginInfo.providerId
+
+    db.run(action.result)
   }
 }
