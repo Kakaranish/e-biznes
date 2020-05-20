@@ -32,7 +32,7 @@ const MainLayoutRoute = ({ component: Component, ...rest }) => {
     return (
         <Route {...rest} render={matchProps => (
             <MainLayout user={state.user}>
-                <Component {...matchProps} />
+                <Component {...matchProps} user={state.user} />
             </MainLayout>
         )} />
     );

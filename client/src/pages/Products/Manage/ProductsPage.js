@@ -15,7 +15,7 @@ const ProductsPage = () => {
 				return;
 			}
 			console.log(result);
-			setState({ loading: false, products: result.data });
+			setState({ loading: false, products: result.data.map(p => p.product) });
 		};
 		fetchProducts();
 	}, []);

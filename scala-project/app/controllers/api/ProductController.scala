@@ -17,7 +17,10 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
                                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   def getAll() = Action.async { implicit request =>
-    productDao.getAll().map(prods => Ok(Json.toJson(prods.map(p => p._1))));
+    productDao.getAll().map(prods => Ok(Json.toJson(prods.map(p => Json.obj(
+      "product" -> p._1,
+      "category" -> p._2.get
+    )))));
   }
 
   def getById(productId: String) = Action.async { implicit request =>

@@ -79,7 +79,7 @@ class WishlistController @Inject()(cc: MessagesControllerComponents,
       createForm => {
         // TODO in future: it would be nice to validate if wishlist item already exists
         val wishlistProduct = WishlistItem(null, createForm.userId, createForm.productId)
-        wishlistItemDao.create(wishlistProduct).map(_ =>
+        wishlistItemDao.addToWishlist(wishlistProduct).map(_ =>
           Redirect(routes.WishlistController.create())
             .flashing("success" -> "Wishlist item created.")
         )

@@ -5,20 +5,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import MainPage from './pages/MainPage';
 import NotFoundPage from './pages/NotFoundPage';
-import CategoryRoutes from './pages/Categories/Manage/CategoryRoutes';
-import ProductRoutes from './pages/Products/Manage/ProductRoutes';
+import ManageCategoryRoutes from './pages/Categories/Manage/ManageCategoryRoutes';
+import ManageProductRoutes from './pages/Products/Manage/ManageProductRoutes';
 import UserRoutes from './pages/Users/UserRoutes';
 import AuthRoutes from './pages/Auth/AuthRoutes';
 import MainLayoutRoute from './routes/MainLayoutRoute';
 import CartRoutes from './pages/Cart/CartRoutes';
+import ProductRoutes from './pages/Products/ProductRoutes';
 
 const App = () => {
   return (
     <Router>
       <Switch>
         <MainLayoutRoute path='/' component={MainPage} exact />
-        <Route path='/manage/categories' component={CategoryRoutes} />
-        <Route path='/manage/products' component={ProductRoutes} />
+        <Route path='/products' component={ProductRoutes} />
+        <Route path='/manage/products' component={ManageProductRoutes} />
+        <Route path='/manage/categories' component={ManageCategoryRoutes} />
         <Route path='/users' component={UserRoutes} />
         <Route path='/auth' component={AuthRoutes} />
         <Route path='/cart' component={CartRoutes} />

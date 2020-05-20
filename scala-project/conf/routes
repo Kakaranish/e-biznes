@@ -4,10 +4,6 @@
 # ~~~~
 
 # Init routes
-GET           /api/cart                                        controllers.api.CartControllerApi.getCartItems
-POST          /api/cart/add                                    controllers.api.CartControllerApi.addToCart
-POST          /api/cart/delete                                 controllers.api.CartControllerApi.deleteFromCart
-PUT           /api/cart/item                                   controllers.api.CartControllerApi.updateCartItemQuantity
 GET           /xD                                          controllers.HomeController.index
 GET           /special/secured                             controllers.misc.MiscController.restricted
 GET           /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
@@ -99,6 +95,9 @@ DELETE        /users/:userId                               controllers.UserContr
 GET           /users/:userId                               controllers.UserController.getById(userId: String)
 
 # WishlistController
+GET           /api/wishlist/product/:id/status             controllers.api.WishlistControllerApi.getProductStatus(id: String)
+POST          /api/wishlist/product                        controllers.api.WishlistControllerApi.addToWishlist
+DELETE        /api/wishlist/product                        controllers.api.WishlistControllerApi.deleteFromWishlist
 GET           /wishlist/user/:userId                       controllers.WishlistController.wishItemsForUser(userId: String)
 GET           /wishlist/item/create                        controllers.WishlistController.create
 POST          /wishlist/item/create                        controllers.WishlistController.createHandler
@@ -115,6 +114,10 @@ DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingC
 GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
 # Cart
+GET           /api/cart                                    controllers.api.CartControllerApi.getCartItems
+POST          /api/cart/add                                controllers.api.CartControllerApi.addToCart
+POST          /api/cart/delete                             controllers.api.CartControllerApi.deleteFromCart
+PUT           /api/cart/item                               controllers.api.CartControllerApi.updateCartItemQuantity
 GET           /carts                                       controllers.CartController.getAllPreviews
 GET           /cart/user/:userId                           controllers.CartController.getByUserId(userId: String)
 GET           /cart/create/user/:userId                    controllers.CartController.createForUser(userId: String)

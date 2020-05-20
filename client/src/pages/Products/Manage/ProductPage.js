@@ -60,19 +60,16 @@ const ProductPage = (props) => {
                 <b>Name:</b> {state.product.product.name}
             </p>
 
-            {
-                state.product.product.description &&
-                <p>
-                    <b>Name:</b> {state.product.product.description}
-                </p>
-            }
-
             <p>
-                <b>Price:</b> {state.product.product.price}
+                <b>Description:</b> {state.product.product.description}
             </p>
 
             <p>
-                <b>Quantity:</b> {state.product.product.quantity}
+                <b>Price:</b> {state.product.product.price.toFixed(2)}
+            </p>
+
+            <p>
+                <b>Available quantity:</b> {state.product.product.quantity}
             </p>
 
             <p>

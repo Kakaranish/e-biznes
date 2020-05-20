@@ -6,7 +6,7 @@ import EditCategoryPage from './EditCategoryPage';
 import CreateCategoryPage from './CreateCategoryPage';
 import AuthorizedOnlyRoute from '../../../routes/AuthorizedOnlyRoute';
 
-const CategoryRoutes = () => {
+const ManageCategoryRoutes = () => {
     return <Switch>
         <AuthorizedOnlyRoute path='/manage/categories' component={CategoriesPage} roles={["ADMIN"]} exact />
         <AuthorizedOnlyRoute path='/manage/categories/create' component={CreateCategoryPage} roles={["ADMIN"]} exact />
@@ -15,4 +15,4 @@ const CategoryRoutes = () => {
     </Switch>
 };
 
-export default CategoryRoutes;
+export default ManageCategoryRoutes;
