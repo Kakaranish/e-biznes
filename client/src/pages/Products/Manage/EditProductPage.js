@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { isValidUUID } from '../../common';
+import { isValidUUID } from '../../../common';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../common';
+import { getFormDataJsonFromEvent } from '../../../common';
 
 const EditProductPage = (props) => {
 	
@@ -22,7 +22,7 @@ const EditProductPage = (props) => {
 			return;
 		}
 
-		history.push(`/products/${productId}`);
+		history.push(`/manage/products/${productId}`);
 	};
 
 	const [state, setState] = useState({

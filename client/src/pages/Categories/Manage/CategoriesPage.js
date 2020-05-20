@@ -22,7 +22,7 @@ const CategoriesPage = () => {
 	if (state.loading) return <></>
 	else if (!state.categories || state.categories.length === 0) return <>
 		<h3>No categories found</h3>
-		<Link to={{ pathname: '/categories/create' }} className="btn btn-success w-25">
+		<Link to={{ pathname: '/manage/categories/create' }} className="btn btn-success w-25">
 			Add First Category
 		</Link>
 	</>
@@ -32,7 +32,7 @@ const CategoriesPage = () => {
 			<ul>
 				{
 					state.categories.map((c, i) =>
-						<Link to={`/categories/${c.id}`} key={`link-${i}`}>
+						<Link to={`/manage/categories/${c.id}`} key={`link-${i}`}>
 							<li key={`cat-${i}`}>
 								{c.name}
 							</li>
@@ -40,7 +40,7 @@ const CategoriesPage = () => {
 					)
 				}
 			</ul>
-			<Link to={{ pathname: '/categories/create' }} className="btn btn-success w-25">
+			<Link to={{ pathname: '/manage/categories/create' }} className="btn btn-success w-25">
 				Create
 			</Link>
 		</>

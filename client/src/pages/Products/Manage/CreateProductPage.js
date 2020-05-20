@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../common';
+import { getFormDataJsonFromEvent } from '../../../common';
 
 const CreateProductPage = () => {
 
@@ -21,7 +21,7 @@ const CreateProductPage = () => {
 			return;
 		}
 
-		history.push('/products');
+		history.push('/manage/products');
 	};
 
 	const [state, setState] = useState({ loading: true, categories: null });

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import Modal from '../../Modal';
-import { isValidUUID } from '../../common';
+import Modal from '../../../Modal';
+import { isValidUUID } from '../../../common';
 
 const ProductPage = (props) => {
 
     const history = useHistory();
     const productId = props.match.params.id;
 
-    const onEdit = () => history.push(`/products/${productId}/edit`);
+    const onEdit = () => history.push(`/manage/products/${productId}/edit`);
     const onDelete = async () => {
         const result = await axios.delete('/api/products',
             { validateStatus: false, data: { id: productId } });
@@ -25,7 +25,7 @@ const ProductPage = (props) => {
         }
         alert('Removed');
         setValidationErrors(null);
-        history.push('/products');
+        history.push('/manage/products');
     }
     
     const [validationErrors, setValidationErrors] = useState(null);

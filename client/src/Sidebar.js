@@ -18,13 +18,13 @@ const Sidebar = (props) => {
                 </div>
 
                 <div className="list-group list-group-flush">
-                    <Link to={'/categories'} className="list-group-item list-group-item-action bg-light">
+                    <Link to={'/manage/categories'} className="list-group-item list-group-item-action bg-light">
                         Categories
                     </Link>
                 </div>
 
                 <div className="list-group list-group-flush">
-                    <Link to={'/products'} className="list-group-item list-group-item-action bg-light">
+                    <Link to={'/manage/products'} className="list-group-item list-group-item-action bg-light">
                         Products
                     </Link>
                 </div>

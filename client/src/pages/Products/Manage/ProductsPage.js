@@ -24,7 +24,7 @@ const ProductsPage = () => {
 	else {
 		if (!state.products || !state.products.length) return <>
 			<h3>There are no products to show</h3>
-			<Link to={{ pathname: '/products/create' }} className="btn btn-success w-25">
+			<Link to={{ pathname: '/manage/products/create' }} className="btn btn-success w-25">
 				Add First Product
 			</Link>	
 		</>
@@ -33,7 +33,7 @@ const ProductsPage = () => {
 			<ul>
 				{
 					state.products.map((prod, i) =>
-						<Link to={`/products/${prod.id}`} key={`link-${i}`}>
+						<Link to={`/manage/products/${prod.id}`} key={`link-${i}`}>
 							<li key={`prod-${i}`}>
 								{prod.name}
 							</li>
@@ -42,7 +42,7 @@ const ProductsPage = () => {
 				}
 			</ul>
 
-			<Link to={{ pathname: '/products/create' }} className="btn btn-success w-25">
+			<Link to={{ pathname: '/manage/products/create' }} className="btn btn-success w-25">
 				Create
 			</Link>
 		</>

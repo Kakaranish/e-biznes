@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID, getFormDataJsonFromEvent } from '../../common';
+import { isValidUUID, getFormDataJsonFromEvent } from '../../../common';
 
 const EditCategoryPage = (props) => {
 	const categoryId = props.match.params.id;
@@ -18,7 +18,7 @@ const EditCategoryPage = (props) => {
 			setValidationErrors(result.data.obj.map(r => r.msg));
 			return;
 		}
-		history.push(`/categories/${categoryId}`);
+		history.push(`/manage/categories/${categoryId}`);
 	};
 
 	const [state, setState] = useState({ loading: true, category: null });

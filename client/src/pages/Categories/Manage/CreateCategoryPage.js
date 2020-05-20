@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getFormDataJsonFromEvent } from '../../common';
+import { getFormDataJsonFromEvent } from '../../../common';
 import axios from 'axios';
 
 const CreateCategoryPage = () => {
@@ -17,7 +17,7 @@ const CreateCategoryPage = () => {
 			setValidationErrors(result.data.obj.map(r => r.msg));
 			return;
 		}
-		history.push('/categories');
+		history.push('/manage/categories');
 	};
 
 	return (

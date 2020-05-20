@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { isValidUUID } from '../../common';
-import Modal from '../../Modal';
+import { isValidUUID } from '../../../common';
+import Modal from '../../../Modal';
 import { useHistory } from 'react-router-dom';
 
 const CategoryPage = (props) => {
 	const categoryId = props.match.params.id;
 	const history = useHistory();
 
-	const onEdit = async () => history.push(`/categories/${categoryId}/edit`);
+	const onEdit = async () => history.push(`/manage/categories/${categoryId}/edit`);
 
 	const onDelete = async () => {
 		const result = await axios.delete('/api/categories',
@@ -25,7 +25,7 @@ const CategoryPage = (props) => {
 		}
 		alert('Removed');
 		setValidationErrors(null);
-		history.push('/categories');
+		history.push('/manage/categories');
 	}
 
 	const [validationErrors, setValidationErrors] = useState(null);
