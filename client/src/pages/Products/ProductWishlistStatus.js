@@ -5,6 +5,7 @@ import wishlistOffIcon from '../../assets/img/heart-off.svg';
 
 const ProductWishlistStatus = (props) => {
 
+    const initState = props.initState;
     const productId = props.productId;
 
     const isWishlistedState = { wishlisted: true, icon: wishlistOnIcon };
@@ -26,7 +27,11 @@ const ProductWishlistStatus = (props) => {
             setWishlisted(isWishlistedState);
         };
 
-        fetchIsWishlisted();
+        if(initState === undefined) fetchIsWishlisted();
+        else {
+            if(!initState) setWishlisted(isNotWishlistedState);
+            else setWishlisted(isWishlistedState);
+        }
     }, []);
 
     const toggleWishlist = async () => {

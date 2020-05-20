@@ -17,6 +17,14 @@ class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
                                      (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  def getAllForUser() = silhouette.SecuredAction.async { implicit request =>
+    wishlistItemDao.getAllWithProductsForUser(request.identity.id).flatMap(items =>
+      Future(Ok(Json.toJson(items.map(item => Json.obj(
+        "wishItem" -> item._1,
+        "product" -> item._2.get
+      ))))))
+  }
+
   def getProductStatus(productId: String) = silhouette.SecuredAction.async { implicit request =>
     if (productId == null || productId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson("cannot be empty")))
     wishlistItemDao.isProductOnUserWishlist(productId, request.identity.id).map { result => Ok(Json.toJson(result)) }

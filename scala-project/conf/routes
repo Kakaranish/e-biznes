@@ -95,6 +95,7 @@ DELETE        /users/:userId                               controllers.UserContr
 GET           /users/:userId                               controllers.UserController.getById(userId: String)
 
 # WishlistController
+GET           /api/wishlist                                controllers.api.WishlistControllerApi.getAllForUser
 GET           /api/wishlist/product/:id/status             controllers.api.WishlistControllerApi.getProductStatus(id: String)
 POST          /api/wishlist/product                        controllers.api.WishlistControllerApi.addToWishlist
 DELETE        /api/wishlist/product                        controllers.api.WishlistControllerApi.deleteFromWishlist

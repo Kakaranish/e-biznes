@@ -26,9 +26,9 @@ const Navbar = (props) => {
 				props.user && <>
 
 					<ul className="navbar-nav ml-auto mt-lg-0">
-							<Link to={{ pathname: '/cart' }}>
-								<img src={cartIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
-							</Link>
+						<Link to={{ pathname: '/cart' }}>
+							<img src={cartIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
+						</Link>
 
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#"
@@ -37,11 +37,15 @@ const Navbar = (props) => {
 								{props.user.email}
 							</a>
 
-							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"
-								onClick={handleLogout} style={{ cursor: "pointer" }}>
-								<span className="dropdown-item">
+
+							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+								<Link to={{ pathname: '/wishlist' }} className="dropdown-item" style={{ cursor: "pointer" }}>
+									Wishlist
+								</Link>
+
+								<span className="dropdown-item" style={{ cursor: "pointer" }} onClick={handleLogout}>
 									Log out
-							</span>
+								</span>
 							</div>
 						</li>
 					</ul>

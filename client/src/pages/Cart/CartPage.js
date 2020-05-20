@@ -11,7 +11,6 @@ const CartPage = () => {
                 headers: { 'X-Auth-Token': localStorage.getItem('token') },
                 validateStatus: false
             });
-            console.log(result)
             if (result.status !== 200) {
                 alert('Some error occured');
                 return;
@@ -31,7 +30,7 @@ const CartPage = () => {
 
         {
             state.cartItems.map(ci =>
-                <div className="p-2" style={{ border: "1px solid gray" }}>
+                <div className="p-2" style={{ border: "1px solid gray" }} key={`div-${ci.product.id}`}>
                     <p><b>
                         {ci.product.name}
                     </b></p>

@@ -12,6 +12,7 @@ import AuthRoutes from './pages/Auth/AuthRoutes';
 import MainLayoutRoute from './routes/MainLayoutRoute';
 import CartRoutes from './pages/Cart/CartRoutes';
 import ProductRoutes from './pages/Products/ProductRoutes';
+import WishlistPage from './pages/WishlistPage';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path='/users' component={UserRoutes} />
         <Route path='/auth' component={AuthRoutes} />
         <Route path='/cart' component={CartRoutes} />
+        <MainLayoutRoute path='/wishlist' component={WishlistPage} />
 
         <MainLayoutRoute component={NotFoundPage} />
       </Switch>

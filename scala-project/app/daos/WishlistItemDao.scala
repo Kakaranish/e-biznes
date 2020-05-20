@@ -3,7 +3,7 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{TableDefinitions, WishlistItem}
+import models.{TableDefinitions, User, WishlistItem}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -20,7 +20,15 @@ class WishlistItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   import profile.api._
 
 
-  def getAllForUser(userId: String) = db.run((for {
+  def getAllWithProductsForUser(userId: String) = db.run((for {
+    (wishlistItem, product) <- wishlistItemTable joinLeft
+      productTable on ((x, y) => x.productId === y.id)
+  } yield (wishlistItem, product))
+    .filter(record => record._1.userId === userId)
+    .result
+  )
+
+  def getAllPopulatedForUser(userId: String) = db.run((for {
     ((wishlistItem, user), product) <- wishlistItemTable joinLeft
       userTable on ((x, y) => x.userId === y.id) joinLeft
       productTable on ((x, y) => x._1.productId === y.id)

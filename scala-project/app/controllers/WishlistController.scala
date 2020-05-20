@@ -18,7 +18,7 @@ class WishlistController @Inject()(cc: MessagesControllerComponents,
   extends MessagesAbstractController(cc) {
 
   def wishItemsForUser(userId: String) = Action.async { implicit request =>
-    val wishlistItemResult = wishlistItemDao.getAllForUser(userId)
+    val wishlistItemResult = wishlistItemDao.getAllPopulatedForUser(userId)
     wishlistItemResult.map(wishlistItem => {
       if (wishlistItem.isEmpty) Ok(s"No wishlist items for user with id $userId")
       else Ok(views.html.wishlistItems.wishlisItemsForUser(wishlistItem))
