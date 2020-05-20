@@ -21,7 +21,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def getById(productId: String) = Action.async { implicit request =>
-    productDao.getById(productId).map(product => product match {
+    productDao.getPopulatedById(productId).map(product => product match {
       case Some(prod) => {
         Ok(Json.obj(
           "product" -> prod._1,
@@ -79,7 +79,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[UpdateProductDto] => {
-        val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getById(s.value.id), Duration.Inf)
+        val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getPopulatedById(s.value.id), Duration.Inf)
         productResult match {
           case Some(prod) => {
             val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId)
@@ -99,7 +99,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        productDao.getById(s.value).map(product => {
+        productDao.getPopulatedById(s.value).map(product => {
           product match {
             case Some(prod) => {
               Await.result(productDao.delete(s.value), Duration.Inf)

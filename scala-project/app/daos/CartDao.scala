@@ -9,7 +9,7 @@ import org.joda.time.format.DateTimeFormat
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
@@ -36,8 +36,24 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   }
 
   def getByUserId(userId: String) = db.run {
+    cartTable.filter(record => record.userId === userId && record.isFinalized === false)
+      .result
+      .headOption
+  }
+
+  def getOrCreateByUserId(userId: String) = {
+    val getCartQuery = cartTable.filter(record => record.userId === userId && record.isFinalized === false)
+      .result
+      .headOption
+    db.run(getCartQuery).flatMap {c => c match {
+      case Some(cart) => Future(cart)
+      case None => createForUser(userId)
+    }}
+  }
+
+  def getPopulatedByUserId(userId: String) = db.run {
     (for {
-      (cart, user) <- cartTable filter(record => record.userId === userId) joinLeft
+      (cart, user) <- cartTable filter(record => record.userId === userId && record.isFinalized === false) joinLeft
         userTable on ((x, y) => x.userId === y.id)
     } yield (cart, user))
       .result
@@ -47,6 +63,15 @@ class CartDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: E
   def create(cart: Cart) = db.run {
     val id = UUID.randomUUID().toString()
     cartTable += Cart(id, cart.userId, cart.isFinalized, cart.updateDate)
+  }
+
+  def createForUser(userId: String) = {
+    val id = UUID.randomUUID().toString()
+    val nowIso = new DateTime().toString(DateTimeFormat
+      .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    val cartToAdd = Cart(id, userId, false, nowIso)
+    val action = cartTable += cartToAdd
+    db.run(action).map(_ => cartToAdd)
   }
 
   def createWithId(cart: Cart) = db.run {

@@ -22,7 +22,7 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
     opinionsResult.map(opinions => {
       if (opinions.isEmpty) Ok(s"There are no opinions for product with id $productId")
       else {
-        val product = Await.result(productDao.getById(productId), Duration.Inf).get
+        val product = Await.result(productDao.getPopulatedById(productId), Duration.Inf).get
         Ok(views.html.opinions.opinionsForProduct(product._1, opinions))
       }
     })

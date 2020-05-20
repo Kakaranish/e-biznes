@@ -36,7 +36,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
   }
 
   def getById(productId: String) = Action.async { implicit request =>
-    val productResult = productDao.getById(productId)
+    val productResult = productDao.getPopulatedById(productId)
     productResult.map(product => {
       if (product == None) Ok(s"There is no product with id $productId")
       else Ok(views.html.products.product(product.get))
@@ -49,7 +49,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
   }
 
   def update(productId: String) = Action { implicit request =>
-    val productResult = Await.result(productDao.getById(productId), Duration.Inf)
+    val productResult = Await.result(productDao.getPopulatedById(productId), Duration.Inf)
     if(productResult == None) Ok(s"There is no product with id $productId to update")
     else {
       val availableCategories = Await.result(categoryDao.getAll(), Duration.Inf)

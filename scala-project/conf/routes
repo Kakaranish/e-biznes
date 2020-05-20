@@ -4,9 +4,13 @@
 # ~~~~
 
 # Init routes
+GET           /api/cart                                        controllers.api.CartControllerApi.getCartItems
+POST          /api/cart/add                                    controllers.api.CartControllerApi.addToCart
+POST          /api/cart/delete                                 controllers.api.CartControllerApi.deleteFromCart
+PUT           /api/cart/item                                   controllers.api.CartControllerApi.updateCartItemQuantity
 GET           /xD                                          controllers.HomeController.index
 GET           /special/secured                             controllers.misc.MiscController.restricted
-GET          /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
+GET           /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
 POST          /auth/login                                  controllers.api.auth.SignInController.submit
 POST          /auth/register                               controllers.api.auth.SignUpController.submit
 POST          /auth/verify                                 controllers.api.auth.AuthController.verify

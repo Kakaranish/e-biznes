@@ -32,7 +32,13 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
       .result
   }
 
-  def getById(productId: String) = db.run((for {
+  def getById(productId: String) = db.run {
+    productTable.filter(_.id === productId)
+      .result
+      .headOption
+  }
+
+  def getPopulatedById(productId: String) = db.run((for {
     (product, category) <- productTable joinLeft
       categoryTable on ((x, y) => x.categoryId === y.id)
   } yield (product, category))

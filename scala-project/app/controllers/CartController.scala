@@ -52,7 +52,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
   }
 
   def getByUserId(userId: String) = Action.async { implicit request =>
-    val cartResult = cartDao.getByUserId(userId)
+    val cartResult = cartDao.getPopulatedByUserId(userId)
     cartResult.map(cartTuple => {
       if(cartTuple == None) Ok(s"There is no cart for user $userId")
       else {
@@ -115,7 +115,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
   }
 
   def deleteCartItem(cartItemId: String) = Action.async { implicit request =>
-    val cartItem = Await.result(cartItemDao.getById(cartItemId), Duration.Inf)
+    val cartItem = Await.result(cartItemDao.getPopulatedById(cartItemId), Duration.Inf)
     if (cartItem == None) Future(Ok(s"There is no cart item with id $cartItemId"))
     else {
       val cartId = cartItem.get._1._1.cartId

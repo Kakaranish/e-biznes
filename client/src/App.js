@@ -10,6 +10,7 @@ import ProductRoutes from './pages/Products/ProductRoutes';
 import UserRoutes from './pages/Users/UserRoutes';
 import AuthRoutes from './pages/Auth/AuthRoutes';
 import MainLayoutRoute from './routes/MainLayoutRoute';
+import CartRoutes from './pages/Cart/CartRoutes';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path='/products' component={ProductRoutes} />
         <Route path='/users' component={UserRoutes} />
         <Route path='/auth' component={AuthRoutes} />
+        <Route path='/cart' component={CartRoutes} />
 
         <MainLayoutRoute component={NotFoundPage} />
       </Switch>

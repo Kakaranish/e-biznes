@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductsPage = () => {
-
-	const history = useHistory();
-
-	const onCreate = () => {
-		history.push(`/products/create`);
-	};
 
 	const [state, setState] = useState({ loading: true, products: null });
 	useEffect(() => {
@@ -28,7 +22,13 @@ const ProductsPage = () => {
 
 	if (state.loading) return <></>
 	else {
-		if (!state.products || !state.products.length) return <h3>There are no products to show</h3>
+		if (!state.products || !state.products.length) return <>
+			<h3>There are no products to show</h3>
+			<Link to={{ pathname: '/products/create' }} className="btn btn-success w-25">
+				Add First Product
+			</Link>	
+		</>
+		
 		else return <>
 			<ul>
 				{
@@ -42,9 +42,9 @@ const ProductsPage = () => {
 				}
 			</ul>
 
-			<button className="btn btn-success w-25" onClick={onCreate}>
+			<Link to={{ pathname: '/products/create' }} className="btn btn-success w-25">
 				Create
-            </button>
+			</Link>
 		</>
 	}
 };

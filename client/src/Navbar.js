@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import $ from 'jquery';
+import cartIcon from '../src/assets/img/cart.svg';
 
 const Navbar = (props) => {
 
@@ -21,23 +23,29 @@ const Navbar = (props) => {
 			</button>
 
 			{
-				props.user &&
-				<ul className="navbar-nav ml-auto mt-lg-0">
-					<li className="nav-item dropdown">
-						<a className="nav-link dropdown-toggle" href="#"
-							id="navbarDropdown" role="button" data-toggle="dropdown"
-							aria-haspopup="true" aria-expanded="false">
-							{props.user.email}
-						</a>
+				props.user && <>
 
-						<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"
-							onClick={handleLogout} style={{ cursor: "pointer" }}>
-							<span className="dropdown-item">
-								Log out
+					<ul className="navbar-nav ml-auto mt-lg-0">
+							<Link to={{ pathname: '/cart' }}>
+								<img src={cartIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
+							</Link>
+
+						<li className="nav-item dropdown">
+							<a className="nav-link dropdown-toggle" href="#"
+								id="navbarDropdown" role="button" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">
+								{props.user.email}
+							</a>
+
+							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown"
+								onClick={handleLogout} style={{ cursor: "pointer" }}>
+								<span className="dropdown-item">
+									Log out
 							</span>
-						</div>
-					</li>
-				</ul>
+							</div>
+						</li>
+					</ul>
+				</>
 			}
 		</nav>
 	);
