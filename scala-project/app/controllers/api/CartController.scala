@@ -1,7 +1,8 @@
 package controllers.api
 
 import com.mohiva.play.silhouette.api.Silhouette
-import daos.{CartDao, CartItemDao, CategoryDao, ProductDao}
+import daos.api.daos.CartDaoApi
+import daos.api.{CartItemDaoApi, CategoryDaoApi, ProductDaoApi}
 import javax.inject.{Inject, Singleton}
 import models.{CartItem, TableDefinitions}
 import play.api.libs.functional.syntax._
@@ -14,10 +15,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CartControllerApi @Inject()(cc: MessagesControllerComponents,
                                   silhouette: Silhouette[DefaultEnv],
-                                  cartDao: CartDao,
-                                  cartItemDao: CartItemDao,
-                                  productDao: ProductDao,
-                                  categoryDao: CategoryDao)
+                                  cartDao: CartDaoApi,
+                                  cartItemDao: CartItemDaoApi,
+                                  productDao: ProductDaoApi,
+                                  categoryDao: CategoryDaoApi)
                                  (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) with TableDefinitions {
 
@@ -28,7 +29,7 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
       c match {
         case None => Future(Ok(JsArray()))
         case Some(cart) => {
-          cartItemDao.getAllForCart(cart.id).flatMap { cartItems =>
+          cartItemDao.getAllWithProductsForCart(cart.id).flatMap { cartItems =>
             Future(Ok(Json.toJson(cartItems.map(ci => Json.obj(
               "cartItem" -> ci._1,
               "product" -> ci._2.get
@@ -104,7 +105,7 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[UpdateCartItemQuantityRequest] => {
-        cartItemDao.getCartItemCart(s.value.cartItemId).flatMap { c =>
+        cartItemDao.getCartOfCartItem(s.value.cartItemId).flatMap { c =>
           c match {
             case None => Future(Status(BAD_REQUEST)("cart item does not belong to any cart"))
             case Some(cart) => {

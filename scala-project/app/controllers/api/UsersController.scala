@@ -8,8 +8,10 @@ import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UserControllerApi @Inject()(cc: MessagesControllerComponents, userDao: UserDao)
-                                 (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
+class UserControllerApi @Inject()(cc: MessagesControllerComponents,
+                                  userDao: UserDao)
+                                 (implicit ec: ExecutionContext)
+  extends MessagesAbstractController(cc) {
 
   def getAll() = Action.async { implicit request =>
     val usersResult = userDao.getAll()

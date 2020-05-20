@@ -36,10 +36,6 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
       .headOption
   }
 
-  def getAllByCategoryId(categoryId: String) = db.run {
-    productTable.filter(_.categoryId === categoryId).result
-  }
-
   def getPopulatedById(productId: String) = db.run((for {
     (product, category) <- productTable joinLeft
       categoryTable on ((x, y) => x.categoryId === y.id)
@@ -48,10 +44,6 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
     .result
     .headOption
   )
-
-  def existsAnyWithCategoryId(categoryId: String) = db.run {
-    productTable.filter(record => record.categoryId === categoryId).exists.result
-  }
 
   def create(product: Product) = db.run {
     val id = UUID.randomUUID().toString()

@@ -42,7 +42,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
         Future.successful(Ok("There is no user"))
       } else {
         val user = userResult.get
-        val cartItemsResult = cartItemDao.getAllForCart(cartId)
+        val cartItemsResult = cartItemDao.getAllWithProductsForCart(cartId)
         cartItemsResult.map(cartItems =>
           Ok(views.html.carts.cart(cart, user, cartItems.map(
             cartItem => (cartItem._1, cartItem._2.get))))
@@ -58,7 +58,7 @@ class CartController @Inject()(cc: MessagesControllerComponents,
       else {
         val user = cartTuple.get._2.get
         val cart = cartTuple.get._1
-        val cartItems = Await.result(cartItemDao.getAllForCart(cart.id), Duration.Inf)
+        val cartItems = Await.result(cartItemDao.getAllWithProductsForCart(cart.id), Duration.Inf)
         Ok(views.html.carts.cartForUser(cart, user,
           cartItems.map(cartItem => (cartItem._1, cartItem._2.get)))
         )

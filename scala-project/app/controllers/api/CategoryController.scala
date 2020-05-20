@@ -1,5 +1,6 @@
 package controllers.api
 
+import daos.api.{CategoryDaoApi, ProductDaoApi}
 import daos.{CategoryDao, ProductDao}
 import javax.inject._
 import models.Category
@@ -13,8 +14,8 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
-                                      categoryDao: CategoryDao,
-                                      productDao: ProductDao)
+                                      categoryDao: CategoryDaoApi,
+                                      productDao: ProductDaoApi)
                                      (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 

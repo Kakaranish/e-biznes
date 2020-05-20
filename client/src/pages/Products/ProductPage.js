@@ -8,7 +8,7 @@ const ProductPage = (props) => {
 
     const productId = props.match.params.id;
 
-    const addToCartOnClick = (props) => {
+    const addToCartOnClick = () => {
 
     }
 

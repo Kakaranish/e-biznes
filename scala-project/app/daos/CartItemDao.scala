@@ -19,37 +19,12 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   import dbConfig._
   import profile.api._
 
-  def getAll() = db.run((for {
-    (cartItem, product) <- cartItemTable joinLeft
-      productTable on ((x, y) => x.productId === y.id)
-  } yield (cartItem, product))
-    .result
-  )
-
-  def getAllForCart(cartId: String) = db.run((for {
+  def getAllWithProductsForCart(cartId: String) = db.run((for {
     (cartItem, product) <- cartItemTable joinLeft
       productTable on ((x, y) => x.productId === y.id)
   } yield (cartItem, product))
     .filter(record => record._1.cartId === cartId)
     .result
-  )
-
-  def getCartItemCart(cartItemId: String) = {
-    val action = for {
-      cartItem <- cartItemTable.filter(_.id === cartItemId)
-      result <- cartTable.filter(_.id === cartItem.id)
-    } yield result
-
-    db.run(action.result.headOption)
-  }
-
-  def getPopulatedWithProductById(cartItemId: String) = db.run((for {
-    (cartItem, product) <- cartItemTable joinLeft
-      productTable on ((x, y) => x.productId === y.id)
-  } yield (cartItem, product))
-    .filter(record => record._1.id === cartItemId)
-    .result
-    .headOption
   )
 
   def getPopulatedById(cartItemId: String) = db.run((for {
@@ -62,40 +37,10 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .headOption
   )
 
-  def updateQuantity(cartItemId: String, quantity: Int) = db.run{
-    cartItemTable.filter(_.id === cartItemId)
-      .map(record => record.quantity)
-      .update(quantity)
-  }
-
-  def belongsToUser(cartItemId: String, userId: String) = {
-
-    val action = (for {
-      (cartItem, cart) <- cartItemTable joinLeft
-        cartTable on ((x, y) => x.cartId === y.id)
-    } yield (cartItem, cart))
-      .filter(_._1.id === cartItemId)
-      .result
-      .headOption
-
-    db.run(action).map { c =>
-      c match {
-        case Some(cartPair) => cartPair._2.get.userId == userId
-        case None => false
-      }
-    }
-  }
-
   def create(cartItem: CartItem) = db.run {
     val id = UUID.randomUUID().toString()
     val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
     cartItemTable += toAdd
-  }
-
-  def createWithReturn(cartItem: CartItem) = {
-    val id = UUID.randomUUID().toString()
-    val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
-    db.run(cartItemTable += toAdd).map(_ => toAdd)
   }
 
   def delete(cartItemId: String) = db.run {

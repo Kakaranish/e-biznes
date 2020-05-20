@@ -1,7 +1,8 @@
 package controllers.api
 
 import com.mohiva.play.silhouette.api.Silhouette
-import daos.{ProductDao, UserDao, WishlistItemDao}
+import daos.UserDao
+import daos.api.{ProductDaoApi, WishlistItemDaoApi}
 import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
@@ -11,9 +12,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
                                       silhouette: Silhouette[DefaultEnv],
-                                      wishlistItemDao: WishlistItemDao,
+                                      wishlistItemDao: WishlistItemDaoApi,
                                       userDao: UserDao,
-                                      productDao: ProductDao)
+                                      productDao: ProductDaoApi)
                                      (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
@@ -38,7 +39,7 @@ class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        wishlistItemDao.addToWishlist2(s.value, request.identity.id).flatMap { result =>
+        wishlistItemDao.create(s.value, request.identity.id).flatMap { result =>
           Future(Ok(Json.toJson(result)))
         }
       }
@@ -53,7 +54,7 @@ class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        wishlistItemDao.deleteFromWishlist(s.value, request.identity.id).flatMap { result =>
+        wishlistItemDao.deleteForUserAndProduct(s.value, request.identity.id).flatMap { result =>
           Future(Ok(Json.toJson(if (result > 0) true else false)))
         }
       }

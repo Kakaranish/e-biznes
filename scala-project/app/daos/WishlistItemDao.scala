@@ -19,15 +19,6 @@ class WishlistItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
   import dbConfig._
   import profile.api._
 
-
-  def getAllWithProductsForUser(userId: String) = db.run((for {
-    (wishlistItem, product) <- wishlistItemTable joinLeft
-      productTable on ((x, y) => x.productId === y.id)
-  } yield (wishlistItem, product))
-    .filter(record => record._1.userId === userId)
-    .result
-  )
-
   def getAllPopulatedForUser(userId: String) = db.run((for {
     ((wishlistItem, user), product) <- wishlistItemTable joinLeft
       userTable on ((x, y) => x.userId === y.id) joinLeft
@@ -47,7 +38,7 @@ class WishlistItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .headOption
   )
 
-  def addToWishlist(wishlistItem: WishlistItem) = {
+  def create(wishlistItem: WishlistItem) = {
     val findOtherAction = wishlistItemTable.filter(record => record.productId === wishlistItem.productId
       && record.userId === wishlistItem.userId).result.headOption
     db.run(findOtherAction).map(other => other match {
@@ -59,33 +50,7 @@ class WishlistItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
       }
     })
   }
-
-  def addToWishlist2(productId: String, userId: String) = {
-    val findOtherAction = wishlistItemTable.filter(record => record.productId === productId
-      && record.userId === userId).result.headOption
-    db.run(findOtherAction).flatMap(other => other match {
-      case Some(other) => Future(other)
-      case None => {
-        val id = UUID.randomUUID().toString()
-        val toAdd = WishlistItem(id, userId, productId)
-        db.run(wishlistItemTable += toAdd).map(_ => toAdd)
-      }
-    })
-  }
-
-  def deleteFromWishlist(productId: String, userId: String) = db.run {
-    wishlistItemTable.filter(record => record.userId === userId
-      && record.productId === productId)
-      .delete
-  }
-
-
-  def isProductOnUserWishlist(productId: String, userId: String) = {
-    val action = wishlistItemTable.filter(record => record.productId === productId
-      && record.userId === userId).result.headOption
-    db.run(action).map(result => result.isDefined)
-  }
-
+  
   def delete(wishlistItemId: String) = db.run {
     wishlistItemTable.filter(record => record.id === wishlistItemId)
       .delete

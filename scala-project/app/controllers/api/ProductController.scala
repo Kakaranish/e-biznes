@@ -1,6 +1,6 @@
 package controllers.api
 
-import daos.{CategoryDao, ProductDao}
+import daos.api.{CategoryDaoApi, ProductDaoApi}
 import javax.inject.{Inject, Singleton}
 import models.{Category, Product}
 import play.api.libs.functional.syntax._
@@ -12,8 +12,8 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
-                                     productDao: ProductDao,
-                                     categoryDao: CategoryDao)
+                                     productDao: ProductDaoApi,
+                                     categoryDao: CategoryDaoApi)
                                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
   def getAll() = Action.async { implicit request =>
@@ -25,7 +25,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def getAllByCategory(categoryId: String) = Action.async {
     if (categoryId == null || categoryId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson(" categoryId cannot be empty")))
-    productDao.getAllByCategoryId(categoryId).flatMap {categories => Future(Ok(Json.toJson(categories)))}
+    productDao.getAllByCategoryId(categoryId).flatMap { categories => Future(Ok(Json.toJson(categories))) }
   }
 
   def getById(productId: String) = Action.async { implicit request =>

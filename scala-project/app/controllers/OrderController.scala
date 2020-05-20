@@ -45,7 +45,7 @@ class OrderController @Inject()(cc: MessagesControllerComponents,
     else {
       val order = orderResult.get
       val cartId = order._1._1.cartId
-      val orderedProductsResult = cartItemDao.getAllForCart(cartId)
+      val orderedProductsResult = cartItemDao.getAllWithProductsForCart(cartId)
 
       orderedProductsResult.map(orderedProducts =>
         Ok(views.html.orders.order(order, orderedProducts.map(
