@@ -1,8 +1,9 @@
 package daos
 
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{CategoryTable, Product, ProductPreview, ProductTable}
+import models.{CategoryTable, Product, ProductPreview, ProductTable, TableDefinitions}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -10,14 +11,11 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao: CategoryDao)
-                          (implicit ec: ExecutionContext) {
+                          (implicit ec: ExecutionContext) extends TableDefinitions{
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
-
-  private val productTable = TableQuery[ProductTable]
-  private val categoryTable = TableQuery[CategoryTable]
 
   def getAll() = db.run {
     (for {
@@ -36,6 +34,10 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
     productTable.filter(_.id === productId)
       .result
       .headOption
+  }
+
+  def getAllByCategoryId(categoryId: String) = db.run {
+    productTable.filter(_.categoryId === categoryId).result
   }
 
   def getPopulatedById(productId: String) = db.run((for {

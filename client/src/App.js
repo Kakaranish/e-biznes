@@ -13,6 +13,7 @@ import MainLayoutRoute from './routes/MainLayoutRoute';
 import CartRoutes from './pages/Cart/CartRoutes';
 import ProductRoutes from './pages/Products/ProductRoutes';
 import WishlistPage from './pages/WishlistPage';
+import CategoriesPage from './pages/Categories/CategoriesPage';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
         <MainLayoutRoute path='/' component={MainPage} exact />
         <Route path='/products' component={ProductRoutes} />
         <Route path='/manage/products' component={ManageProductRoutes} />
+        <MainLayoutRoute path='/categories' component={CategoriesPage} />
         <Route path='/manage/categories' component={ManageCategoryRoutes} />
         <Route path='/users' component={UserRoutes} />
         <Route path='/auth' component={AuthRoutes} />

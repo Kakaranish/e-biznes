@@ -70,6 +70,7 @@ GET           /payments/:paymentId                         controllers.PaymentCo
 
 # ProductController
 GET           /api/products                                controllers.api.ProductControllerApi.getAll
+GET           /api/products/category/:id                   controllers.api.ProductControllerApi.getAllByCategory(id: String)
 GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
 POST          /api/products                                controllers.api.ProductControllerApi.create
 PUT           /api/products                                controllers.api.ProductControllerApi.update

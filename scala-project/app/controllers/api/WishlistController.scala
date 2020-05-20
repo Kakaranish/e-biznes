@@ -26,7 +26,7 @@ class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def getProductStatus(productId: String) = silhouette.SecuredAction.async { implicit request =>
-    if (productId == null || productId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson("cannot be empty")))
+    if (productId == null || productId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson("productId cannot be empty")))
     wishlistItemDao.isProductOnUserWishlist(productId, request.identity.id).map { result => Ok(Json.toJson(result)) }
   }
 

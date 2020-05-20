@@ -23,6 +23,11 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     )))));
   }
 
+  def getAllByCategory(categoryId: String) = Action.async {
+    if (categoryId == null || categoryId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson(" categoryId cannot be empty")))
+    productDao.getAllByCategoryId(categoryId).flatMap {categories => Future(Ok(Json.toJson(categories)))}
+  }
+
   def getById(productId: String) = Action.async { implicit request =>
     productDao.getPopulatedById(productId).map(product => product match {
       case Some(prod) => {
