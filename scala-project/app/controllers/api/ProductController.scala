@@ -1,17 +1,20 @@
 package controllers.api
 
+import com.mohiva.play.silhouette.api.Silhouette
 import daos.api.{CategoryDaoApi, ProductDaoApi}
 import javax.inject.{Inject, Singleton}
 import models.{Category, Product}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{MessagesControllerComponents, _}
+import silhouette.DefaultEnv
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
+                                     silhouette: Silhouette[DefaultEnv],
                                      productDao: ProductDaoApi,
                                      categoryDao: CategoryDaoApi)
                                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
@@ -25,19 +28,44 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def getAllByCategory(categoryId: String) = Action.async {
     if (categoryId == null || categoryId.isEmpty) Future(Status(BAD_REQUEST)(Json.toJson(" categoryId cannot be empty")))
-    productDao.getAllByCategoryId(categoryId).flatMap { categories => Future(Ok(Json.toJson(categories))) }
+    productDao.getAllByCategoryId(categoryId).flatMap { result =>
+      Future(Ok(Json.obj(
+        "category" -> result._1.get,
+        "products" -> Json.toJson(result._2)
+      )))
+    }
   }
 
-  def getById(productId: String) = Action.async { implicit request =>
-    productDao.getPopulatedById(productId).map(product => product match {
-      case Some(prod) => {
-        Ok(Json.obj(
-          "product" -> prod._1,
-          "category" -> prod._2
-        ))
+
+  def getById(productId: String) = silhouette.UserAwareAction.async { implicit request =>
+
+    request.identity match {
+      case None => {
+        productDao.getPopulatedById(productId).map(product => product match {
+          case Some(prod) => {
+            Ok(Json.obj(
+              "product" -> prod._1,
+              "category" -> prod._2.getOrElse(null),
+              "wishlistItem" -> JsNull,
+              "cartItem" -> JsNull
+            ))
+          }
+          case _ => Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
+        })
       }
-      case _ => Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
-    })
+      case Some(_) => {
+        productDao.getProductPreview(productId, request.identity.get.id).map(result =>
+          if(!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
+          else {
+            Ok(Json.obj(
+              "product" -> result._1.get._1,
+              "category" -> result._1.get._2,
+              "wishlistItem" -> result._2,
+              "cartItem" -> result._4
+            ))
+        })
+      }
+    }
   }
 
   case class CreateProductDto(name: String, description: String, price: Float, quantity: Int, categoryId: String)
@@ -89,7 +117,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       case s: JsSuccess[UpdateProductDto] => {
         val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getPopulatedById(s.value.id), Duration.Inf)
         productResult match {
-          case Some(prod) => {
+          case Some(_) => {
             val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId)
             productDao.update(updatedProduct)
             Future(Ok)

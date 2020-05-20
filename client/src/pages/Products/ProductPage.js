@@ -7,26 +7,29 @@ import ProductWishlistStatus from './ProductWishlistStatus';
 const ProductPage = (props) => {
 
     const productId = props.match.params.id;
+    const token = localStorage.getItem('token');
 
     const addToCartOnClick = () => {
 
     }
 
-    const [state, setState] = useState({ loading: true, product: null });
+    const [state, setState] = useState({ loading: true, result: null });
     useEffect(() => {
         const fetchProduct = async () => {
-            const result = await axios.get(`/api/products/${productId}`,
-                { validateStatus: false });
+            const headers = token ? { 'X-Auth-Token': token } : {};
+            const result = await axios.get(`/api/products/${productId}`, {
+                headers: headers, validateStatus: false
+            });
 
             if (result.status === 404) {
-                setState({ loading: false, product: null });
+                setState({ loading: false, result: null });
                 return;
             }
             if (result.status !== 200) {
                 alert('Some error occured');
                 return;
             }
-            setState({ loading: false, product: result.data });
+            setState({ loading: false, result: result.data });
         };
 
         if (isValidUUID(productId)) fetchProduct();
@@ -35,27 +38,32 @@ const ProductPage = (props) => {
     if (!isValidUUID(productId)) return <h3>Product Id '{productId}' is invalid UUID</h3>
     else if (state.loading) return <></>
     else {
-        if (!state.product) return <h3>Product Id '{productId}' does not exist</h3>
+        if (!state.result) return <h3>Product Id '{productId}' does not exist</h3>
         else return <>
             <h3>
-                {state.product.product.name}
-                <ProductWishlistStatus productId={productId} />
+                {state.result.product.name}
+                {token && <ProductWishlistStatus productId={productId}
+                    initState={state.result.wishlistItem ? true : false} />}
             </h3>
 
             <p>
-                <b>Description:</b> {state.product.product.description}
+                <b>Is in cart? </b> {state.result.cartItem ? "Yes" : "No"}
             </p>
 
             <p>
-                <b>Price:</b> {state.product.product.price.toFixed(2)}PLN
+                <b>Description:</b> {state.result.product.description}
             </p>
 
             <p>
-                <b>Available quantity:</b> {state.product.product.quantity}
+                <b>Price:</b> {state.result.product.price.toFixed(2)}PLN
             </p>
 
             <p>
-                <b>Category:</b> {state.product.category?.name ?? 'None'}
+                <b>Available quantity:</b> {state.result.product.quantity}
+            </p>
+
+            <p>
+                <b>Category:</b> {state.result.category?.name ?? 'None'}
             </p>
 
             <button type="button" className="btn btn-primary w-25 mr-2" onClick={addToCartOnClick}>

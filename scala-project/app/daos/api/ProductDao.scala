@@ -10,8 +10,8 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao: CategoryDaoApi )
-                          (implicit ec: ExecutionContext) extends TableDefinitions{
+class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
+                             (implicit ec: ExecutionContext) extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -25,9 +25,18 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider, category
       .result
   }
 
-  def getAllPreviews() = db.run {
-    productTable.map(record => (record.id, record.name))
-      .result
+  def getProductPreview(productId: String, userId: String) = db.run {
+    (for {
+      product <- productTable.joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
+      wishlistItem <- if (product.isDefined) wishlistItemTable
+        .filter(r => r.userId === userId && r.productId === productId).result.headOption else DBIO.successful(null)
+      cart <- if(product.isDefined) cartTable
+        .filter(r => r.userId === userId && r.isFinalized === false).result.headOption else DBIO.successful(null)
+      cartItem <- {
+        if (cart == null || !cart.isDefined) DBIO.successful(null)
+        else cartItemTable.filter(r => r.cartId === cart.get.id && r.productId === productId).result.headOption
+      }
+    } yield (product, wishlistItem, cart, cartItem)).transactionally
   }
 
   def getById(productId: String) = db.run {
@@ -37,7 +46,10 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider, category
   }
 
   def getAllByCategoryId(categoryId: String) = db.run {
-    productTable.filter(_.categoryId === categoryId).result
+    (for {
+      category <- categoryTable.filter(_.id === categoryId).result.headOption
+      products <- productTable.filter(_.categoryId === categoryId).result
+    } yield (category, products)).transactionally
   }
 
   def getPopulatedById(productId: String) = db.run((for {
