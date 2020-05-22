@@ -4,17 +4,19 @@ import '../assets/css/main-layout.css';
 import Navbar from '../components/Navbar';
 
 const MainLayout = (props) => {
-	return (
+	return <>
 		<div className="d-flex" id="wrapper">
-			<Sidebar user={props.user}/>
+			<Sidebar />
 			<div id="page-content-wrapper">
-				<Navbar user={props.user} />
+				<Navbar />
 				<div className="container-fluid p-3">
+
 					{props.children}
+
 				</div>
 			</div>
 		</div>
-	);
+	</>
 };
 
 export default MainLayout;

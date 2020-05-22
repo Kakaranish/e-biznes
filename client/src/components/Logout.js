@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { logOut } from '../pages/Auth/duck/actions';
+import * as AuthUtils from '../pages/Auth/Utils';
 
 const Logout = (props) => {
 
@@ -9,7 +8,7 @@ const Logout = (props) => {
             alert('Cannot logout because no one is logged in.');
             return;
         }
-        
+
         localStorage.removeItem('auth');
         props.logOut();
     };
@@ -19,12 +18,4 @@ const Logout = (props) => {
     </div>
 };
 
-const mapStateToProps = state => ({
-    auth: state.auth
-});
-
-const mapDispatchToProps = dispatch => ({
-    logOut: () => dispatch(logOut())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Logout);
+export default AuthUtils.createAuthAwareComponent(Logout);

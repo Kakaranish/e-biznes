@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { Route, useHistory } from 'react-router-dom';
-import { verifyAuthState } from '../pages/Utils';
-import MainLayout from '../routes/MainLayout'
+import * as AuthUtils from '../pages/Auth/Utils';
 
 const NotAuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
 
     const history = useHistory();
-    const [state, setState] = useState({ loading: true, user: null });
+    const [state, setState] = useState({ loading: true });
 
     useEffect(() => {
         const auth = async () => {
-            const user = await verifyAuthState();
-            setState({ loading: false, user: user });
+            if (!rest.auth || rest.auth.tokenExpiry < Date.now()) {
+                rest.logOut();
+                setState({ loading: false });
+                return;
+            }
+            alert('This page requires not to be logged in. Redirecting to main page...');
+            history.push('/');
         };
         auth();
     }, []);
 
     if (state.loading) return <></>
     else return <Route {...rest} render={matchProps => (
-        <MainLayout user={state.user}>
-            <Component {...matchProps} />
-        </MainLayout>
+        <Component {...matchProps} />
     )} />
 };
 
-export default NotAuthorizedOnlyRoute;
+export default AuthUtils.createAuthAwareComponent(NotAuthorizedOnlyRoute);

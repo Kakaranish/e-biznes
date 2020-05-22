@@ -39,10 +39,3 @@ export const verifyAuthState = async () => {
         role: authObj.role
     };
 }
-
-export const getToken = () => {
-    try {
-        const authObj = JSON.parse(localStorage.getItem('auth'));
-        return authObj.token;
-    } catch (error) { return null; }
-};

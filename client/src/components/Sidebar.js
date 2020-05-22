@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import * as AuthUtils from '../pages/Auth/Utils';
 
 const Sidebar = (props) => {
 
@@ -53,7 +53,7 @@ const Sidebar = (props) => {
                 {
                     !props.auth && <>
                         <div className='items-separator'></div>
-                        
+
                         <div className="list-group list-group-flush">
                             <Link to={'/auth/login'} className="list-group-item list-group-item-action bg-light">
                                 Login
@@ -72,8 +72,4 @@ const Sidebar = (props) => {
     );
 };
 
-const mapStateToProps = state => ({
-    auth: state?.auth
-});
-
-export default connect(mapStateToProps)(Sidebar);
+export default AuthUtils.createAuthAwareComponent(Sidebar);

@@ -43,8 +43,9 @@ class SignInController @Inject()(cc: MessagesControllerComponents,
               result <- silhouette.env.authenticatorService.embed(token, Ok(
                 Json.obj(
                   "token" -> token,
-                  "email" -> data.email,
-                  "expiryDatetime" -> authenticator.expirationDateTime.toString()
+                  "tokenExpiry" -> authenticator.expirationDateTime.getMillis,
+                  "email" -> user.email,
+                  "role" -> user.role
                 )))
             } yield {
               silhouette.env.eventBus.publish(LoginEvent(user, request))

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../common';
+import * as AuthUtils from '../Auth/Utils';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
-import { logIn } from './duck/actions';
 
 const LoginPage = (props) => {
 
@@ -28,7 +27,6 @@ const LoginPage = (props) => {
             role: result.data.role
         };
         props.logIn(auth);
-        localStorage.setItem('auth', JSON.stringify(auth));
 
         history.push('/');
     }
@@ -83,8 +81,4 @@ const LoginPage = (props) => {
     </>
 };
 
-const mapDispatchToProps = dispatch => ({
-    logIn: user => dispatch(logIn(user))
-});
-
-export default connect(null, mapDispatchToProps)(LoginPage);
+export default AuthUtils.createAuthAwareComponent(LoginPage);

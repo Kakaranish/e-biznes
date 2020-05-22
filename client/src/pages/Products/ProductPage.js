@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { isValidUUID } from '../../common';
 import ProductWishlistStatus from './ProductWishlistStatus';
-import { getToken } from '../Utils';
-
+import * as AuthUtils from '../Auth/Utils';
 
 const ProductPage = (props) => {
 
     const productId = props.match.params.id;
-    const token = getToken();
 
     const addToCartOnClick = () => {
 
@@ -17,7 +15,7 @@ const ProductPage = (props) => {
     const [state, setState] = useState({ loading: true, result: null });
     useEffect(() => {
         const fetchProduct = async () => {
-            const headers = token ? { 'X-Auth-Token': token } : {};
+            const headers = props.auth?.token ? { 'X-Auth-Token': props.auth.token } : {};
             const result = await axios.get(`/api/products/${productId}`, {
                 headers: headers, validateStatus: false
             });
@@ -28,6 +26,7 @@ const ProductPage = (props) => {
             }
             if (result.status !== 200) {
                 alert('Some error occured');
+                console.log(headers);
                 return;
             }
             setState({ loading: false, result: result.data });
@@ -43,7 +42,7 @@ const ProductPage = (props) => {
         else return <>
             <h3>
                 {state.result.product.name}
-                {token && <ProductWishlistStatus productId={productId}
+                {props.auth && <ProductWishlistStatus productId={productId}
                     initState={state.result.wishlistItem ? true : false} />}
             </h3>
 
@@ -74,4 +73,5 @@ const ProductPage = (props) => {
     }
 };
 
-export default ProductPage;
+
+export default AuthUtils.createAuthAwareComponent(ProductPage);

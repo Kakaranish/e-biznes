@@ -19,9 +19,8 @@ class AuthController @Inject()(cc: MessagesControllerComponents,
   def verify() = silhouette.SecuredAction.async { implicit request =>
     val user = request.identity
     Future.successful(Ok(Json.obj(
+      "tokenExpiry" -> request.authenticator.expirationDateTime.getMillis,
       "email" -> user.email,
-      "firstName" -> user.firstName,
-      "lastName" -> user.lastName,
       "role" -> user.role
     )))
   }

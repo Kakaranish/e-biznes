@@ -1,9 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
 import cartIcon from '../../src/assets/img/cart.svg';
 import Logout from './Logout';
+import * as AuthUtils from '../pages/Auth/Utils';
 
 const Navbar = (props) => {
 
@@ -20,7 +20,7 @@ const Navbar = (props) => {
 			</button>
 
 			{
-				props?.email && <>
+				props.auth?.email && <>
 
 					<ul className="navbar-nav ml-auto mt-lg-0">
 						<Link to={{ pathname: '/cart' }}>
@@ -31,7 +31,7 @@ const Navbar = (props) => {
 							<a className="nav-link dropdown-toggle" href="#"
 								id="navbarDropdown" role="button" data-toggle="dropdown"
 								aria-haspopup="true" aria-expanded="false">
-								{props?.email}
+								{props.auth?.email}
 							</a>
 
 							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -51,8 +51,4 @@ const Navbar = (props) => {
 	);
 };
 
-const mapStateToProps = state => ({
-	email: state.auth?.email
-})
-
-export default connect(mapStateToProps)(Navbar);
+export default AuthUtils.createAuthAwareComponent(Navbar);

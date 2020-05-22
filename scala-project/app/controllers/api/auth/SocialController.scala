@@ -47,7 +47,8 @@ class SocialController @Inject()(cc: MessagesControllerComponents,
 
                     authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
                     token <- silhouette.env.authenticatorService.init(authenticator)
-                    queryParams = s"token=$token&email=${profile.email.get}&expiryDatetime=${authenticator.expirationDateTime.toString()}}"
+                    tokenExpiry = authenticator.expirationDateTime.getMillis
+                    queryParams = s"token=$token&tokenExpiry=$tokenExpiry&email=${profile.email.get}&role=${user.role}"
                     result <- silhouette.env.authenticatorService.embed(
                       token, Redirect(s"http://localhost:3000/auth/successful?$queryParams"))
                   } yield {
