@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as AuthUtils from '../Auth/Utils';
 import wishlistOnIcon from '../../assets/img/heart-on.svg';
 import wishlistOffIcon from '../../assets/img/heart-off.svg';
 
@@ -16,7 +17,7 @@ const ProductWishlistStatus = (props) => {
         const fetchIsWishlisted = async () => {
             const result = await axios.get(`/api/wishlist/product/${productId}/status`, {
                 validateStatus: false,
-                headers: { 'X-Auth-Token': localStorage.getItem('token') }
+                headers: { 'X-Auth-Token': props.auth.token }
             });
             if (result.status !== 200) {
                 alert('Some error occured');
@@ -27,9 +28,9 @@ const ProductWishlistStatus = (props) => {
             setWishlisted(isWishlistedState);
         };
 
-        if(initState === undefined) fetchIsWishlisted();
+        if (initState === undefined) fetchIsWishlisted();
         else {
-            if(!initState) setWishlisted(isNotWishlistedState);
+            if (!initState) setWishlisted(isNotWishlistedState);
             else setWishlisted(isWishlistedState);
         }
     }, []);
@@ -37,19 +38,16 @@ const ProductWishlistStatus = (props) => {
     const toggleWishlist = async () => {
 
         let result;
+        const headers = { 'X-Auth-Token': props.auth.token };
         if (wishlisted.wishlisted) {
             result = await axios.delete('/api/wishlist/product', {
                 data: { productId: productId },
                 validateStatus: false,
-                headers: { 'X-Auth-Token': localStorage.getItem('token') },
+                headers
             });
         } else {
             result = await axios.post('/api/wishlist/product',
-                { productId: productId },
-                {
-                    validateStatus: false,
-                    headers: { 'X-Auth-Token': localStorage.getItem('token') },
-                });
+                { productId: productId }, { validateStatus: false, headers });
         }
 
         if (result.status !== 200) {
@@ -66,4 +64,4 @@ const ProductWishlistStatus = (props) => {
     </>
 };
 
-export default ProductWishlistStatus;
+export default AuthUtils.createAuthAwareComponent(ProductWishlistStatus);

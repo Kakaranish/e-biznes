@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductWishlistStatus from './Products/ProductWishlistStatus';
+import * as AuthUtils from './Auth/Utils';
 
-const WishlistPage = () => {
+const WishlistPage = (props) => {
 
     const [state, setState] = useState({ loading: true, wishItems: null });
     useEffect(() => {
         const getMessage = async () => {
             const result = await axios.get('/api/wishlist', {
-                headers: { 'X-Auth-Token': localStorage.getItem('token') },
+                headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
             });
             if (result.status !== 200) {
@@ -50,4 +51,4 @@ const WishlistPage = () => {
     </>
 };
 
-export default WishlistPage;
+export default AuthUtils.createAuthAwareComponent(WishlistPage);

@@ -60,7 +60,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
             var resJson = Json.obj("product" -> result._1.get._1)
             if(result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
             if(result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
-            if(result._4 != null && result._4.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._4.get))
+            if(result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
             Ok(resJson)
         })
       }

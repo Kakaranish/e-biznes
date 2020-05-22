@@ -30,6 +30,7 @@ const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
             }
             if (result.status !== 200) {
                 alert('This page requires to be logged in. Redirecting to login page...');
+                rest.logOut();
                 history.push('/auth/login');
                 return;
             }
@@ -55,7 +56,7 @@ const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
 
     if (state.loading) return <></>
     else return <Route {...rest} render={matchProps => (
-        <Component {...matchProps} user={state.auth} />
+        <Component {...matchProps} />
     )} />
 };
 

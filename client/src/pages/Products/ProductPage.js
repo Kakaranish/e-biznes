@@ -26,7 +26,6 @@ const ProductPage = (props) => {
             }
             if (result.status !== 200) {
                 alert('Some error occured');
-                console.log(headers);
                 return;
             }
             setState({ loading: false, result: result.data });
