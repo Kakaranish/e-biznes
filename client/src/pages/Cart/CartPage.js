@@ -42,21 +42,27 @@ const CartPage = (props) => {
         <h3>Your shopping cart is currently empty :(</h3>
     </>
     else return <>
-        <h3>Summary</h3>
-        <p>
-            <b>Items in cart:</b> {state.cartItems.length}
-        </p>
+        <div className="mb-3">
+            <h3>Summary</h3>
+            <p>
+                <b>Items in cart:</b> {state.cartItems.length}
+            </p>
 
-        <p>
-            <b>Total price: </b>
-            {
-                (() => {
-                    let totalPrice = 0;
-                    state.cartItems.forEach(item => totalPrice += item.cartItem.quantity * item.product.price);
-                    return totalPrice.toFixed(2);
-                })()
-            } PLN
-        </p>
+            <p>
+                <b>Total price: </b>
+                {
+                    (() => {
+                        let totalPrice = 0;
+                        state.cartItems.forEach(item => totalPrice += item.cartItem.quantity * item.product.price);
+                        return totalPrice.toFixed(2);
+                    })()
+                } PLN
+            </p>
+
+            <button className="btn btn-success">
+                Finalize order
+            </button>
+        </div>
 
         <h3>Items in your shopping cart</h3>
         {

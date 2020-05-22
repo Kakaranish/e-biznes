@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../common';
+import { createAuthAwareComponent } from '../Auth/Utils';
 
-const RegisterPage = () => {
+const RegisterPage = (props) => {
 
     const onSubmit = async event => {
         event.preventDefault();
@@ -14,17 +15,22 @@ const RegisterPage = () => {
         }
 
         formData.repeatPassword = undefined;
-        const result = await axios.post('/auth/register', formData, {
-            headers: { 'X-Auth-Token': localStorage.getItem('token') },
-            validateStatus: false
-        });
-        if(result.status !== 200) {
+        const result = await axios.post('/auth/register', formData,
+            { validateStatus: false });
+        if (result.status !== 200) {
             setValidationErrors([result.data ?? "Unknown error"])
             return;
         }
+        
+        const auth = {
+            token: result.data.token,
+            tokenExpiry: parseInt(result.data.tokenExpiry),
+            email: result.data.email,
+            role: result.data.role
+        };
+        props.logIn(auth);
 
         setValidationErrors(null);
-        localStorage.setItem('token', result.data.token);
         history.push('/');
     }
 
@@ -34,10 +40,14 @@ const RegisterPage = () => {
 
     useEffect(() => {
         const verifyIfLogged = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) return;
+            if (!props.auth?.token) return;
+            if (props.auth?.tokenExpiry > Date.now()) {
+                props.logOut();
+                return;
+            }
+
             const result = await axios.post('/auth/verify', {}, {
-                headers: { 'X-Auth-Token': localStorage.getItem('token') },
+                headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
             });
             if (result.status === 200) {
@@ -45,7 +55,7 @@ const RegisterPage = () => {
                 history.push('/');
                 return;
             }
-            localStorage.removeItem('token');
+            props.logOut();
         };
         verifyIfLogged();
     }, []);
@@ -83,7 +93,7 @@ const RegisterPage = () => {
                 <div className="col-12 mt-2">
                     <p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
                         Validation errors
-                        </p>
+                    </p>
                     <ul style={{ paddingTop: "0" }, { marginTop: "0px" }}>
                         {
                             validationErrors.map((error, i) => {
@@ -97,4 +107,4 @@ const RegisterPage = () => {
     </>
 };
 
-export default RegisterPage;
+export default createAuthAwareComponent(RegisterPage);
