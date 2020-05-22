@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { isValidUUID } from '../../common';
 import ProductWishlistStatus from './ProductWishlistStatus';
+import { getToken } from '../Utils';
 
 
 const ProductPage = (props) => {
 
     const productId = props.match.params.id;
-    const token = localStorage.getItem('token');
+    const token = getToken();
 
     const addToCartOnClick = () => {
 

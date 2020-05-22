@@ -1,19 +1,28 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import queryString from 'query-string';
+import { logIn } from './duck/actions';
 
 const AuthSuccessfulPage = (props) => {
-    
+
     const history = useHistory();
-
+    
     const queryParams = queryString.parse(props.location.search);
-    localStorage.setItem('token', queryParams.token);
-    localStorage.setItem('email', queryParams.email);
-    localStorage.setItem('expiryDatetime', queryParams.expiryDatetime);
-
+    const auth = {
+        token: queryParams.token,
+        tokenExpiry: parseInt(queryParams.tokenExpiry),
+        email: queryParams.email,
+        role: queryParams.role
+    };
+    props.logIn(auth);
     history.push('/');
 
     return <></>
 };
 
-export default AuthSuccessfulPage;
+const mapDispatchToProps = dispatch => ({
+    logIn: item => dispatch(logIn(item))
+});
+
+export default connect(null, mapDispatchToProps)(AuthSuccessfulPage);

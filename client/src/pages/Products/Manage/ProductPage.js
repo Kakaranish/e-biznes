@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import Modal from '../../../Modal';
+import Modal from '../../../components/Modal';
 import { isValidUUID } from '../../../common';
 
 const ProductPage = (props) => {

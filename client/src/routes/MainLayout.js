@@ -1,7 +1,7 @@
 import React from 'react';
-import Sidebar from '../Sidebar';
+import Sidebar from '../components/Sidebar';
 import '../assets/css/main-layout.css';
-import Navbar from '../Navbar';
+import Navbar from '../components/Navbar';
 
 const MainLayout = (props) => {
 	return (

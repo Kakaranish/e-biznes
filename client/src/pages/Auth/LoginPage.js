@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../common';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
+import { logIn } from './duck/actions';
 
 const LoginPage = (props) => {
 
@@ -19,7 +21,14 @@ const LoginPage = (props) => {
             setValidationErrors([result.data.msg]);
             return;
         }
-        localStorage.setItem('token', result.data.token);
+        const auth = {
+            token: result.data.token,
+            tokenExpiry: parseInt(result.data.tokenExpiry),
+            email: result.data.email,
+            role: result.data.role
+        };
+        props.logIn(auth);
+        localStorage.setItem('auth', JSON.stringify(auth));
 
         history.push('/');
     }
@@ -74,4 +83,8 @@ const LoginPage = (props) => {
     </>
 };
 
-export default LoginPage;
+const mapDispatchToProps = dispatch => ({
+    logIn: user => dispatch(logIn(user))
+});
+
+export default connect(null, mapDispatchToProps)(LoginPage);

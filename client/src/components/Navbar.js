@@ -1,14 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
-import cartIcon from '../src/assets/img/cart.svg';
+import cartIcon from '../../src/assets/img/cart.svg';
+import Logout from './Logout';
 
 const Navbar = (props) => {
-
-	const handleLogout = () => {
-		localStorage.removeItem('token');
-		window.location = '/';
-	}
 
 	const toggleOnClick = event => {
 		event.preventDefault();
@@ -23,7 +20,7 @@ const Navbar = (props) => {
 			</button>
 
 			{
-				props.user && <>
+				props?.email && <>
 
 					<ul className="navbar-nav ml-auto mt-lg-0">
 						<Link to={{ pathname: '/cart' }}>
@@ -34,17 +31,16 @@ const Navbar = (props) => {
 							<a className="nav-link dropdown-toggle" href="#"
 								id="navbarDropdown" role="button" data-toggle="dropdown"
 								aria-haspopup="true" aria-expanded="false">
-								{props.user.email}
+								{props?.email}
 							</a>
-
 
 							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 								<Link to={{ pathname: '/wishlist' }} className="dropdown-item" style={{ cursor: "pointer" }}>
 									Wishlist
 								</Link>
 
-								<span className="dropdown-item" style={{ cursor: "pointer" }} onClick={handleLogout}>
-									Log out
+								<span className="dropdown-item" style={{ cursor: "pointer" }}>
+									<Logout />
 								</span>
 							</div>
 						</li>
@@ -55,4 +51,8 @@ const Navbar = (props) => {
 	);
 };
 
-export default Navbar;
+const mapStateToProps = state => ({
+	email: state.auth?.email
+})
+
+export default connect(mapStateToProps)(Navbar);

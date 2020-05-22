@@ -1,11 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const Sidebar = (props) => {
-
-    const onClickLogout = () => {
-        localStorage.removeItem('token');
-    }
 
     return (
         <>
@@ -16,7 +13,6 @@ const Sidebar = (props) => {
                         Main Page
                     </Link>
                 </div>
-
 
                 <div className="list-group list-group-flush">
                     <Link to={'/products'} className="list-group-item list-group-item-action bg-light">
@@ -31,12 +27,13 @@ const Sidebar = (props) => {
                 </div>
 
                 {
-                    props.user?.role === 'ADMIN' && <>
+                    props.auth?.role === 'ADMIN' && <>
                         <div className='items-separator'></div>
                         <div className="list-group list-group-flush">
                             <Link to={'/manage/categories'} className="list-group-item list-group-item-action bg-light">
                                 Manage Categories
                             </Link>
+
                         </div>
 
                         <div className="list-group list-group-flush">
@@ -53,31 +50,30 @@ const Sidebar = (props) => {
                     </>
                 }
 
-                <div className='items-separator'></div>
                 {
-                    !props.user
-                        ? <>
-                            <div className="list-group list-group-flush">
-                                <Link to={'/auth/login'} className="list-group-item list-group-item-action bg-light">
-                                    Login
+                    !props.auth && <>
+                        <div className='items-separator'></div>
+                        
+                        <div className="list-group list-group-flush">
+                            <Link to={'/auth/login'} className="list-group-item list-group-item-action bg-light">
+                                Login
                                 </Link>
-                            </div>
-
-                            <div className="list-group list-group-flush">
-                                <Link to={'/auth/register'} className="list-group-item list-group-item-action bg-light">
-                                    Register
-                                </Link>
-                            </div>
-                        </>
-                        : <div className="list-group list-group-flush">
-                            <Link to={'/'} className="list-group-item list-group-item-action bg-light" onClick={onClickLogout}>
-                                Logout
-                            </Link>
                         </div>
+
+                        <div className="list-group list-group-flush">
+                            <Link to={'/auth/register'} className="list-group-item list-group-item-action bg-light">
+                                Register
+                                </Link>
+                        </div>
+                    </>
                 }
             </div>
         </>
     );
 };
 
-export default Sidebar;
+const mapStateToProps = state => ({
+    auth: state?.auth
+});
+
+export default connect(mapStateToProps)(Sidebar);

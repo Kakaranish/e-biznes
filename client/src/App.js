@@ -16,23 +16,23 @@ import WishlistPage from './pages/WishlistPage';
 import CategoriesPage from './pages/Categories/CategoriesPage';
 
 const App = () => {
-  return (
-    <Router>
-      <Switch>
-        <MainLayoutRoute path='/' component={MainPage} exact />
-        <Route path='/products' component={ProductRoutes} />
-        <Route path='/manage/products' component={ManageProductRoutes} />
-        <MainLayoutRoute path='/categories' component={CategoriesPage} />
-        <Route path='/manage/categories' component={ManageCategoryRoutes} />
-        <Route path='/users' component={UserRoutes} />
-        <Route path='/auth' component={AuthRoutes} />
-        <Route path='/cart' component={CartRoutes} />
-        <MainLayoutRoute path='/wishlist' component={WishlistPage} />
+  return <>
+      <Router>
+        <Switch>
+          <MainLayoutRoute path='/' component={MainPage} exact />
+          <Route path='/products' component={ProductRoutes} />
+          <Route path='/manage/products' component={ManageProductRoutes} />
+          <MainLayoutRoute path='/categories' component={CategoriesPage} />
+          <Route path='/manage/categories' component={ManageCategoryRoutes} />
+          <Route path='/users' component={UserRoutes} />
+          <Route path='/auth' component={AuthRoutes} />
+          <Route path='/cart' component={CartRoutes} />
+          <MainLayoutRoute path='/wishlist' component={WishlistPage} />
 
-        <MainLayoutRoute component={NotFoundPage} />
-      </Switch>
-    </Router>
-  )
+          <MainLayoutRoute component={NotFoundPage} />
+        </Switch>
+      </Router>
+  </>
 };
 
 export default App;
