@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as AuthUtils from '../Auth/Utils';
 
-const CartPage = () => {
-
+const CartPage = (props) => {
 
     const [state, setState] = useState({ loading: true, cartItems: null });
     useEffect(() => {
         const getMessage = async () => {
             const result = await axios.get('/api/cart', {
-                headers: { 'X-Auth-Token': localStorage.getItem('token') },
+                headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
             });
             if (result.status !== 200) {
@@ -50,4 +50,4 @@ const CartPage = () => {
     </>
 };
 
-export default CartPage;
+export default AuthUtils.createAuthAwareComponent(CartPage);

@@ -17,7 +17,6 @@ const ProductsByCategoryPage = (props) => {
                 console.log(result);
                 return;
             }
-            console.log(result);
             setState({ loading: false, result: result.data });
         };
         fetchProducts();
@@ -28,7 +27,7 @@ const ProductsByCategoryPage = (props) => {
         if (!state.result || !state.result.products?.length)
             return <h3>There are no products in category {state.result.category.name}</h3>
         else return <>
-            <h3>Products in category {categoryId}</h3>
+            <h3>Products in category {state.result.category.name}</h3>
             {
                 state.result.products.map((item, i) =>
                     <div className="p-3" style={{ border: "1px solid gray" }} key={`div-${item.id}`}>
