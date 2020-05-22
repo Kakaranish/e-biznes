@@ -27,7 +27,7 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   def getProductPreview(productId: String, userId: String) = db.run {
     (for {
-      product <- productTable.joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
+      product <- productTable.filter(_.id === productId).joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
       wishlistItem <- if (product.isDefined) wishlistItemTable
         .filter(r => r.userId === userId && r.productId === productId).result.headOption else DBIO.successful(null)
       cart <- if(product.isDefined) cartTable

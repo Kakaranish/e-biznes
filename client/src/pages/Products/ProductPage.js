@@ -1,15 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { isValidUUID } from '../../common';
 import ProductWishlistStatus from './ProductWishlistStatus';
 import * as AuthUtils from '../Auth/Utils';
+import { getFormDataJsonFromEvent } from '../../common';
 
 const ProductPage = (props) => {
 
     const productId = props.match.params.id;
+    const history = useHistory();
 
-    const addToCartOnClick = () => {
+    const addToCartOnSubmit = async event => {
+        event.preventDefault();
+        let formData = getFormDataJsonFromEvent(event);
+        formData.quantity = parseInt(formData.quantity);
+        formData.productId = productId;
 
+        const result = await axios.post('/api/cart/add', formData, {
+            validateStatus: false,
+            headers: { 'X-Auth-Token': props.auth.token }
+        });
+
+        if (result.status === 401) {
+            alert('You are no longer authorized to do this. Please log in.');
+            history.push('/auth/login');
+            return;
+        }
+        if (result.status !== 200) {
+            alert('Internal error. Try to refresh page.');
+            console.log(result);
+            return;
+        }
+
+        history.go();
     }
 
     const [state, setState] = useState({ loading: true, result: null });
@@ -65,9 +89,19 @@ const ProductPage = (props) => {
                 <b>Category:</b> {state.result.category?.name ?? 'None'}
             </p>
 
-            <button type="button" className="btn btn-primary w-25 mr-2" onClick={addToCartOnClick}>
-                Add to cart
-			</button>
+            <form onSubmit={addToCartOnSubmit} className="form-inline">
+                <div className="form-group w-100">
+                    <input name="quantity" type="number" step="1" min="0" max={state.result.product.quantity} className="form-control form-control"
+                        style={{ width: "10%" }} placeholder="Quantity to add" disabled={state.result.cartItem ? true : false} required />
+                    <button type="submit" className="btn btn-primary w-25 mr-2" disabled={state.result.cartItem ? true : false}>
+                        {
+                            state.result.cartItem
+                                ? <>Product already in cart</>
+                                : <>Add to cart</>
+                        }
+                    </button>
+                </div>
+            </form>
         </>
     }
 };
