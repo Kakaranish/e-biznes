@@ -28,8 +28,19 @@ class OrderDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
     val toAdd = Order(id, order.cartId, order.userId, order.shippingInfoId, nowIso)
     db.run(orderTable += toAdd).map(_ => toAdd)
   }
-  
-  def getById(orderId: String) = db.run {
+
+  def getByUserId(userId: String) = db.run {
+      orderTable.filter(_.userId === userId)
+        .result
+  }
+
+  def belongsToUser(orderId: String, userId: String) = db.run {
+    orderTable.filter(r => r.id === orderId && r.userId === userId)
+      .exists
+      .result
+  }
+
+  def getPopulatedById(orderId: String) = db.run {
     (for {
       orderInfo <- orderTable.filter(_.id === orderId)
         .joinLeft(cartTable).on((x, y) => x.cartId === y.id)
@@ -37,13 +48,17 @@ class OrderDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
         .result
         .headOption
       cartItems <-
-        if (orderInfo.isDefined) cartItemTable.filter(_.cartId === orderInfo.get._1._2.get.id)
+        if (!orderInfo.isDefined) DBIO.successful(null)
+        else cartItemTable.filter(_.cartId === orderInfo.get._1._2.get.id)
           .joinLeft(productTable).on((x, y) => x.productId === y.id)
           .result
-        else DBIO.successful(null)
+      payments <-
+        if(!orderInfo.isDefined) DBIO.successful(null)
+        else paymentTable.filter(_.orderId === orderId)
+          .result
     } yield {
-      if (!orderInfo.isDefined) null
-      else (orderInfo.get._1._1, orderInfo.get._1._2.get, orderInfo.get._2, cartItems)
+      if (!orderInfo.isDefined) None
+      else Some((orderInfo.get._1._1, orderInfo.get._1._2.get, orderInfo.get._2, cartItems, payments))
     }).transactionally
   }
 }

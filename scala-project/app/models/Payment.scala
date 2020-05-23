@@ -12,7 +12,7 @@ case class Payment(id: String,
                    amountOfMoney: Float)
 
 object Payment {
-  implicit val paymentFormat = Json.format[Category]
+  implicit val paymentFormat = Json.format[Payment]
 }
 
 class PaymentTable(tag: Tag) extends Table[Payment](tag, "Payment") {

@@ -8,7 +8,7 @@ const WishlistPage = (props) => {
 
     const [state, setState] = useState({ loading: true, wishItems: null });
     useEffect(() => {
-        const getMessage = async () => {
+        const fetchWishlist = async () => {
             const result = await axios.get('/api/wishlist', {
                 headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
@@ -20,7 +20,7 @@ const WishlistPage = (props) => {
             setState({ loading: false, wishItems: result.data });
         };
 
-        getMessage();
+        fetchWishlist();
     }, []);
 
     if (state.loading) return <></>

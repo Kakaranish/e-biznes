@@ -14,7 +14,7 @@ const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
     useEffect(() => {
         const auth = async () => {
 
-            const token = rest.auth.token;
+            const token = rest.auth?.token;
             if (!token) {
                 alert('This page requires to be logged in. Redirecting to login page...');
                 history.push('/auth/login');

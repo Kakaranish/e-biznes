@@ -1,10 +1,13 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import OrdersPage from './OrdersPage';
+import AuthorizedOnlyRoute from '../../routes/AuthorizedOnlyRoute';
+import OrderPage from './OrderPage';
 
 const OrderRoutes = () => {
     return <Switch>
-        <Route path='/orders' component={OrdersPage} exact />
+        <AuthorizedOnlyRoute path='/orders' component={OrdersPage} exact />
+        <AuthorizedOnlyRoute path='/orders/:id' component={OrderPage} />
     </Switch>
 };
 

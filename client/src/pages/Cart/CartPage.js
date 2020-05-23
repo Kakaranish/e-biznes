@@ -9,7 +9,7 @@ const CartPage = (props) => {
 
     const [state, setState] = useState({ loading: true, cartItems: null });
     useEffect(() => {
-        const getCartItems = async () => {
+        const fetchCartItems = async () => {
             const result = await axios.get('/api/cart', {
                 headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
@@ -21,7 +21,7 @@ const CartPage = (props) => {
             setState({ loading: false, cartItems: result.data });
         };
 
-        getCartItems();
+        fetchCartItems();
     }, []);
 
     const finalizeOnClick = async () => {
