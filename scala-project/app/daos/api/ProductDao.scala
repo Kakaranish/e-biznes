@@ -46,6 +46,20 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
       .headOption
   }
 
+  def subtractAmt(productId: String, toSubtract: Int) = {
+    (for {
+      product <- productTable.filter(_.id === productId).result.headOption
+      result <- {
+        if(!product.isDefined) DBIO.failed(null)
+        else if(product.get.quantity - toSubtract < 0) DBIO.failed(null)
+        else productTable.filter(_.id === productId)
+          .map(r => r.quantity)
+          .update(product.get.quantity - toSubtract)
+          .map(_ => Some(product.get.copy(quantity = product.get.quantity - toSubtract)))
+      }
+    } yield result).transactionally
+  }
+
   def getAllByCategoryId(categoryId: String) = db.run {
     (for {
       category <- categoryTable.filter(_.id === categoryId).result.headOption

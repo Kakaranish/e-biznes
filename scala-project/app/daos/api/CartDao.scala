@@ -14,7 +14,9 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
+                           productDao: ProductDaoApi)
+                          (implicit ec: ExecutionContext)
   extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -56,7 +58,9 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
   }
 
   def setFinalized(cartId: String) = db.run {
-    for {
+    (for {
+      cartItems <- cartItemTable.filter(_.cartId === cartId).result
+      _ <- DBIO.sequence(cartItems.map(ci => productDao.subtractAmt(ci.productId, ci.quantity)))
       _ <- cartTable.filter(record => record.id === cartId)
         .map(record => record.isFinalized)
         .update(true)
@@ -64,7 +68,7 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
       _ <- cartTable.filter(record => record.id === cartId)
         .map(record => (record.updateDate))
         .update(now)
-    } yield ()
+    } yield ()).transactionally
   }
 
   def setUpdateDateToNow(cartId: String) = db.run {

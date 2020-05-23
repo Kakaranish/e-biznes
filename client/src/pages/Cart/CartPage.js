@@ -18,8 +18,7 @@ const CartPage = (props) => {
             return;
         }
 
-        alert('Everything is ok');
-        console.log(result);
+        history.push(`/orders/${result.data}`);
     }
 
     const deleteFromCart = async cartItemId => {
