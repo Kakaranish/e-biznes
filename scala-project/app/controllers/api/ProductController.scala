@@ -36,7 +36,6 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
-
   def getById(productId: String) = silhouette.UserAwareAction.async { implicit request =>
 
     request.identity match {

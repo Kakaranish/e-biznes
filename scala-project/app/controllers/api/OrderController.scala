@@ -52,7 +52,20 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
     orderDao.getByUserId(request.identity.id).map(orders => Ok(Json.toJson(orders)))
   }
 
-  def getById(orderId: String) = silhouette.SecuredAction.async { implicit request =>
+  def getPopulatedWithShippingInfoById(orderId: String) = silhouette.SecuredAction.async {implicit request =>
+    if (orderId == null || orderId.isBlank || orderId.isEmpty)
+      Future(Status(BAD_REQUEST)("orderId is invalid"))
+
+    orderDao.getPopulatedWithShippingInfoById(orderId).flatMap(o => o match {
+      case None => Future(Status(NOT_FOUND)("Order not found"))
+      case Some(orderInfo) => Future(Ok(Json.obj(
+        "order" -> orderInfo._1,
+        "shippingInfo" -> orderInfo._2
+      )))
+    })
+  }
+
+  def getPopulatedById(orderId: String) = silhouette.SecuredAction.async { implicit request =>
     if (orderId == null || orderId.isBlank || orderId.isEmpty)
       Future(Status(BAD_REQUEST)("orderId is invalid"))
 

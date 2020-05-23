@@ -56,7 +56,8 @@ GET           /opinions/:opinionId                         controllers.OpinionCo
 # OrderController
 GET           /api/orders/user                             controllers.api.OrderControllerApi.getPreviewsForUser
 POST          /api/orders                                  controllers.api.OrderControllerApi.create
-GET           /api/orders/:id                              controllers.api.OrderControllerApi.getById(id: String)
+GET           /api/orders/:id/shipping-info                controllers.api.OrderControllerApi.getPopulatedWithShippingInfoById(id: String)
+GET           /api/orders/:id                              controllers.api.OrderControllerApi.getPopulatedById(id: String)
 GET           /orders                                      controllers.OrderController.getAll
 GET           /orders/user/:userId                         controllers.OrderController.getAllForUser(userId: String)
 GET           /orders/create/cart/:cartId                  controllers.OrderController.create(cartId: String)
@@ -110,6 +111,9 @@ DELETE        /wishlist/item/:wishItemId                   controllers.WishlistC
 GET           /wishlist/item/:wishItemId                   controllers.WishlistController.wishItem(wishItemId: String)
 
 # ShippingController
+POST          /api/shipping-info                           controllers.api.ShippingControllerApi.create
+PUT           /api/shipping-info                           controllers.api.ShippingControllerApi.update
+DELETE        /api/shipping-info                           controllers.api.ShippingControllerApi.delete
 GET           /shippinginfos                               controllers.ShippingController.getAll
 GET           /shippinginfos/create                        controllers.ShippingController.create
 POST          /shippinginfos/create                        controllers.ShippingController.createHandler

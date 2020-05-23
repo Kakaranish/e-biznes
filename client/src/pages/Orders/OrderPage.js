@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { createAuthAwareComponent } from '../Auth/Utils';
 import axios from 'axios';
 import moment from 'moment';
+import Modal from '../../components/Modal';
 
 const OrderPage = (props) => {
+    
     const orderId = props.match.params.id;
+    const history = useHistory();
 
     const [state, setState] = useState({ loading: true, orderInfo: null });
     useEffect(() => {
@@ -31,17 +34,27 @@ const OrderPage = (props) => {
                 totalPrice: totalPrice,
                 paymentsValue: paymentsValue
             });
-
-            console.log(result);
         };
 
         fetchOrder();
     }, []);
 
+    const deleteShippingInfoOnClick = async () => {
+        const result = await axios.delete('/api/shipping-info', {
+            data: { shippingInfoId: state.orderInfo.shippingInfo.id },
+            headers: { 'X-Auth-Token': props.auth.token },
+            validateStatus: false
+        })
+        if (result.status !== 200) {
+            alert('Some error occured');
+            console.log(result);
+            return;
+        }
+        history.go();
+    }
+
     if (state.loading) return <></>
-    else if (!state.orderInfo) return <>
-        <h3>No such order...</h3>
-    </>
+    else if (!state.orderInfo) return <h3>No such order...</h3>
     return <>
 
         <h3>Order {orderId}</h3>
@@ -70,43 +83,78 @@ const OrderPage = (props) => {
 
         {
             state.paymentsValue < state.totalPrice &&
-            <Link to={'/'} className="btn btn-primary w-25 mb-4">
+            <Link to={'/'} className="btn btn-primary w-25 mb-5">
                 Pay
             </Link>
         }
 
         <h3>Shipping info</h3>
-        {
-            !state.orderInfo.shippingInfo
-                ? <>
-                    <p>You provided no shipping info</p>
-                    <Link to={'/'} className="btn btn-primary w-25 mb-4">
-                        Add shipping info
-                    </Link>
-                </>
+        <div className="p-3 mb-5" style={{ border: "1px solid gray" }}>
 
-                : <>
-                    Shipping info
-                </>
-        }
+            {
+                !state.orderInfo.shippingInfo
+                    ? <p> You provided no shipping info </p>
+
+                    : <>
+                        <p>
+                            <b>Country:</b> {state.orderInfo.shippingInfo.country}
+                        </p>
+
+                        <p>
+                            <b>City:</b> {state.orderInfo.shippingInfo.city}
+                        </p>
+
+                        <p>
+                            <b>Address:</b> {state.orderInfo.shippingInfo.address}
+                        </p>
+
+                        <p>
+                            <b>Zip/Postcode:</b> {state.orderInfo.shippingInfo.zipOrPostcode}
+                        </p>
+                    </>
+            }
+
+            <div>
+                <Link to={`/orders/${orderId}/shipping-info`} className="btn btn-primary w-25">
+                    {
+                        !state.orderInfo.shippingInfo
+                            ? "Add shipping info"
+                            : "Edit"
+                    }
+                </Link>
+
+                {
+                    state.orderInfo.shippingInfo &&
+                    <Modal title={"Are you sure?"}
+                        btnText={"Delete"}
+                        btnClasses={"btn btn-danger w-25"}
+                        modalTitle={"Are you sure?"}
+                        modalPrimaryBtnText={"Delete"}
+                        modalPrimaryBtnClasses={"btn btn-danger"}
+                        onModalPrimaryBtnClick={deleteShippingInfoOnClick}
+                        modalSecondaryBtnText={"Cancel"}
+                        modalSecondaryBtnClasses={"btn btn-secondary"}
+                    />
+                }
+            </div>
+        </div>
 
         <h3>Payments</h3>
-        {
-            !state.orderInfo.payments || state.orderInfo.payments.length === 0
-                ? <p>You have no payments yet</p>
-                    
-                : <>
-                    Payments info
-                </>
-        }
+        <div className="p-3 mb-5" style={{ border: "1px solid gray" }}>
+            {
+                !state.orderInfo.payments || state.orderInfo.payments.length === 0
+                    ? <p>You have no payments yet</p>
+                    : <> Payments info </>
+            }
+        </div>
 
         <h3>Ordered products</h3>
         {
             state.orderInfo.cartItems.map((ci, i) =>
                 <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`div-${ci.product.id}`}>
-                    <p><b>
-                        {ci.product.name}
-                    </b></p>
+                    <p>
+                        <b>{ci.product.name}</b>
+                    </p>
 
                     <p>
                         {ci.product.description}
