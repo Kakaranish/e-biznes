@@ -1,7 +1,6 @@
 package controllers.api
 
 import daos.api.{CategoryDaoApi, ProductDaoApi}
-import daos.{CategoryDao, ProductDao}
 import javax.inject._
 import models.Category
 import play.api.libs.functional.syntax._
@@ -37,13 +36,10 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        categoryDao.getByName(s.value).map(exists => {
+        categoryDao.getByName(s.value).flatMap(exists => {
           exists match {
-            case Some(x) => Status(BAD_REQUEST)(JsError.toJson(JsError("category with such name exists")))
-            case _ => {
-              categoryDao.create(Category(null, s.value))
-              Ok
-            }
+            case Some(_) => Future(Status(BAD_REQUEST)(JsError.toJson(JsError("category with such name exists"))))
+            case _ => categoryDao.create(Category(null, s.value, false)).flatMap(_ => Future(Ok))
           }
         })
       }
@@ -62,19 +58,14 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[CategoryUpdateDto] => {
-        categoryDao.getById(s.value.id).map(category => {
-          if (category.getOrElse(null) == null) {
-            Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
-          } else if (category.get.name == s.value.name) {
-            Ok
-          } else {
+        categoryDao.getById(s.value.id).flatMap(category => {
+          if (category.getOrElse(null) == null) Future(Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id"))))
+          else if (category.get.name == s.value.name) Future(Ok)
+          else {
             val otherCategoryResult = Await.result(categoryDao.getByName(s.value.name), Duration.Inf)
             otherCategoryResult match {
-              case Some(cat) => Status(BAD_REQUEST)(JsError.toJson(JsError("other category has such name")))
-              case None => {
-                categoryDao.update(Category(s.value.id, s.value.name))
-                Ok
-              }
+              case Some(_) => Future(Status(BAD_REQUEST)(JsError.toJson(JsError("other category has such name"))))
+              case None => categoryDao.update(Category(s.value.id, s.value.name, false)).flatMap(_ => Future(Ok))
             }
           }
         })
@@ -89,18 +80,13 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        categoryDao.getById(s.value).map(category => {
-          if (category.getOrElse(null) == null) {
-            Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id")))
-          } else {
-            val productWithCategoryExists = Await.result(productDao.existsAnyWithCategoryId(s.value), Duration.Inf)
-            productWithCategoryExists match {
-              case true => Status(BAD_REQUEST)(JsError.toJson(JsError("cannot remove because category is assigned to at least one product")))
-              case _ => {
-                Await.result(categoryDao.delete(s.value), Duration.Inf)
-                Ok
-              }
-            }
+        categoryDao.getById(s.value).flatMap(category => {
+          if (category.getOrElse(null) == null) Future(Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id"))))
+          else {
+            productDao.existsAnyWithCategoryId(s.value).flatMap(exists => {
+              if(exists) Future(Status(BAD_REQUEST)(JsError.toJson(JsError("cannot remove because category is assigned to at least one product"))))
+              else categoryDao.delete(s.value).flatMap(_ => Future(Ok))
+            })
           }
         })
       }

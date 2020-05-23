@@ -8,7 +8,8 @@ case class Product(id: String,
                    description: String,
                    price: Float,
                    quantity: Int,
-                   categoryId: String)
+                   categoryId: String,
+                   isDeleted: Boolean)
 
 case class ProductPreview(id: String, name: String)
 
@@ -33,7 +34,9 @@ class ProductTable(tag: Tag) extends Table[Product](tag, "Product") {
 
   def categoryId = column[String]("CategoryId")
 
+  def isDeleted = column[Boolean]("IsDeleted")
+
   def category_fk = foreignKey("category_fk", categoryId, TableQuery[CategoryTable])(_.id)
 
-  override def * = (id, name, description, price, quantity, categoryId) <> ((Product.apply _).tupled, Product.unapply)
+  override def * = (id, name, description, price, quantity, categoryId, isDeleted) <> ((Product.apply _).tupled, Product.unapply)
 }

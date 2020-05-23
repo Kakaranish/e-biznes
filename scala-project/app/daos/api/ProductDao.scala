@@ -19,7 +19,7 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   def getAll() = db.run {
     (for {
-      (product, category) <- productTable joinLeft
+      (product, category) <- productTable.filter(_.isDeleted === false) joinLeft
         categoryTable on ((x, y) => x.categoryId === y.id)
     } yield (product, category))
       .result
@@ -27,10 +27,11 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   def getProductPreview(productId: String, userId: String) = db.run {
     (for {
-      product <- productTable.filter(_.id === productId).joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
+      product <- productTable.filter(p => p.id === productId && p.isDeleted === false)
+        .joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
       wishlistItem <- if (product.isDefined) wishlistItemTable
         .filter(r => r.userId === userId && r.productId === productId).result.headOption else DBIO.successful(null)
-      cart <- if(product.isDefined) cartTable
+      cart <- if (product.isDefined) cartTable
         .filter(r => r.userId === userId && r.isFinalized === false).result.headOption else DBIO.successful(null)
       cartItem <- {
         if (cart == null || !cart.isDefined) DBIO.successful(null)
@@ -40,7 +41,7 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
   }
 
   def getById(productId: String) = db.run {
-    productTable.filter(_.id === productId)
+    productTable.filter(p => p.id === productId && p.isDeleted === false)
       .result
       .headOption
   }
@@ -48,27 +49,29 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
   def getAllByCategoryId(categoryId: String) = db.run {
     (for {
       category <- categoryTable.filter(_.id === categoryId).result.headOption
-      products <- productTable.filter(_.categoryId === categoryId).result
-    } yield (category, products)).transactionally
+      products <- productTable.filter(p => p.categoryId === categoryId && p.isDeleted === false).result
+    } yield (category, products))
+      .transactionally
   }
 
   def getPopulatedById(productId: String) = db.run((for {
-    (product, category) <- productTable joinLeft
+    (product, category) <- productTable.filter(p => p.id === productId && p.isDeleted === false) joinLeft
       categoryTable on ((x, y) => x.categoryId === y.id)
   } yield (product, category))
-    .filter(record => record._1.id === productId)
     .result
     .headOption
   )
 
   def existsAnyWithCategoryId(categoryId: String) = db.run {
-    productTable.filter(record => record.categoryId === categoryId).exists.result
+    productTable.filter(p => p.isDeleted === false && p.categoryId === categoryId)
+      .exists
+      .result
   }
 
   def create(product: Product) = db.run {
     val id = UUID.randomUUID().toString()
     productTable += Product(id, product.name, product.description, product.price,
-      product.quantity, product.categoryId)
+      product.quantity, product.categoryId, false)
   }
 
   def update(productToUpdate: Product) = db.run {
@@ -78,6 +81,7 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   def delete(productId: String) = db.run {
     productTable.filter(record => record.id === productId)
-      .delete
+      .map(r => (r.isDeleted))
+      .update(true)
   }
 }

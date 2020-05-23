@@ -55,14 +55,14 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       }
       case Some(_) => {
         productDao.getProductPreview(productId, request.identity.get.id).map(result =>
-          if(!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
+          if (!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
           else {
             var resJson = Json.obj("product" -> result._1.get._1)
-            if(result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
-            if(result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
-            if(result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
+            if (result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
+            if (result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
+            if (result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
             Ok(resJson)
-        })
+          })
       }
     }
   }
@@ -86,7 +86,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
           if (category.getOrElse(null) == null) {
             Status(BAD_REQUEST)(JsError.toJson(JsError("invalid category")))
           } else {
-            val product = Product(null, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId)
+            val product = Product(null, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId, false)
             val createResult = Await.result(productDao.create(product), Duration.Inf)
             createResult match {
               case 0 => Status(INTERNAL_SERVER_ERROR)(JsError.toJson(JsError("internal error")))
@@ -117,7 +117,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
         val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getPopulatedById(s.value.id), Duration.Inf)
         productResult match {
           case Some(_) => {
-            val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId)
+            val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId, false)
             productDao.update(updatedProduct)
             Future(Ok)
           }
@@ -134,13 +134,10 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        productDao.getPopulatedById(s.value).map(product => {
+        productDao.getPopulatedById(s.value).flatMap(product => {
           product match {
-            case Some(prod) => {
-              Await.result(productDao.delete(s.value), Duration.Inf)
-              Ok
-            }
-            case _ => Status(NOT_FOUND)(JsError.toJson(JsError("no product with such id")))
+            case Some(_) => productDao.delete(s.value).flatMap(_ => Future(Ok))
+            case _ => Future(Status(NOT_FOUND)(JsError.toJson(JsError("no product with such id"))))
           }
         })
       }

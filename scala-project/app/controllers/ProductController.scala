@@ -103,7 +103,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
       },
       productForm => {
         val product = Product(null, productForm.name, productForm.description,
-          productForm.price, productForm.quantity, productForm.categoryId)
+          productForm.price, productForm.quantity, productForm.categoryId, false)
         productDao.create(product).map(_ =>
           Redirect(routes.ProductController.create())
             .flashing("success" -> "Product created.")
@@ -122,7 +122,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
       },
       productForm => {
         val productToUpdate = Product(productForm.id, productForm.name, productForm.description,
-          productForm.price, productForm.quantity, productForm.categoryId)
+          productForm.price, productForm.quantity, productForm.categoryId, false)
         productDao.update(productToUpdate).map(_ =>
           Redirect(routes.ProductController.update(productToUpdate.id))
             .flashing("success" -> "Product updated.")

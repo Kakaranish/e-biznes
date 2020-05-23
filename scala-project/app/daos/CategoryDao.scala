@@ -34,7 +34,7 @@ class CategoryDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit e
 
   def create(category: Category) = db.run {
     val id = UUID.randomUUID().toString()
-    categoryTable += Category(id, category.name)
+    categoryTable += Category(id, category.name, false)
   }
 
   def update(categoryToUpdate: Category) = db.run {

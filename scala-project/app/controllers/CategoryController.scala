@@ -74,7 +74,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
         )
       },
       categoryForm => {
-        val category = Category(null, categoryForm.name)
+        val category = Category(null, categoryForm.name, false)
         categoryDao.create(category).map(_ =>
           Redirect(routes.CategoryController.create())
             .flashing("success" -> "Category created.")
@@ -91,7 +91,7 @@ class CategoryController @Inject()(cc: MessagesControllerComponents, categoryDao
         )
       },
       categoryForm  => {
-        val categoryToUpdate = Category(categoryForm.id, categoryForm.name)
+        val categoryToUpdate = Category(categoryForm.id, categoryForm.name, false)
         categoryDao.update(categoryToUpdate).map { _ =>
           Redirect(routes.CategoryController.update(categoryToUpdate.id))
             .flashing("success" -> "Product updated.")

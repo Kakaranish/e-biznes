@@ -3,7 +3,7 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{CategoryTable, Product, ProductPreview, ProductTable, TableDefinitions}
+import models.{Product, TableDefinitions}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao: CategoryDao)
-                          (implicit ec: ExecutionContext) extends TableDefinitions{
+                          (implicit ec: ExecutionContext) extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -48,7 +48,7 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
   def create(product: Product) = db.run {
     val id = UUID.randomUUID().toString()
     productTable += Product(id, product.name, product.description, product.price,
-      product.quantity, product.categoryId)
+      product.quantity, product.categoryId, false)
   }
 
   def update(productToUpdate: Product) = db.run {

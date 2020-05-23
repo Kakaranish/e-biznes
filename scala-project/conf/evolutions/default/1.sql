@@ -44,6 +44,7 @@ CREATE TABLE "OAuth2Info" (
 CREATE TABLE IF NOT EXISTS "Category" (
 	"Id"	TEXT NOT NULL UNIQUE,
 	"Name"	TEXT NOT NULL,
+	"IsDeleted"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("Id")
 );
 
@@ -64,6 +65,7 @@ CREATE TABLE "Product" (
 	"PicUrl"	TEXT,
 	"Quantity"	INTEGER NOT NULL DEFAULT 0,
 	"CategoryId"	TEXT NOT NULL,
+	"IsDeleted"	INTEGER NOT NULL DEFAULT 0,
 	PRIMARY KEY("Id")
 	FOREIGN KEY("CategoryId") REFERENCES "Category"("Id")
 );
