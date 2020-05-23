@@ -7,23 +7,6 @@ const CartPage = (props) => {
 
     const history = useHistory();
 
-    const [state, setState] = useState({ loading: true, cartItems: null });
-    useEffect(() => {
-        const fetchCartItems = async () => {
-            const result = await axios.get('/api/cart', {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
-            }
-            setState({ loading: false, cartItems: result.data });
-        };
-
-        fetchCartItems();
-    }, []);
-
     const finalizeOnClick = async () => {
         const result = await axios.post('/api/orders', { cartId: state.cartItems[0].cartItem.cartId }, {
             headers: { 'X-Auth-Token': props.auth.token },
@@ -52,6 +35,45 @@ const CartPage = (props) => {
 
         history.go();
     }
+
+    const validateCart = async (cartItems) => {
+        cartItems.forEach(async ci => {
+            if(ci.cartItem.quantity > ci.product.quantity) {
+                const result = await axios.post('/api/cart/delete', { cartItemId: ci.cartItem.id }, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                if (result.status !== 200) {
+                    alert('Some error occured');
+                    console.log(result.data);
+                    return;
+                }
+
+                alert(`Product ${ci.product.name} is no longer available in quantity you have chosen. It will be removed from your cart.`);
+                history.go();
+            }
+        })
+    }
+
+    const [state, setState] = useState({ loading: true, cartItems: null });
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            const result = await axios.get('/api/cart', {
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+            });
+            if (result.status !== 200) {
+                alert('Some error occured');
+                return;
+            }
+
+            await validateCart(result.data);
+
+            setState({ loading: false, cartItems: result.data });
+        };
+
+        fetchCartItems();
+    }, []);
 
     if (state.loading) return <></>
     else if (!state.cartItems || state.cartItems.length === 0) return <>

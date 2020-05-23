@@ -83,7 +83,7 @@ const OrderPage = (props) => {
 
         {
             state.paymentsValue < state.totalPrice &&
-            <Link to={'/'} className="btn btn-primary w-25 mb-5">
+            <Link to={`/orders/${orderId}/payment`} className="btn btn-primary w-25 mb-5">
                 Pay
             </Link>
         }
