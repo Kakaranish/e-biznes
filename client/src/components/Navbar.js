@@ -35,6 +35,10 @@ const Navbar = (props) => {
 							</a>
 
 							<div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+								<Link to={{ pathname: '/orders' }} className="dropdown-item" style={{ cursor: "pointer" }}>
+									Orders
+								</Link>
+
 								<Link to={{ pathname: '/wishlist' }} className="dropdown-item" style={{ cursor: "pointer" }}>
 									Wishlist
 								</Link>

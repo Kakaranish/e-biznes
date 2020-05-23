@@ -54,6 +54,7 @@ DELETE        /opinions/:opinionId                         controllers.OpinionCo
 GET           /opinions/:opinionId                         controllers.OpinionController.getById(opinionId: String)
 
 # OrderController
+POST          /api/orders                                  controllers.api.OrderControllerApi.create
 GET           /orders                                      controllers.OrderController.getAll
 GET           /orders/user/:userId                         controllers.OrderController.getAllForUser(userId: String)
 GET           /orders/create/cart/:cartId                  controllers.OrderController.create(cartId: String)

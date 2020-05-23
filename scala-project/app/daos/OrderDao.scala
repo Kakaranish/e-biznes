@@ -3,27 +3,24 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{Order, OrderTable, ShippingInfoTable, UserTable}
+import models.{Order, TableDefinitions}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class OrderDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
                          userDao: UserDao,
                          shippingInfoDao: ShippingInfoDao)
-                        (implicit ec: ExecutionContext) {
+                        (implicit ec: ExecutionContext)
+  extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
-
-  private val orderTable = TableQuery[OrderTable]
-  private val userTable = TableQuery[UserTable]
-  private val shippingInfoTable = TableQuery[ShippingInfoTable]
 
   def getAll() = db.run((for {
     ((order, user), shippingInfo) <- orderTable joinLeft

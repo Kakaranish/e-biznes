@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import * as AuthUtils from '../Auth/Utils';
 
@@ -24,6 +24,21 @@ const CartPage = (props) => {
         getCartItems();
     }, []);
 
+    const finalizeOnClick = async () => {
+        const result = await axios.post('/api/orders', { cartId: state.cartItems[0].cartItem.cartId }, {
+            headers: { 'X-Auth-Token': props.auth.token },
+            validateStatus: false
+        });
+        if (result.status !== 200) {
+            alert('Some error occured');
+            console.log(result.data);
+            return;
+        }
+
+        alert('Everything is ok');
+        console.log(result);
+    }
+
     const deleteFromCart = async cartItemId => {
         const result = await axios.post('/api/cart/delete', { cartItemId: cartItemId }, {
             headers: { 'X-Auth-Token': props.auth.token },
@@ -31,6 +46,7 @@ const CartPage = (props) => {
         });
         if (result.status !== 200) {
             alert('Some error occured');
+            console.log(result.data);
             return;
         }
 
@@ -59,7 +75,7 @@ const CartPage = (props) => {
                 } PLN
             </p>
 
-            <button className="btn btn-success">
+            <button className="btn btn-success" onClick={finalizeOnClick}>
                 Finalize order
             </button>
         </div>
@@ -81,6 +97,11 @@ const CartPage = (props) => {
                     <p>Price/Item: {ci.product.price.toFixed(2)}PLN</p>
 
                     <p>Total price: {ci.product.price.toFixed(2) * ci.cartItem.quantity} PLN</p>
+
+                    <Link to={`/products/${ci.product.id}`} key={`prod-link-${ci.product.id}`}
+                        className="btn btn-primary mr-2">
+                        Go to product
+                    </Link>
 
                     <button className="btn btn-danger" onClick={async () => await deleteFromCart(ci.cartItem.id)}>
                         Remove from cart

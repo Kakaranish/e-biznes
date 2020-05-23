@@ -58,8 +58,8 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
                 val user = request.identity
                 cartDao.getOrCreateByUserId(user.id).flatMap { cart =>
                   val cartItemToAdd = CartItem(null, cart.id, s.value.productId, s.value.quantity)
-                  cartItemDao.createWithReturn(cartItemToAdd).flatMap { cartItem =>
-                    Future(Ok(Json.toJson(cartItem)))
+                  cartItemDao.create(cartItemToAdd).flatMap { cartItem =>
+                    cartDao.setUpdateDateToNow(cart.id).flatMap { _ => Future(Ok(Json.toJson(cartItem))) }
                   }
                 }
               }

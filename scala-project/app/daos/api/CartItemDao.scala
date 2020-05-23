@@ -68,7 +68,7 @@ class CartItemDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
     }
   }
 
-  def createWithReturn(cartItem: CartItem) = {
+  def create(cartItem: CartItem) = {
     val id = UUID.randomUUID().toString()
     val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
     db.run(cartItemTable += toAdd).map(_ => toAdd)

@@ -21,6 +21,12 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
   import dbConfig._
   import profile.api._
 
+  def getById(cartId: String) = db.run {
+    cartTable.filter(_.id === cartId)
+      .result
+      .headOption
+  }
+
   def getByUserId(userId: String) = db.run {
     cartTable.filter(record => record.userId === userId && record.isFinalized === false)
       .result
@@ -47,6 +53,25 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
 
     val action = cartTable += cartToAdd
     db.run(action).map(_ => cartToAdd)
+  }
+
+  def setFinalized(cartId: String) = db.run {
+    for {
+      _ <- cartTable.filter(record => record.id === cartId)
+        .map(record => record.isFinalized)
+        .update(true)
+      now = new DateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      _ <- cartTable.filter(record => record.id === cartId)
+        .map(record => (record.updateDate))
+        .update(now)
+    } yield ()
+  }
+
+  def setUpdateDateToNow(cartId: String) = db.run {
+    val nowIso = new DateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    cartTable.filter(record => record.id === cartId)
+      .map(record => record.updateDate)
+      .update(nowIso)
   }
 
   def update(cartToUpdate: Cart) = db.run {
