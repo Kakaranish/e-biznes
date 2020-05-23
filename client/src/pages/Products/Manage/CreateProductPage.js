@@ -10,7 +10,7 @@ const CreateProductPage = () => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
-		formData.price = parseFloat(formData.price)
+		formData.price = parseFloat(formData.price).toFixed(2);
 		formData.quantity = parseInt(formData.quantity)
 
 		const result = await axios.post('/api/products', formData,

@@ -65,6 +65,7 @@ PUT           /order/:orderId                              controllers.OrderCont
 GET           /orders/:orderId                             controllers.OrderController.getById(orderId: String)
 
 # PaymentController
+POST          /api/payments                                controllers.api.PaymentControllerApi.create
 GET           /payments                                    controllers.PaymentController.getAll
 GET           /payments/create                             controllers.PaymentController.create
 POST          /payments/create                             controllers.PaymentController.createHandler

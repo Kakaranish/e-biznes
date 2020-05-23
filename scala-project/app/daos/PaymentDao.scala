@@ -3,20 +3,19 @@ package daos
 import java.util.UUID
 
 import javax.inject.{Inject, Singleton}
-import models.{Payment, PaymentTable}
+import models.{Payment, TableDefinitions}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+  extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
-
-  private val paymentTable = TableQuery[PaymentTable]
 
   def getAll() = db.run {
     paymentTable.result

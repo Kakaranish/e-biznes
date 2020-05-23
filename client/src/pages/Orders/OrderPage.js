@@ -6,7 +6,7 @@ import moment from 'moment';
 import Modal from '../../components/Modal';
 
 const OrderPage = (props) => {
-    
+
     const orderId = props.match.params.id;
     const history = useHistory();
 
@@ -28,11 +28,14 @@ const OrderPage = (props) => {
             let paymentsValue = 0;
             result.data.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
 
+            let toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
+
             setState({
                 loading: false,
                 orderInfo: result.data,
                 totalPrice: totalPrice,
-                paymentsValue: paymentsValue
+                paymentsValue: paymentsValue,
+                toPay: toPay
             });
         };
 
@@ -63,9 +66,9 @@ const OrderPage = (props) => {
         <p>
             <b>Paid? </b>
             {
-                state.paymentsValue < state.totalPrice
-                    ? <span className="text-danger">No</span>
-                    : <span className="text-success">Yes</span>
+                state.toPay <= 0
+                    ? <span className="text-success">Yes</span>
+                    : <span className="text-danger">No</span>
             }
         </p>
 
@@ -78,11 +81,11 @@ const OrderPage = (props) => {
         </p>
 
         <p>
-            <b>Remaining money to paid:</b> {(state.totalPrice - state.paymentsValue).toFixed(2)} PLN
+            <b>Remaining money to paid:</b> {state.toPay} PLN
         </p>
 
         {
-            state.paymentsValue < state.totalPrice &&
+            state.toPay > 0 &&
             <Link to={`/orders/${orderId}/payment`} className="btn btn-primary w-25 mb-5">
                 Pay
             </Link>
@@ -139,12 +142,32 @@ const OrderPage = (props) => {
             </div>
         </div>
 
-        <h3>Payments</h3>
-        <div className="p-3 mb-5" style={{ border: "1px solid gray" }}>
-            {
-                !state.orderInfo.payments || state.orderInfo.payments.length === 0
-                    ? <p>You have no payments yet</p>
-                    : <> Payments info </>
+        <div className="mb-5">
+            <h3>Payments</h3>
+            {!state.orderInfo.payments || state.orderInfo.payments.length === 0
+                ? <p>You have no payments yet</p>
+
+                :
+                state.orderInfo.payments.map((p, i) =>
+                    <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`p-${p.id}`}>
+
+                        <p>
+                            <b>Payment Id:</b> {p.id}
+                        </p>
+
+                        <p>
+                            <b>Amount of money:</b> {p.amountOfMoney} PLN
+                        </p>
+
+                        <p>
+                            <b>Payment method:</b> {p.methodCode}
+                        </p>
+
+                        <p>
+                            <b>Paid in:</b> {moment(p.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
+                        </p>
+                    </div>
+                )
             }
         </div>
 
@@ -156,15 +179,24 @@ const OrderPage = (props) => {
                         <b>{ci.product.name}</b>
                     </p>
 
+                    {
+                        ci.product.description &&
+                        <p>
+                            <b>Description:</b> {ci.product.description}
+                        </p>
+                    }
+
                     <p>
-                        {ci.product.description}
+                        <b>Quantity:</b> {ci.cartItem.quantity}
                     </p>
 
-                    <p>Quantity: {ci.cartItem.quantity}</p>
+                    <p>
+                        <b>Price/Item:</b> {ci.product.price.toFixed(2)}PLN
+                    </p>
 
-                    <p>Price/Item: {ci.product.price.toFixed(2)}PLN</p>
-
-                    <p>Total price: {ci.product.price.toFixed(2) * ci.cartItem.quantity} PLN</p>
+                    <p>
+                        <b>Total price:</b> {ci.product.price.toFixed(2) * ci.cartItem.quantity} PLN
+                    </p>
                 </div>
             )
         }
