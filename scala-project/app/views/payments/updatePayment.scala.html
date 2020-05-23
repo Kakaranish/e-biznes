@@ -11,7 +11,6 @@
     <input name="id" value="@paymentForm("id").value" hidden />
     <input name="orderId" value="@paymentForm("orderId").value" hidden />
     <input name="dateCreated" value="@paymentForm("dateCreated").value" hidden />
-    <input name="dateUpdated" value="@paymentForm("dateUpdated").value" hidden />
 
     <div>
       <p>
@@ -26,14 +25,7 @@
     </div>
 
 
-    <div>
-      <p>
-        <b>Date Last Time Updated: </b> @paymentForm("dateUpdated").value
-      </p>
-    </div>
-
     @inputText(paymentForm("methodCode"), '_label -> "Method Code")
-    @inputText(paymentForm("state"), '_label -> "State")
     @inputText(paymentForm("amountOfMoney"), '_label -> "Amount of money")
 
     <div class="buttons" style="margin-top: 10px">

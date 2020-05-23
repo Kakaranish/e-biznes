@@ -7,8 +7,6 @@ case class Payment(id: String,
                    orderId: String,
                    methodCode: String,
                    dateCreated: String,
-                   dateUpdated: String,
-                   state: String,
                    amountOfMoney: Float)
 
 object Payment {
@@ -24,14 +22,10 @@ class PaymentTable(tag: Tag) extends Table[Payment](tag, "Payment") {
 
   def dateCreated = column[String]("DateCreated")
 
-  def dateUpdated = column[String]("DateUpdated")
-
-  def state = column[String]("State")
-
   def amountOfMoney = column[Float]("AmountOfMoney")
 
   def order_fk = foreignKey("order_fk", orderId, TableQuery[OrderTable])(_.id)
 
-  override def * = ((id, orderId, methodCode, dateCreated, dateUpdated, state, amountOfMoney)
+  override def * = ((id, orderId, methodCode, dateCreated, amountOfMoney)
     <> ((Payment.apply _).tupled, Payment.unapply))
 }

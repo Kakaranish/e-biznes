@@ -48,8 +48,7 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
     else {
       val payment = paymentResult.get
       val updateFormToPass = updateForm.fill(UpdatePaymentForm(
-        payment.id, payment.orderId, payment.methodCode, payment.dateCreated,
-        payment.dateUpdated, payment.state, payment.amountOfMoney))
+        payment.id, payment.orderId, payment.methodCode, payment.dateCreated, payment.amountOfMoney))
       Ok(views.html.payments.updatePayment(updateFormToPass))
     }
   }
@@ -60,7 +59,6 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
     mapping(
       "orderId" -> nonEmptyText,
       "methodCode" -> nonEmptyText,
-      "state" -> nonEmptyText,
       "amountOfMoney" -> of(floatFormat)
     )(CreatePaymentForm.apply)(CreatePaymentForm.unapply)
   }
@@ -71,8 +69,6 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
       "orderId" -> nonEmptyText,
       "methodCode" -> nonEmptyText,
       "dateCreated" -> nonEmptyText,
-      "dateUpdated" -> nonEmptyText,
-      "state" -> nonEmptyText,
       "amountOfMoney" -> of(floatFormat)
     )(UpdatePaymentForm.apply)(UpdatePaymentForm.unapply)
   }
@@ -91,7 +87,7 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
         val nowIso = new DateTime().toString(DateTimeFormat
           .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
         val payment = Payment(null, createForm.orderId, createForm.methodCode,
-         nowIso, nowIso, createForm.state, createForm.amountOfMoney)
+         nowIso, createForm.amountOfMoney)
 
         paymentDao.create(payment).map(_ =>
           Redirect(routes.PaymentController.create())
@@ -109,10 +105,8 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
         )
       },
       updateForm => {
-        val nowIso = new DateTime().toString(DateTimeFormat
-          .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
         val payment = Payment(updateForm.id, updateForm.orderId, updateForm.methodCode,
-          updateForm.dateCreated, nowIso, updateForm.state, updateForm.amountOfMoney)
+          updateForm.dateCreated, updateForm.amountOfMoney)
 
         paymentDao.update(payment).map(_ =>
           Redirect(routes.PaymentController.update(payment.id))
@@ -125,13 +119,10 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
 
 case class CreatePaymentForm(orderId: String,
                              methodCode: String,
-                             state: String,
                              amountOfMoney: Float)
 
 case class UpdatePaymentForm(id: String,
                              orderId: String,
                              methodCode: String,
                              dateCreated: String,
-                             dateUpdated: String,
-                             state: String,
                              amountOfMoney: Float)
