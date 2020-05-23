@@ -32,7 +32,7 @@ const App = () => {
           <Route path='/cart' component={CartRoutes} />
           <AuthorizedOnlyRoute path='/wishlist' component={WishlistPage} />
 
-          <MainLayoutRoute component={NotFoundPage} />
+          <Route component={NotFoundPage} />
         </Switch>
       </MainLayout>
     </Router>

@@ -8,7 +8,7 @@ import models.{LoginInfoDb, TableDefinitions, UserLoginInfoDb}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
@@ -28,6 +28,12 @@ class LoginInfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
       _ <- userLoginInfoTable += userLoginInfo
     } yield ()
     db.run(actions)
+  }
+
+  def checkEmailIsAlreadyInUse(email: String) = db.run {
+    userTable.filter(_.email === email)
+      .exists
+      .result
   }
 
   def getAuthenticationProviders(email: String) = {

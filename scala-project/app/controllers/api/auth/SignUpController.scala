@@ -4,6 +4,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.PasswordHasherRegistry
 import com.mohiva.play.silhouette.api.{LoginEvent, LoginInfo, SignUpEvent, Silhouette}
 import com.mohiva.play.silhouette.impl.providers.{CredentialsProvider, SocialProviderRegistry}
+import daos.LoginInfoDao
 import javax.inject.{Inject, Singleton}
 import models.UserIdentity
 import play.api.i18n.I18nSupport
@@ -20,6 +21,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
                                  silhouette: Silhouette[DefaultEnv],
                                  userService: UserService,
                                  authInfoRepository: AuthInfoRepository,
+                                 loginInfoDao: LoginInfoDao,
                                  passwordHasherRegistry: PasswordHasherRegistry,
                                  socialProviderRegistry: SocialProviderRegistry)
                                 (implicit ec: ExecutionContext)
@@ -41,9 +43,9 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
         val data = s.value
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
 
-        userService.retrieve(loginInfo).flatMap {
-          case Some(user) => Future(Status(CONFLICT)(s"email '${user.email}' is already in use"))
-          case None => {
+        loginInfoDao.checkEmailIsAlreadyInUse(data.email).flatMap(isInUse => {
+          if(isInUse) Future(Status(CONFLICT)(s"email '${data.email}' is already in use"))
+          else {
             val userToCreate = UserIdentity(email = s.value.email, firstName = s.value.firstName,
               lastName = s.value.lastName, role = "USER")
             for {
@@ -65,7 +67,7 @@ class SignUpController @Inject()(cc: MessagesControllerComponents,
               result
             }
           }
-        }
+        })
       }
     }
   }
