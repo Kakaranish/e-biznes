@@ -37,26 +37,47 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def getById(productId: String) = silhouette.UserAwareAction.async { implicit request =>
-
     request.identity match {
       case None => {
-        productDao.getPopulatedById(productId).map(product => product match {
+        productDao.getPopulatedById(productId).map(productInfo => productInfo._1 match {
           case Some(prod) => {
+            val opinions = productInfo._2.map(o => Json.obj(
+              "opinion" -> o._1,
+              "user" -> Json.obj(
+                "id" -> o._2.get.id,
+                "firstName" -> o._2.get.firstName,
+                "lastName" -> o._2.get.lastName,
+                "email" -> o._2.get.email
+              )
+            ))
             Ok(Json.obj(
               "product" -> prod._1,
               "category" -> prod._2.getOrElse(null),
-              "wishlistItem" -> JsNull,
-              "cartItem" -> JsNull
+              "opinions" -> opinions
             ))
           }
           case _ => Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
         })
       }
-      case Some(_) => {
+      case Some(user) => {
         productDao.getProductPreview(productId, request.identity.get.id).map(result =>
           if (!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
           else {
-            var resJson = Json.obj("product" -> result._1.get._1)
+            val opinions = result._5.map(o => Json.obj(
+              "opinion" -> o._1,
+              "user" -> Json.obj(
+                "id" -> o._2.get.id,
+                "firstName" -> o._2.get.firstName,
+                "lastName" -> o._2.get.lastName,
+                "email" -> o._2.get.email
+              )
+            ))
+            var resJson = Json.obj(
+              "userId" -> user.id,
+              "product" -> result._1.get._1,
+              "opinions" -> opinions,
+              "boughtByUser" -> result._6
+              )
             if (result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
             if (result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
             if (result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
@@ -113,15 +134,15 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[UpdateProductDto] => {
-        val productResult: Option[(Product, Option[Category])] = Await.result(productDao.getPopulatedById(s.value.id), Duration.Inf)
-        productResult match {
+        productDao.getById(s.value.id).flatMap(productResult => productResult match {
           case Some(_) => {
-            val updatedProduct = Product(s.value.id, s.value.name, s.value.description, s.value.price, s.value.quantity, s.value.categoryId, false)
+            val updatedProduct = Product(s.value.id, s.value.name, s.value.description,
+              s.value.price, s.value.quantity, s.value.categoryId, false)
             productDao.update(updatedProduct)
             Future(Ok)
           }
           case _ => Future(Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id"))))
-        }
+        })
       }
     }
   }
@@ -133,7 +154,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
-        productDao.getPopulatedById(s.value).flatMap(product => {
+        productDao.getById(s.value).flatMap(product => {
           product match {
             case Some(_) => productDao.delete(s.value).flatMap(_ => Future(Ok))
             case _ => Future(Status(NOT_FOUND)(JsError.toJson(JsError("no product with such id"))))

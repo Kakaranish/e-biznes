@@ -62,7 +62,6 @@ CREATE TABLE "Product" (
 	"Name"	TEXT NOT NULL,
 	"Description" TEXT NOT NULL,
 	"Price"	REAL,
-	"PicUrl"	TEXT,
 	"Quantity"	INTEGER NOT NULL DEFAULT 0,
 	"CategoryId"	TEXT NOT NULL,
 	"IsDeleted"	INTEGER NOT NULL DEFAULT 0,

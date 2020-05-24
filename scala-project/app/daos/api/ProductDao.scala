@@ -11,7 +11,8 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
-                             (implicit ec: ExecutionContext) extends TableDefinitions {
+                             (implicit ec: ExecutionContext)
+  extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -37,27 +38,27 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
         if (cart == null || !cart.isDefined) DBIO.successful(null)
         else cartItemTable.filter(r => r.cartId === cart.get.id && r.productId === productId).result.headOption
       }
-    } yield (product, wishlistItem, cart, cartItem)).transactionally
+      opinions <- {
+        if (product == null || !product.isDefined) DBIO.successful(List())
+        else opinionTable.filter(_.productId === productId)
+          .joinLeft(userTable).on((x, y) => x.userId === y.id)
+          .result
+      }
+      boughtByUser <- {
+        if (product == null || !product.isDefined) DBIO.successful(false)
+        else cartItemTable.filter(r => r.productId === productId)
+          .joinLeft(cartTable.filter(_.isFinalized === true)).on((x, y) => x.cartId === y.id)
+          .exists
+          .result
+      }
+
+    } yield (product, wishlistItem, cart, cartItem, opinions, boughtByUser)).transactionally
   }
 
   def getById(productId: String) = db.run {
     productTable.filter(p => p.id === productId && p.isDeleted === false)
       .result
       .headOption
-  }
-
-  def subtractAmt(productId: String, toSubtract: Int) = {
-    (for {
-      product <- productTable.filter(_.id === productId).result.headOption
-      result <- {
-        if(!product.isDefined) DBIO.failed(null)
-        else if(product.get.quantity - toSubtract < 0) DBIO.failed(null)
-        else productTable.filter(_.id === productId)
-          .map(r => r.quantity)
-          .update(product.get.quantity - toSubtract)
-          .map(_ => Some(product.get.copy(quantity = product.get.quantity - toSubtract)))
-      }
-    } yield result).transactionally
   }
 
   def getAllByCategoryId(categoryId: String) = db.run {
@@ -68,18 +69,39 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
       .transactionally
   }
 
-  def getPopulatedById(productId: String) = db.run((for {
-    (product, category) <- productTable.filter(p => p.id === productId && p.isDeleted === false) joinLeft
-      categoryTable on ((x, y) => x.categoryId === y.id)
-  } yield (product, category))
-    .result
-    .headOption
-  )
+  def getPopulatedById(productId: String) = db.run {
+    for {
+      productInfo <- productTable.filter(p => p.id === productId && p.isDeleted === false)
+        .joinLeft(categoryTable).on((x, y) => x.categoryId === y.id)
+        .result
+        .headOption
+      opinions <- {
+        if (productInfo == null || !productInfo.isDefined) DBIO.successful(List())
+        else opinionTable.filter(_.productId === productId)
+          .joinLeft(userTable).on((x, y) => x.userId === y.id)
+          .result
+      }
+    } yield (productInfo, opinions)
+  }
 
   def existsAnyWithCategoryId(categoryId: String) = db.run {
     productTable.filter(p => p.isDeleted === false && p.categoryId === categoryId)
       .exists
       .result
+  }
+
+  def subtractAmt(productId: String, toSubtract: Int) = {
+    (for {
+      product <- productTable.filter(_.id === productId).result.headOption
+      result <- {
+        if (!product.isDefined) DBIO.failed(null)
+        else if (product.get.quantity - toSubtract < 0) DBIO.failed(null)
+        else productTable.filter(_.id === productId)
+          .map(r => r.quantity)
+          .update(product.get.quantity - toSubtract)
+          .map(_ => Some(product.get.copy(quantity = product.get.quantity - toSubtract)))
+      }
+    } yield result).transactionally
   }
 
   def create(product: Product) = db.run {

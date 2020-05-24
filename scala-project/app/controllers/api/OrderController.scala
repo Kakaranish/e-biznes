@@ -21,7 +21,8 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
   extends MessagesAbstractController(cc) {
 
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
-    implicit val createOrderRead = (JsPath \ "cartId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+    implicit val createOrderRead =
+      (JsPath \ "cartId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
 
     val validation = request.body.validate[String](createOrderRead)
     validation match {

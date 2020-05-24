@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import { isValidUUID } from '../../common';
 import ProductWishlistStatus from './ProductWishlistStatus';
 import * as AuthUtils from '../Auth/Utils';
 import { getFormDataJsonFromEvent } from '../../common';
+import Modal from '../../components/Modal';
+import AddOpinion from './Components/AddOpinion';
 
 const ProductPage = (props) => {
 
@@ -52,7 +54,15 @@ const ProductPage = (props) => {
 				alert('Some error occured');
 				return;
 			}
-			setState({ loading: false, result: result.data });
+
+			const allowAddOpinion = !result.data.opinions.some(o => o.user.id === result.data.userId)
+				&& result.data.boughtByUser;
+			setState({
+				loading: false,
+				result: Object.assign({
+					allowAddOpinion: allowAddOpinion
+				}, result.data)
+			});
 		};
 
 		if (isValidUUID(productId)) fetchProduct();
@@ -79,7 +89,7 @@ const ProductPage = (props) => {
 
 			<p>
 				<b>Price:</b> {state.result.product.price.toFixed(2)}PLN
-            </p>
+			</p>
 
 			<p>
 				<b>Available quantity:</b> {state.result.product.quantity}
@@ -92,7 +102,7 @@ const ProductPage = (props) => {
 			{
 				state.result.product.quantity === 0
 					? <h3 className="text-danger">Product is not available</h3>
-					: <form onSubmit={addToCartOnSubmit} className="form-inline">
+					: <form onSubmit={addToCartOnSubmit} className="form-inline mb-4">
 						<div className="form-group w-100">
 							<input name="quantity" type="number" step="1" min="0" max={state.result.product.quantity} className="form-control form-control"
 								style={{ width: "10%" }} placeholder="Quantity to add" disabled={state.result.cartItem ? true : false} required />
@@ -106,6 +116,73 @@ const ProductPage = (props) => {
 						</div>
 					</form>
 			}
+
+			<h3 className="mb-4">Opinions</h3>
+			{
+				!state.result.opinions || state.result.opinions.length === 0
+					? <p>No opinions yet</p>
+					: (() => {
+						const deleteOpinionOnClick = async opinionId => {
+							const result = await axios.delete('/api/opinions', {
+								data: { opinionId: opinionId },
+								validateStatus: false,
+								headers: { 'X-Auth-Token': props.auth.token }
+							});
+
+							if (result.status !== 200) {
+								alert('Some error occured');
+								console.log(result.data);
+								return;
+							}
+
+							history.go();
+						}
+
+						return <>
+							{
+								state.result.opinions.map(o =>
+									<div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`o-${o.opinion.id}`}>
+										<p className="mb-1">
+											<b>{o.user.firstName} {o.user.lastName}</b> ({o.user.email}) wrote:
+									</p>
+
+										<p>{o.opinion.content}</p>
+
+										<Link to={'/'} className="btn btn-primary w-25">
+											Edit
+									</Link>
+
+										<Modal title={"Are you sure"}
+											btnText={"Delete"}
+											btnClasses={"btn btn-danger w-25"}
+											modalTitle={"Are you sure?"}
+											modalPrimaryBtnText={"Delete"}
+											modalPrimaryBtnClasses={"btn btn-danger"}
+											onModalPrimaryBtnClick={async () => deleteOpinionOnClick(o.opinion.id)}
+											modalSecondaryBtnText={"Cancel"}
+											modalSecondaryBtnClasses={"btn btn-secondary"}
+										/>
+									</div>)
+							}
+						</>
+					})()
+			}
+
+			{
+				state.result.allowAddOpinion &&
+				(() => {
+					const addOpinionCallback = () => {
+						history.go();
+					}
+
+					return <>
+						<AddOpinion productId={productId}
+							callback={addOpinionCallback}
+						/>
+					</>
+				})()
+			}
+			
 		</>
 	}
 };

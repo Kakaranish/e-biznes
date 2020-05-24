@@ -1,7 +1,10 @@
 import React from 'react';
 import * as AuthUtils from '../pages/Auth/Utils';
+import { useHistory } from 'react-router-dom';
 
 const Logout = (props) => {
+
+    const history = useHistory();
 
     const onClick = () => {
         if (!props.auth) {
@@ -9,8 +12,8 @@ const Logout = (props) => {
             return;
         }
 
-        localStorage.removeItem('auth');
         props.logOut();
+        history.go();
     };
 
     return <div onClick={onClick}>

@@ -107,7 +107,7 @@ const PaymentPage = (props) => {
 
 				<button type="submit" className="btn btn-primary w-25 mr-2">
 					Pay
-        </button>
+        		</button>
 			</div>
 		</form>
 	</>
