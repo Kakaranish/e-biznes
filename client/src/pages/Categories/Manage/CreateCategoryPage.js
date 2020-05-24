@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getFormDataJsonFromEvent } from '../../../common';
+import { getFormDataJsonFromEvent } from '../../../Utils';
 import axios from 'axios';
 
 const CreateCategoryPage = () => {

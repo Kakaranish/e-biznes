@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, useHistory } from 'react-router-dom';
-import * as AuthUtils from '../pages/Auth/Utils';
+import * as Utils from '../Utils';
 
 const NotAuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
 
@@ -26,4 +26,4 @@ const NotAuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
     )} />
 };
 
-export default AuthUtils.createAuthAwareComponent(NotAuthorizedOnlyRoute);
+export default Utils.createAuthAwareComponent(NotAuthorizedOnlyRoute);

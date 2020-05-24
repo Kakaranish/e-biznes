@@ -16,6 +16,7 @@ import CategoriesPage from './pages/Categories/CategoriesPage';
 import MainLayout from './routes/MainLayout';
 import AuthorizedOnlyRoute from './routes/AuthorizedOnlyRoute';
 import OrderRoutes from './pages/Orders/OrderRoutes';
+import NotificationsPage from './pages/Notifications/NotificationsPage';
 
 const App = () => {
   return <>
@@ -31,6 +32,7 @@ const App = () => {
           <Route path='/users' component={UserRoutes} />
           <Route path='/auth' component={AuthRoutes} />
           <Route path='/cart' component={CartRoutes} />
+          <AuthorizedOnlyRoute path='/notifications' component={NotificationsPage} />
           <AuthorizedOnlyRoute path='/wishlist' component={WishlistPage} />
 
           <Route component={NotFoundPage} />

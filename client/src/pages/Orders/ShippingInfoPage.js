@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { createAuthAwareComponent } from '../Auth/Utils';
+import { createAuthAwareComponent, getFormDataJsonFromEvent } from '../../Utils';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../common';
 
 const ShippingInfoPage = (props) => {
 

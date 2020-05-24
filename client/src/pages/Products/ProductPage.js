@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID } from '../../common';
+import { isValidUUID } from '../../Utils';
 import ProductWishlistStatus from './ProductWishlistStatus';
-import * as AuthUtils from '../Auth/Utils';
-import { getFormDataJsonFromEvent } from '../../common';
+import * as Utils from '../../Utils';
 import Modal from '../../components/Modal';
 import AddOpinion from './Components/AddOpinion';
 
@@ -15,7 +14,7 @@ const ProductPage = (props) => {
 
 	const addToCartOnSubmit = async event => {
 		event.preventDefault();
-		let formData = getFormDataJsonFromEvent(event);
+		let formData = Utils.getFormDataJsonFromEvent(event);
 		formData.quantity = parseInt(formData.quantity);
 		formData.productId = productId;
 
@@ -32,6 +31,22 @@ const ProductPage = (props) => {
 		if (result.status !== 200) {
 			alert('Internal error. Try to refresh page.');
 			console.log(result);
+			return;
+		}
+
+		history.go();
+	}
+
+	const deleteOpinionOnClick = async opinionId => {
+		const result = await axios.delete('/api/opinions', {
+			data: { opinionId: opinionId },
+			validateStatus: false,
+			headers: { 'X-Auth-Token': props.auth.token }
+		});
+
+		if (result.status !== 200) {
+			alert('Some error occured');
+			console.log(result.data);
 			return;
 		}
 
@@ -67,6 +82,8 @@ const ProductPage = (props) => {
 
 		if (isValidUUID(productId)) fetchProduct();
 	}, []);
+
+	// ---  RENDER  ------------------------------------------------------------------------------------------------------
 
 	if (!isValidUUID(productId)) return <h3>Product Id '{productId}' is invalid UUID</h3>
 	else if (state.loading) return <></>
@@ -121,56 +138,39 @@ const ProductPage = (props) => {
 			{
 				!state.result.opinions || state.result.opinions.length === 0
 					? <p>No opinions yet</p>
-					: (() => {
-						const deleteOpinionOnClick = async opinionId => {
-							const result = await axios.delete('/api/opinions', {
-								data: { opinionId: opinionId },
-								validateStatus: false,
-								headers: { 'X-Auth-Token': props.auth.token }
-							});
-
-							if (result.status !== 200) {
-								alert('Some error occured');
-								console.log(result.data);
-								return;
-							}
-
-							history.go();
-						}
-
-						return <>
-							{
-								state.result.opinions.map(o =>
-									<div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`o-${o.opinion.id}`}>
-										<p className="mb-1">
-											<b>{o.user.firstName} {o.user.lastName}</b> ({o.user.email}) wrote:
+					: <>
+						{
+							state.result.opinions.map(o =>
+								<div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`o-${o.opinion.id}`}>
+									<p className="mb-1">
+										<b>{o.user.firstName} {o.user.lastName}</b> ({o.user.email}) wrote:
 									</p>
 
-										<p>{o.opinion.content}</p>
+									<p>{o.opinion.content}</p>
 
-										{
-											state.result.userId === o.user.id && <>
-												<Link to={'/'} className="btn btn-primary w-25">
-													Edit
+									{
+										state.result.userId === o.user.id && <>
+											<Link to={'/'} className="btn btn-primary w-25">
+												Edit
 												</Link>
 
-												<Modal title={"Are you sure"}
-													btnText={"Delete"}
-													btnClasses={"btn btn-danger w-25"}
-													modalTitle={"Are you sure?"}
-													modalPrimaryBtnText={"Delete"}
-													modalPrimaryBtnClasses={"btn btn-danger"}
-													onModalPrimaryBtnClick={async () => deleteOpinionOnClick(o.opinion.id)}
-													modalSecondaryBtnText={"Cancel"}
-													modalSecondaryBtnClasses={"btn btn-secondary"}
-												/>
-											</>
-										}
-									</div>
-								)
-							}
-						</>
-					})()
+											<Modal title={"Are you sure"}
+												btnText={"Delete"}
+												btnClasses={"btn btn-danger w-25"}
+												modalTitle={"Are you sure?"}
+												modalPrimaryBtnText={"Delete"}
+												modalPrimaryBtnClasses={"btn btn-danger"}
+												onModalPrimaryBtnClick={async () => deleteOpinionOnClick(o.opinion.id)}
+												modalSecondaryBtnText={"Cancel"}
+												modalSecondaryBtnClasses={"btn btn-secondary"}
+											/>
+										</>
+									}
+								</div>
+							)
+						}
+					</>
+
 			}
 
 			{
@@ -183,4 +183,4 @@ const ProductPage = (props) => {
 };
 
 
-export default AuthUtils.createAuthAwareComponent(ProductPage);
+export default Utils.createAuthAwareComponent(ProductPage);

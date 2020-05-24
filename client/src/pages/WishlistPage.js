@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductWishlistStatus from './Products/ProductWishlistStatus';
-import * as AuthUtils from './Auth/Utils';
+import * as Utils from '../Utils';
 
 const WishlistPage = (props) => {
 
@@ -51,4 +51,4 @@ const WishlistPage = (props) => {
     </>
 };
 
-export default AuthUtils.createAuthAwareComponent(WishlistPage);
+export default Utils.createAuthAwareComponent(WishlistPage);

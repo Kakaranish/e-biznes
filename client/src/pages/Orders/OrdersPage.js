@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import { createAuthAwareComponent } from '../Auth/Utils';
+import { createAuthAwareComponent } from '../../Utils';
 
 const OrdersPage = (props) => {
 

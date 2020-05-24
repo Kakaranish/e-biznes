@@ -1,5 +1,5 @@
 import React from 'react';
-import * as AuthUtils from '../pages/Auth/Utils';
+import * as Utils from '../Utils';
 import { useHistory } from 'react-router-dom';
 
 const Logout = (props) => {
@@ -21,4 +21,4 @@ const Logout = (props) => {
     </div>
 };
 
-export default AuthUtils.createAuthAwareComponent(Logout);
+export default Utils.createAuthAwareComponent(Logout);

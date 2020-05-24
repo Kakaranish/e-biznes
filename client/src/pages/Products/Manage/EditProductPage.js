@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { isValidUUID } from '../../../common';
+import { isValidUUID, getFormDataJsonFromEvent } from '../../../Utils';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../../common';
 
 const EditProductPage = (props) => {
 	

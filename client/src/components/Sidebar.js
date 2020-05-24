@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as AuthUtils from '../pages/Auth/Utils';
+import * as Utils from '../Utils';
 
 const Sidebar = (props) => {
 
@@ -72,4 +72,4 @@ const Sidebar = (props) => {
     );
 };
 
-export default AuthUtils.createAuthAwareComponent(Sidebar);
+export default Utils.createAuthAwareComponent(Sidebar);

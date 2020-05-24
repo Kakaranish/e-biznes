@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { createAuthAwareComponent } from '../Auth/Utils';
+import { createAuthAwareComponent } from '../../Utils';
 import axios from 'axios';
 import moment from 'moment';
 import Modal from '../../components/Modal';

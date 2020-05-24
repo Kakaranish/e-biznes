@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID } from '../../common';
+import { isValidUUID } from '../../Utils';
 
 const UserPage = (props) => {
     

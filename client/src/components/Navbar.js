@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
-import cartIcon from '../../src/assets/img/cart.svg';
 import Logout from './Logout';
-import * as AuthUtils from '../pages/Auth/Utils';
+import cartIcon from '../../src/assets/img/cart.svg';
+import notificationIcon from '../../src/assets/img/notification.svg';
+import { createAuthAndNotifAwareComponent } from '../Utils';
 
 const Navbar = (props) => {
 
@@ -23,6 +24,17 @@ const Navbar = (props) => {
 				props.auth?.email && <>
 
 					<ul className="navbar-nav ml-auto mt-lg-0">
+						<Link to={{ pathname: '/notifications' }} className="bg-blue border-darken-2 mr-2" style={{ cursor: "pointer" }} >
+							<img src={notificationIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
+
+							{
+								props.notifs?.length > 0 &&
+								<span class="badge badge-danger">
+									{props.notifs.length}
+								</span>
+							}
+						</Link>
+
 						<Link to={{ pathname: '/cart' }}>
 							<img src={cartIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
 						</Link>
@@ -55,4 +67,4 @@ const Navbar = (props) => {
 	);
 };
 
-export default AuthUtils.createAuthAwareComponent(Navbar);
+export default createAuthAndNotifAwareComponent(Navbar);

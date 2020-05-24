@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
-import * as AuthUtils from '../Auth/Utils';
+import * as Utils from '../../Utils';
 
 const CartPage = (props) => {
 
@@ -134,4 +134,4 @@ const CartPage = (props) => {
     </>
 };
 
-export default AuthUtils.createAuthAwareComponent(CartPage);
+export default Utils.createAuthAwareComponent(CartPage);

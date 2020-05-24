@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { createAuthAwareComponent } from '../Auth/Utils';
-import { getFormDataJsonFromEvent } from '../../common';
+import { createAuthAwareComponent } from '../../Utils';
+import { getFormDataJsonFromEvent } from '../../Utils';
 
 const PaymentPage = (props) => {
 

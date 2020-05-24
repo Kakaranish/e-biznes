@@ -1,6 +1,5 @@
 import React from 'react';
-import { createAuthAwareComponent } from '../../Auth/Utils';
-import { getFormDataJsonFromEvent } from '../../../common';
+import { createAuthAwareComponent, getFormDataJsonFromEvent } from '../../../Utils';
 import axios from 'axios';
 
 const AddOpinion = (props) => {

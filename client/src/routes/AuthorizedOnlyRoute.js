@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import * as AuthUtils from '../pages/Auth/Utils';
+import * as Utils from '../Utils';
 
 const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
 
@@ -60,4 +60,4 @@ const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
     )} />
 };
 
-export default AuthUtils.createAuthAwareComponent(AuthorizedOnlyRoute);
+export default Utils.createAuthAwareComponent(AuthorizedOnlyRoute);

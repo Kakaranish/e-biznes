@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { isValidUUID } from '../../../common';
+import { isValidUUID } from '../../../Utils';
 import Modal from '../../../components/Modal';
 import { useHistory } from 'react-router-dom';
 

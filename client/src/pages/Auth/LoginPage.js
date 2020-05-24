@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../common';
-import * as AuthUtils from '../Auth/Utils';
+import { getFormDataJsonFromEvent } from '../../Utils';
+import * as Utils from '../../Utils';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
 
@@ -81,4 +81,4 @@ const LoginPage = (props) => {
     </>
 };
 
-export default AuthUtils.createAuthAwareComponent(LoginPage);
+export default Utils.createAuthAwareComponent(LoginPage);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID, getFormDataJsonFromEvent } from '../../../common';
+import { isValidUUID, getFormDataJsonFromEvent } from '../../../Utils';
 
 const EditCategoryPage = (props) => {
 	const categoryId = props.match.params.id;
