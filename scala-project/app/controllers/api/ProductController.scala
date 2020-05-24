@@ -39,7 +39,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
   def getById(productId: String) = silhouette.UserAwareAction.async { implicit request =>
     request.identity match {
       case None => {
-        productDao.getPopulatedById(productId).map(productInfo => productInfo._1 match {
+        productDao.getWhenNotLoggedInPopulatedProduct(productId).map(productInfo => productInfo._1 match {
           case Some(prod) => {
             val opinions = productInfo._2.map(o => Json.obj(
               "opinion" -> o._1,
@@ -60,7 +60,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
         })
       }
       case Some(user) => {
-        productDao.getProductPreview(productId, request.identity.get.id).map(result =>
+        productDao.getWhenLoggedInPopulatedProduct(productId, request.identity.get.id).map(result =>
           if (!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
           else {
             val opinions = result._5.map(o => Json.obj(

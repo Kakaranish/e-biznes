@@ -109,8 +109,8 @@ const ProductPage = (props) => {
 							<button type="submit" className="btn btn-primary w-25 mr-2" disabled={state.result.cartItem ? true : false}>
 								{
 									state.result.cartItem
-										? <>Product already in cart</>
-										: <>Add to cart</>
+										? "Product already in cart"
+										: "Add to cart"
 								}
 							</button>
 						</div>
@@ -148,21 +148,26 @@ const ProductPage = (props) => {
 
 										<p>{o.opinion.content}</p>
 
-										<Link to={'/'} className="btn btn-primary w-25">
-											Edit
-									</Link>
+										{
+											state.result.userId === o.user.id && <>
+												<Link to={'/'} className="btn btn-primary w-25">
+													Edit
+												</Link>
 
-										<Modal title={"Are you sure"}
-											btnText={"Delete"}
-											btnClasses={"btn btn-danger w-25"}
-											modalTitle={"Are you sure?"}
-											modalPrimaryBtnText={"Delete"}
-											modalPrimaryBtnClasses={"btn btn-danger"}
-											onModalPrimaryBtnClick={async () => deleteOpinionOnClick(o.opinion.id)}
-											modalSecondaryBtnText={"Cancel"}
-											modalSecondaryBtnClasses={"btn btn-secondary"}
-										/>
-									</div>)
+												<Modal title={"Are you sure"}
+													btnText={"Delete"}
+													btnClasses={"btn btn-danger w-25"}
+													modalTitle={"Are you sure?"}
+													modalPrimaryBtnText={"Delete"}
+													modalPrimaryBtnClasses={"btn btn-danger"}
+													onModalPrimaryBtnClick={async () => deleteOpinionOnClick(o.opinion.id)}
+													modalSecondaryBtnText={"Cancel"}
+													modalSecondaryBtnClasses={"btn btn-secondary"}
+												/>
+											</>
+										}
+									</div>
+								)
 							}
 						</>
 					})()
@@ -170,19 +175,9 @@ const ProductPage = (props) => {
 
 			{
 				state.result.allowAddOpinion &&
-				(() => {
-					const addOpinionCallback = () => {
-						history.go();
-					}
-
-					return <>
-						<AddOpinion productId={productId}
-							callback={addOpinionCallback}
-						/>
-					</>
-				})()
+				<AddOpinion productId={productId} callback={() => history.go()} />
 			}
-			
+
 		</>
 	}
 };

@@ -45,7 +45,8 @@ class OpinionDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
       wasBought <- {
         if(exists) DBIO.successful(true)
         else cartItemTable.filter(r => r.productId === productId)
-          .joinLeft(cartTable.filter(_.isFinalized === true)).on((x, y) => x.cartId === y.id)
+          .joinLeft(cartTable).on((x, y) => x.cartId === y.id)
+          .filter(c => c._2.map(_.userId) === userId && c._2.map(_.isFinalized) === true)
           .exists
           .result
       }
