@@ -29,7 +29,7 @@ const Navbar = (props) => {
 
 							{
 								props.notifs?.length > 0 &&
-								<span class="badge badge-danger">
+								<span className="badge badge-danger">
 									{props.notifs.length}
 								</span>
 							}

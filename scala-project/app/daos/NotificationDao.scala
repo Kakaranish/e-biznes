@@ -10,14 +10,14 @@ import slick.jdbc.JdbcProfile
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class NotificationDao @Inject()(dbConfigProvider: DatabaseConfigProvider, userDao: UserDao)(implicit ec: ExecutionContext) {
+class NotificationDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
+                                userDao: UserDao)
+                               (implicit ec: ExecutionContext)
+  extends TableDefinitions {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
-
-  private val userTable = TableQuery[UserTable]
-  private val notificationTable = TableQuery[NotificationTable]
 
   def getAllForUser(userId: String) = db.run((for {
     (notification, user) <- notificationTable joinLeft

@@ -36,6 +36,9 @@ GET           /categories/:categoryId                      controllers.CategoryC
 GET           /featured/:productId                         controllers.FeaturedController.featured(productId: String)
 
 # NotificationController
+GET           /api/notifications/user/unread               controllers.api.NotificationControllerApi.getUnreadForUser
+GET           /api/notifications/user                      controllers.api.NotificationControllerApi.getAllForUser
+POST          /api/notifications/user                      controllers.api.NotificationControllerApi.makeAllReadForUser
 GET           /notifications/user/:userId                  controllers.NotificationController.notifications(userId: String)
 GET           /notifications/create                        controllers.NotificationController.create
 POST          /notifications/create                        controllers.NotificationController.createHandler
