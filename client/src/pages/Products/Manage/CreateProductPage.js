@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 
 const CreateProductPage = () => {
 
@@ -10,30 +10,31 @@ const CreateProductPage = () => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
-		formData.price = parseFloat(formData.price).toFixed(2);
+		formData.price = parseFloat(parseFloat(formData.price).toFixed(2));
 		formData.quantity = parseInt(formData.quantity)
 
-		const result = await axios.post('/api/products', formData,
-			{ validateStatus: false });
-		if (result.status !== 200) {
-			alert('Some error occured');
-			console.log(result);
-			return;
+		try {
+			const action = async () => axios.post('/api/products', formData,
+				{ validateStatus: false });
+			await doRequest(action);
+			history.push('/manage/products');
+		} catch (error) {
+			alert(`${error} error occured`);
 		}
-
-		history.push('/manage/products');
 	};
 
 	const [state, setState] = useState({ loading: true, categories: null });
 	useEffect(() => {
 		const fetchCategories = async () => {
-			const result = await axios.get('/api/categories', { validateStatus: false });
-			if (result.status !== 200) {
-				alert('Some error occured');
+			try {
+				const action = async () => axios.get('/api/categories',
+					{ validateStatus: false });
+				const result = await doRequest(action);
+				setState({ loading: false, categories: result });
+			} catch (error) {
 				setState({ loading: false, categories: null });
-				return;
+				alert(`${error} error occured`);
 			}
-			setState({ loading: false, categories: result.data });
 		};
 		fetchCategories();
 	}, []);

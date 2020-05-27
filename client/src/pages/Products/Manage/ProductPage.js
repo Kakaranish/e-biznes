@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../../components/Modal';
-import { isValidUUID } from '../../../Utils';
+import { isValidUUID, doRequest } from '../../../Utils';
 
 const ProductPage = (props) => {
 
@@ -10,40 +10,38 @@ const ProductPage = (props) => {
     const productId = props.match.params.id;
 
     const onEdit = () => history.push(`/manage/products/${productId}/edit`);
+
     const onDelete = async () => {
-        const result = await axios.delete('/api/products',
+        const action = async () => axios.delete('/api/products',
             { validateStatus: false, data: { id: productId } });
-        if (result.status === 500) {
-            alert('Some error occured');
-            console.log(result);
-            return;
+
+        try {
+            await doRequest(action);
+            setValidationErrors(null);
+            history.push('/manage/products');
+        } catch (error) {
+            if (error === 404) {
+                setValidationErrors(["no product with such id"]);
+                return;
+            } 
+            alert(`${error} occured`)
         }
-        if (result.status === 404) {
-            const validationErrors = result.data.obj.map(e => e.msg[0]);
-            setValidationErrors(validationErrors);
-            return;
-        }
-        alert('Removed');
-        setValidationErrors(null);
-        history.push('/manage/products');
     }
-    
+
     const [validationErrors, setValidationErrors] = useState(null);
     const [state, setState] = useState({ loading: true, product: null });
     useEffect(() => {
         const fetchProduct = async () => {
-            const result = await axios.get(`/api/products/${productId}`,
+            const action = async () => axios.get(`/api/products/${productId}`,
                 { validateStatus: false });
 
-            if (result.status === 404) {
-                setState({ loading: false, product: null });
-                return;
+            try {
+                const result = await doRequest(action);
+                setState({ loading: false, product: result });
+            } catch (error) {
+                if (error === 404) setState({ loading: false, product: null });
+                alert(`${error} occured`);
             }
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
-            }
-            setState({ loading: false, product: result.data });
         };
 
         if (isValidUUID(productId)) fetchProduct();
@@ -54,27 +52,8 @@ const ProductPage = (props) => {
     else {
         if (!state.product) return <h3>Product Id '{productId}' does not exist</h3>
         else return <>
-            <h3>Product {state.product.product.id}</h3>
 
-            <p>
-                <b>Name:</b> {state.product.product.name}
-            </p>
-
-            <p>
-                <b>Description:</b> {state.product.product.description}
-            </p>
-
-            <p>
-                <b>Price:</b> {state.product.product.price.toFixed(2)}
-            </p>
-
-            <p>
-                <b>Available quantity:</b> {state.product.product.quantity}
-            </p>
-
-            <p>
-                <b>Category:</b> {state.product.category?.name ?? 'None'}
-            </p>
+            <Product product={state.product} />
 
             <button type="button" className="btn btn-primary w-25 mr-2" onClick={onEdit}>
                 Edit
@@ -108,6 +87,33 @@ const ProductPage = (props) => {
             }
         </>
     }
+};
+
+const Product = (props) => {
+    const product = props.product;
+    return <>
+        <h3>Product {product.product.id}</h3>
+
+        <p>
+            <b>Name:</b> {product.product.name}
+        </p>
+
+        <p>
+            <b>Description:</b> {product.product.description}
+        </p>
+
+        <p>
+            <b>Price:</b> {product.product.price.toFixed(2)}
+        </p>
+
+        <p>
+            <b>Available quantity:</b> {product.product.quantity}
+        </p>
+
+        <p>
+            <b>Category:</b> {product.category?.name ?? 'None'}
+        </p>
+    </>
 };
 
 export default ProductPage;

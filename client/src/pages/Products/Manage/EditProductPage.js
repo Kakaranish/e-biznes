@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { isValidUUID, getFormDataJsonFromEvent } from '../../../Utils';
+import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import axios from 'axios';
 
 const EditProductPage = (props) => {
-	
+
 	const history = useHistory();
 	const productId = props.match.params.id;
 
@@ -14,14 +14,15 @@ const EditProductPage = (props) => {
 		formData.price = parseFloat(formData.price);
 		formData.quantity = parseInt(formData.quantity);
 
-		const result = await axios.put('/api/products', formData, { validateStatus: false });
-		if (result.status !== 200) {
-			alert('Some error occured');
-			console.log(result);
-			return;
-		}
 
-		history.push(`/manage/products/${productId}`);
+		try {
+			const action = async () => axios.put('/api/products', formData,
+				{ validateStatus: false });
+			await doRequest(action);
+			history.push(`/manage/products/${productId}`);
+		} catch (error) {
+			alert(`${error} error occured`);
+		}
 	};
 
 	const [state, setState] = useState({
@@ -31,31 +32,32 @@ const EditProductPage = (props) => {
 	useEffect(() => {
 		const fetchData = async () => {
 
-			const productResult = await axios.get(`/api/products/${productId}`,
-				{ validateStatus: false });
-
-			if (productResult.status === 404) {
-				setState({ loading: false });
-				return;
-			}
-			if (productResult.status !== 200) {
-				alert('Some error occured');
-				setState({ loading: false, error: 'Failed loading product' });
+			let productResult;
+			try {
+				const action = async () => axios.get(`/api/products/${productId}`,
+					{ validateStatus: false });
+				productResult = await doRequest(action);
+			} catch (error) {
+				if (error === 404) setState({ loading: false });
+				alert(`${error} error occured while loading product`);
 				return;
 			}
 
-			const categoriesResult = await axios.get('/api/categories',
-				{ validateStatus: false });
-			if (categoriesResult.status !== 200) {
-				alert('Some error occured');
-				setState({ loading: false, error: 'Failed loading categories' });
+			let categoriesResult;
+			try {
+				const action = async () => axios.get('/api/categories',
+					{ validateStatus: false });
+				categoriesResult = await doRequest(action);
+			} catch (error) {
+				alert(`${error} error occured`);
+				setState({ loading: false })
 				return;
 			}
 
 			setState({
 				loading: false,
-				product: productResult.data.product,
-				categories: categoriesResult.data
+				product: productResult.product,
+				categories: categoriesResult
 			});
 		};
 

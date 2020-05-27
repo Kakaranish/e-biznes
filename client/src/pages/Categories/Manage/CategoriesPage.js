@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { doRequest } from '../../../Utils';
 
 const CategoriesPage = () => {
-	
+
 	const [state, setState] = useState({ loading: true, categories: null });
-	
+
 	useEffect(() => {
 		const getMessage = async () => {
-			const result = await axios.get('/api/categories', { validateStatus: false });
-			if (result.status !== 200) {
-				alert('Some error occured');
-				return;
+			const action = async () => axios.get('/api/categories', { validateStatus: false });
+			
+			try {
+				const result = await doRequest(action);
+				setState({ loading: false, categories: result });
+			} catch (error) {
+				alert(error.msg);
 			}
-			setState({ loading: false, categories: result.data });
 		};
 
 		getMessage();

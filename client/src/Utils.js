@@ -13,3 +13,12 @@ export const getFormDataJsonFromEvent = event => {
 
     return formDataJson;
 }
+
+
+export const doRequest = async requestAction => {
+    const result = await requestAction();
+    if(result.status === 200) return result.data;
+    
+    console.log(result);
+    throw result.status;
+}

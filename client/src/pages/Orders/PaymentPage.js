@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const PaymentPage = (props) => {
@@ -20,43 +20,45 @@ const PaymentPage = (props) => {
 		formData.amountOfMoney = parseFloat(formData.amountOfMoney);
 		formData.orderId = orderId;
 
-		const result = await axios.post('/api/payments', formData, {
-			headers: { 'X-Auth-Token': props.auth.token },
-			validateStatus: false
-		});
-		if (result.status !== 200) {
-			alert('Some error occured');
-			console.log(result);
-			return;
+		try {
+			const action = async () => axios.post('/api/payments', formData, {
+				headers: { 'X-Auth-Token': props.auth.token },
+				validateStatus: false
+			});			
+			await doRequest(action);
+			history.push(`/orders/${orderId}`);
+		} catch (error) {
+			alert(`${error} error occured`);
 		}
-		
-		history.push(`/orders/${orderId}`);
 	}
 
 	const [state, setState] = useState({ loading: true, orderInfo: null });
 	useEffect(() => {
 		const fetchOrder = async () => {
-			const result = await axios.get(`/api/orders/${orderId}`, {
-				headers: { 'X-Auth-Token': props.auth.token },
-				validateStatus: false
-			});
-			if (result.status !== 200) {
-				alert('Some error occured');
-				return;
+			
+			let result;
+			try {
+				const action = async () => axios.get(`/api/orders/${orderId}`, {
+					headers: { 'X-Auth-Token': props.auth.token },
+					validateStatus: false
+				});
+				result = await doRequest(action);
+			} catch (error) {
+				alert(`${error} error occured`);
 			}
 
 			let totalPrice = 0;
-			result.data.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
+			result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
 
 			let paymentsValue = 0;
-			result.data.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
+			result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
 
 			const toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
 
-			console.log(result.data);
+			console.log(result);
 			setState({
 				loading: false,
-				orderInfo: result.data,
+				orderInfo: result,
 				totalPrice: totalPrice,
 				paymentsValue: paymentsValue,
 				toPay: toPay
@@ -114,5 +116,5 @@ const PaymentPage = (props) => {
 };
 
 export default new AwareComponentBuilder()
-    .withAuthAwareness()
-    .build(PaymentPage);
+	.withAuthAwareness()
+	.build(PaymentPage);

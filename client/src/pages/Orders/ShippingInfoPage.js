@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getFormDataJsonFromEvent } from '../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../Utils';
 import axios from 'axios';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
@@ -12,23 +12,21 @@ const ShippingInfoPage = (props) => {
     const [state, setState] = useState({ loading: true, orderInfo: null });
     useEffect(() => {
         const fetchOrder = async () => {
-            const result = await axios.get(`/api/orders/${orderId}/shipping-info`, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status === 404) {
-                setState({
-                    loading: false,
-                    orderInfo: null
+
+            try {
+                const action = async () => axios.get(`/api/orders/${orderId}/shipping-info`, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
                 });
-                return;
+                const result = await doRequest(action);
+                setState({ loading: false, orderInfo: result });
+            } catch (error) {
+                if (error === 404) {
+                    setState({ loading: false, orderInfo: null });
+                    return;
+                }
+                alert(`${error} error occured`);
             }
-            if (result.status !== 200) {
-                alert('Some error occured');
-                console.log(result);
-                return;
-            }
-            setState({ loading: false, orderInfo: result.data });
         }
         fetchOrder();
     }, []);
@@ -42,17 +40,17 @@ const ShippingInfoPage = (props) => {
             let formData = getFormDataJsonFromEvent(event);
             formData.orderId = orderId;
 
-            const result = await axios.put(`/api/shipping-info`, formData, {
+            const action = async () => axios.put(`/api/shipping-info`, formData, {
                 headers: { 'X-Auth-Token': props.auth.token },
                 validateStatus: false
             });
 
-            if (result.status !== 200) {
-                alert('Some error occured');
-                console.log(result.data);
-                return;
+            try {
+                await doRequest(action);
+                history.push(`/orders/${orderId}`);
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-            history.push(`/orders/${orderId}`);
         }
 
         return <>
@@ -99,17 +97,16 @@ const ShippingInfoPage = (props) => {
             let formData = getFormDataJsonFromEvent(event);
             formData.orderId = orderId;
 
-            const result = await axios.post(`/api/shipping-info`, formData, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-
-            if (result.status !== 200) {
-                alert('Some error occured');
-                console.log(result.data);
-                return;
+            try {
+                const action = async () => axios.post(`/api/shipping-info`, formData, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                await doRequest(action);
+                history.push(`/orders/${orderId}`);
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-            history.push(`/orders/${orderId}`);
         }
 
         return <>

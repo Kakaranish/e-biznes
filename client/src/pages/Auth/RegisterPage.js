@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const RegisterPage = (props) => {
+
+    const history = useHistory();
 
     const onSubmit = async event => {
         event.preventDefault();
@@ -13,52 +15,29 @@ const RegisterPage = (props) => {
             setValidationErrors(["passwords are different"])
             return;
         }
-
         formData.repeatPassword = undefined;
-        const result = await axios.post('/auth/register', formData,
-            { validateStatus: false });
-        if (result.status !== 200) {
-            setValidationErrors([result.data ?? "Unknown error"])
-            return;
-        }
-        
-        const auth = {
-            token: result.data.token,
-            tokenExpiry: parseInt(result.data.tokenExpiry),
-            email: result.data.email,
-            role: result.data.role
-        };
-        props.logIn(auth);
 
-        setValidationErrors(null);
-        history.push('/');
+        try {
+            const action = async () => axios.post('/auth/register', formData,
+                { validateStatus: false });
+            const result = await doRequest(action);
+
+            const auth = {
+                token: result.token,
+                tokenExpiry: parseInt(result.tokenExpiry),
+                email: result.email,
+                role: result.role
+            };
+            props.logIn(auth);
+
+            setValidationErrors(null);
+            history.push('/');
+        } catch (error) {
+            alert(`${error} error occured`);
+        }
     }
 
-    const history = useHistory();
-
     const [validationErrors, setValidationErrors] = useState(null);
-
-    useEffect(() => {
-        const verifyIfLogged = async () => {
-            if (!props.auth?.token) return;
-            if (props.auth?.tokenExpiry > Date.now()) {
-                props.logOut();
-                return;
-            }
-
-            const result = await axios.post('/auth/verify', {}, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status === 200) {
-                alert("You' are already logged in");
-                history.push('/');
-                return;
-            }
-            props.logOut();
-        };
-        verifyIfLogged();
-    }, []);
 
     return <>
         <h3>Sign In</h3>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID } from '../../Utils';
+import { isValidUUID, doRequest } from '../../Utils';
 import ProductWishlistStatus from './ProductWishlistStatus';
 import * as Utils from '../../Utils';
 import Modal from '../../components/Modal';
@@ -19,67 +19,58 @@ const ProductPage = (props) => {
 		formData.quantity = parseInt(formData.quantity);
 		formData.productId = productId;
 
-		const result = await axios.post('/api/cart/add', formData, {
-			validateStatus: false,
-			headers: { 'X-Auth-Token': props.auth.token }
-		});
+		try {
+			const action = async () => axios.post('/api/cart/add', formData, {
+				validateStatus: false,
+				headers: { 'X-Auth-Token': props.auth.token }
+			});
+			await doRequest(action);
+			props.addToCart(productId);
 
-		if (result.status === 401) {
-			alert('You are no longer authorized to do this. Please log in.');
-			history.push('/auth/login');
-			return;
-		}
-		if (result.status !== 200) {
-			alert('Internal error. Try to refresh page.');
-			console.log(result);
-			return;
+			history.go();
+		} catch (error) {
+			alert(`${error} error occured`);
 		}
 
-		props.addToCart(productId);
-		history.go();
 	}
 
 	const deleteOpinionOnClick = async opinionId => {
-		const result = await axios.delete('/api/opinions', {
-			data: { opinionId: opinionId },
-			validateStatus: false,
-			headers: { 'X-Auth-Token': props.auth.token }
-		});
+		try {
+			const action = async () => axios.delete('/api/opinions', {
+				data: { opinionId: opinionId },
+				validateStatus: false,
+				headers: { 'X-Auth-Token': props.auth.token }
+			});
+			await doRequest(action);
 
-		if (result.status !== 200) {
-			alert('Some error occured');
-			console.log(result.data);
-			return;
+			history.go();
+		} catch (error) {
+			alert(`${error} error occured`);
 		}
-
-		history.go();
 	}
 
 	const [state, setState] = useState({ loading: true, result: null });
 	useEffect(() => {
 		const fetchProduct = async () => {
-			const headers = props.auth?.token ? { 'X-Auth-Token': props.auth.token } : {};
-			const result = await axios.get(`/api/products/${productId}`, {
-				headers: headers, validateStatus: false
-			});
 
-			if (result.status === 404) {
-				setState({ loading: false, result: null });
-				return;
+			try {
+				const headers = props.auth?.token ? { 'X-Auth-Token': props.auth.token } : {};
+				const action = async () => axios.get(`/api/products/${productId}`,
+					{ headers: headers, validateStatus: false });
+				const result = await doRequest(action);
+				const allowAddOpinion = !result.opinions.some(o => o.user.id === result.userId)
+					&& result.boughtByUser;
+				setState({
+					loading: false,
+					result: Object.assign({ allowAddOpinion: allowAddOpinion }, result)
+				});
+			} catch (error) {
+				if (error === 404) {
+					setState({ loading: false, result: null });
+					return;
+				}
+				alert(`${error} error occured`);
 			}
-			if (result.status !== 200) {
-				alert('Some error occured');
-				return;
-			}
-
-			const allowAddOpinion = !result.data.opinions.some(o => o.user.id === result.data.userId)
-				&& result.data.boughtByUser;
-			setState({
-				loading: false,
-				result: Object.assign({
-					allowAddOpinion: allowAddOpinion
-				}, result.data)
-			});
 		};
 
 		if (isValidUUID(productId)) fetchProduct();
@@ -188,4 +179,4 @@ const ProductPage = (props) => {
 export default new AwareComponentBuilder()
 	.withAuthAwareness()
 	.withCartAwareness()
-    .build(ProductPage);
+	.build(ProductPage);

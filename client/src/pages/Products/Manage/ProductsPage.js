@@ -14,7 +14,6 @@ const ProductsPage = () => {
 				console.log(result);
 				return;
 			}
-			console.log(result);
 			setState({ loading: false, products: result.data.map(p => p.product) });
 		};
 		fetchProducts();
@@ -26,9 +25,9 @@ const ProductsPage = () => {
 			<h3>There are no products to show</h3>
 			<Link to={{ pathname: '/manage/products/create' }} className="btn btn-success w-25">
 				Add First Product
-			</Link>	
+			</Link>
 		</>
-		
+
 		else return <>
 			<ul>
 				{

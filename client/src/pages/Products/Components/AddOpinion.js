@@ -1,5 +1,5 @@
 import React from 'react';
-import { getFormDataJsonFromEvent } from '../../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import axios from 'axios';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
@@ -12,15 +12,14 @@ const AddOpinion = (props) => {
         let formData = getFormDataJsonFromEvent(event);
         formData.productId = productId;
 
-        const result = await axios.post('/api/opinions', formData, {
-            validateStatus: false,
-            headers: { 'X-Auth-Token': props.auth.token }
-        })
-
-        if (result.status !== 200) {
-            alert('Some error occured');
-            console.log(result.data);
-            return;
+        try {
+            const action = async () => await axios.post('/api/opinions', formData, {
+                validateStatus: false,
+                headers: { 'X-Auth-Token': props.auth.token }
+            });
+            await doRequest(action);
+        } catch (error) {
+            alert(`${error} error occured`);
         }
 
         props.callback();

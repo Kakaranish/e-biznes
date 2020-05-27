@@ -2,55 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { doRequest } from '../../Utils';
 
 const CartPage = (props) => {
 
     const history = useHistory();
 
     const finalizeOnClick = async () => {
-        const result = await axios.post('/api/orders', { cartId: state.cartItems[0].cartItem.cartId }, {
+        const action = async () => axios.post('/api/orders',
+            { cartId: state.cartItems[0].cartItem.cartId }, {
             headers: { 'X-Auth-Token': props.auth.token },
             validateStatus: false
         });
-        if (result.status !== 200) {
-            alert('Some error occured');
-            console.log(result.data);
-            return;
-        }
 
-        history.push(`/orders/${result.data}`);
+        try {
+            const result = await doRequest(action)
+            history.push(`/orders/${result}`);
+        } catch (error) {
+            alert(error.msg);
+        }
     }
 
     const deleteFromCart = async (cartItemId, productId) => {
-        const result = await axios.post('/api/cart/delete', { cartItemId: cartItemId }, {
+        const action = async () => axios.post('/api/cart/delete',
+            { cartItemId: cartItemId }, {
             headers: { 'X-Auth-Token': props.auth.token },
             validateStatus: false
         });
-        if (result.status !== 200) {
-            alert('Some error occured');
-            console.log(result.data);
-            return;
-        }
 
-        props.removeFromCart(productId);
-        history.go();
+        try {
+            await doRequest(action)
+            props.removeFromCart(productId);
+            history.go();
+        } catch (error) {
+            alert(error.msg);
+        }
     }
 
     const validateCart = async (cartItems) => {
         cartItems.forEach(async ci => {
-            if(ci.cartItem.quantity > ci.product.quantity) {
-                const result = await axios.post('/api/cart/delete', { cartItemId: ci.cartItem.id }, {
-                    headers: { 'X-Auth-Token': props.auth.token },
-                    validateStatus: false
-                });
-                if (result.status !== 200) {
-                    alert('Some error occured');
-                    console.log(result.data);
-                    return;
-                }
+            if (ci.cartItem.quantity > ci.product.quantity) {
 
-                alert(`Product ${ci.product.name} is no longer available in quantity you have chosen. It will be removed from your cart.`);
-                history.go();
+                try {
+                    const action = async () => axios.post('/api/cart/delete', { cartItemId: ci.cartItem.id }, {
+                        headers: { 'X-Auth-Token': props.auth.token },
+                        validateStatus: false
+                    });
+                    await doRequest(action);
+                    alert(`Product ${ci.product.name} is no longer available in quantity you have chosen. It will be removed from your cart.`);
+                    history.go();
+                } catch (error) {
+                    alert(`${error} error occured`);
+                }
             }
         })
     }
@@ -58,20 +61,19 @@ const CartPage = (props) => {
     const [state, setState] = useState({ loading: true, cartItems: null });
     useEffect(() => {
         const fetchCartItems = async () => {
-            const result = await axios.get('/api/cart', {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
+            
+            try {
+                const action = async () => axios.get('/api/cart', {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                const result = await doRequest(action);
+                await validateCart(result);
+                setState({ loading: false, cartItems: result });
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-
-            await validateCart(result.data);
-
-            setState({ loading: false, cartItems: result.data });
         };
-
         fetchCartItems();
     }, []);
 

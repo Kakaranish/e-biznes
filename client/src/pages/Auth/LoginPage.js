@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent } from '../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../Utils';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
@@ -27,22 +27,20 @@ const LoginPage = (props) => {
             email: result.data.email,
             role: result.data.role
         };
-        
-        const cartItemsResult = await axios.get('/api/cart/raw', {
+
+        const action = async () => axios.get('/api/cart/raw', {
             headers: { 'X-Auth-Token': auth.token },
             validateStatus: false
         });
+        try {
+            const cartItemsResult = await doRequest(action);
+            props.logIn(auth);
+            props.setCartItems(cartItemsResult.map(x => x.productId));
 
-        if(cartItemsResult.status !== 200) {
-             alert("Unknown error occured.");
-             console.log(cartItemsResult);
-             return;
+            history.push('/');
+        } catch (error) {
+            alert(error.msg);
         }
-
-        props.logIn(auth);
-        props.setCartItems(cartItemsResult.data.map(x => x.productId));
-
-        history.push('/');
     }
 
     const logWithGoogleOnClick = () => {

@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { doRequest } from '../../Utils';
 
 const NotificationsPage = (props) => {
 
     const [state, setState] = useState({ loading: true, notifs: [] });
     useEffect(() => {
         const fetchNotifs = async () => {
-            const result = await axios.get('/api/notifications/user/unread', {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                console.log(result.data);
-                return;
-            }
-            setState({ loading: false, notifs: result.data });
 
-            await axios.post('/api/notifications/user', {}, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            props.clearNotifs();
+            try {
+                const action = async () => axios.get('/api/notifications/user/unread', {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                const result = await doRequest(action);
+                setState({ loading: false, notifs: result });
+
+                const nextAction = async () => axios.post('/api/notifications/user', {}, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                await doRequest(nextAction);
+                props.clearNotifs();
+            } catch (error) {
+                alert(`${error} error occured`);
+            }
         };
 
         fetchNotifs();

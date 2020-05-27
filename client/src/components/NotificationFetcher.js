@@ -1,35 +1,34 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import AwareComponentBuilder from '../common/AwareComponentBuilder';
+import { doRequest } from '../Utils';
 
 const NotificationFetcher = (props) => {
 
     let interval;
-    
+
     let action = async () => {
         const token = props.auth?.token;
-        if(!token) {
-            if(!props.notifs.length > 0) props.setNotifs([]);
+        if (!token) {
+            if (!props.notifs.length > 0) props.setNotifs([]);
             return;
         }
 
-        const result = await axios.get('/api/notifications/user/unread', {
-            headers: { 'X-Auth-Token': props.auth.token },
-            validateStatus: false
-        });
-
-        if (result.status !== 200) {
-            console.log("some error occured");
-            console.log(result.data);
-            return;
+        try {
+            const action = async () => axios.get('/api/notifications/user/unread', {
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+            });
+            const result = await doRequest(action);
+            props.setNotifs(result);
+        } catch (error) {
+            alert(`${error} error occured`);
         }
-
-        props.setNotifs(result.data);
     };
 
     useEffect(() => {
         action();
-        
+
         interval = setInterval(() => {
             action();
         }, 10 * 1000);

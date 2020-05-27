@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { doRequest } from '../../Utils';
 import axios from 'axios';
 
 const ProductsByCategoryPage = (props) => {
@@ -9,15 +10,15 @@ const ProductsByCategoryPage = (props) => {
     const [state, setState] = useState({ loading: true, result: null });
     useEffect(() => {
         const fetchProducts = async () => {
-            const result = await axios.get(`/api/products/category/${categoryId}`,
+            const action = async () => axios.get(`/api/products/category/${categoryId}`,
                 { validateStatus: false });
-            if (result.status !== 200) {
+            try {
+                const result = await doRequest(action);
+                setState({ loading: false, result: result });
+            } catch (error) {
                 setState({ loading: false, result: null });
-                alert('Some error occured');
-                console.log(result);
-                return;
+                alert(`${error} error occured`);
             }
-            setState({ loading: false, result: result.data });
         };
         fetchProducts();
     }, []);

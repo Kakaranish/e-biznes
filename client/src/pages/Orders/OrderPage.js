@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import Modal from '../../components/Modal';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { doRequest } from '../../Utils';
 
 const OrderPage = (props) => {
 
@@ -13,26 +14,29 @@ const OrderPage = (props) => {
     const [state, setState] = useState({ loading: true, orderInfo: null });
     useEffect(() => {
         const fetchOrder = async () => {
-            const result = await axios.get(`/api/orders/${orderId}`, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
+            let result;
+            try {
+                const action = async () => axios.get(`/api/orders/${orderId}`, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                result = await doRequest(action);
+            } catch (error) {
+                alert(`${error} error occured`);
                 return;
             }
 
             let totalPrice = 0;
-            result.data.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
+            result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
 
             let paymentsValue = 0;
-            result.data.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
+            result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
 
             let toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
 
             setState({
                 loading: false,
-                orderInfo: result.data,
+                orderInfo: result,
                 totalPrice: totalPrice,
                 paymentsValue: paymentsValue,
                 toPay: toPay
@@ -43,17 +47,19 @@ const OrderPage = (props) => {
     }, []);
 
     const deleteShippingInfoOnClick = async () => {
-        const result = await axios.delete('/api/shipping-info', {
-            data: { shippingInfoId: state.orderInfo.shippingInfo.id },
-            headers: { 'X-Auth-Token': props.auth.token },
-            validateStatus: false
-        })
-        if (result.status !== 200) {
-            alert('Some error occured');
-            console.log(result);
-            return;
+
+        try {
+            const action = async () => axios.delete('/api/shipping-info', {
+                data: { shippingInfoId: state.orderInfo.shippingInfo.id },
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+            });
+            await doRequest(action);
+            
+            history.go();
+        } catch (error) {
+            alert(`${error} error occured`);
         }
-        history.go();
     }
 
     if (state.loading) return <></>

@@ -3,21 +3,23 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { doRequest } from '../../Utils';
 
 const OrdersPage = (props) => {
 
     const [state, setState] = useState({ loading: true, products: null });
     useEffect(() => {
         const fetchOrders = async () => {
-            const result = await axios.get('/api/orders/user', {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
+            try {
+                const action = async () => axios.get('/api/orders/user', {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                const result = await doRequest(action);
+                setState({ loading: false, orders: result });
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-            setState({ loading: false, orders: result.data });
         };
 
         fetchOrders();

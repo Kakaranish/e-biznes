@@ -3,21 +3,23 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductWishlistStatus from './Products/ProductWishlistStatus';
 import AwareComponentBuilder from '../common/AwareComponentBuilder';
+import { doRequest } from '../Utils';
 
 const WishlistPage = (props) => {
 
     const [state, setState] = useState({ loading: true, wishItems: null });
     useEffect(() => {
         const fetchWishlist = async () => {
-            const result = await axios.get('/api/wishlist', {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
+            try {
+                const action = async () =>  axios.get('/api/wishlist', {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
+                const result = await doRequest(action);
+                setState({ loading: false, wishItems: result });
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-            setState({ loading: false, wishItems: result.data });
         };
 
         fetchWishlist();
