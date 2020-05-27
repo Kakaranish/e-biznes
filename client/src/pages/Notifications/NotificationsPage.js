@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { createAuthAndNotifAwareComponent } from '../../Utils';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const NotificationsPage = (props) => {
 
@@ -43,4 +43,7 @@ const NotificationsPage = (props) => {
     </>
 };
 
-export default createAuthAndNotifAwareComponent(NotificationsPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withNotifsAwareness()
+    .build(NotificationsPage);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as Utils from '../Utils';
+import AwareComponentBuilder from '../common/AwareComponentBuilder';
 
 const Sidebar = (props) => {
 
@@ -72,4 +72,6 @@ const Sidebar = (props) => {
     );
 };
 
-export default Utils.createAuthAwareComponent(Sidebar);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(Sidebar);

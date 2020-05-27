@@ -129,7 +129,8 @@ DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingC
 GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
 # Cart
-GET           /api/cart                                    controllers.api.CartControllerApi.getCartItems
+GET           /api/cart                                    controllers.api.CartControllerApi.getPopulatedCartItems
+GET           /api/cart/raw                                controllers.api.CartControllerApi.getCartItems
 POST          /api/cart/add                                controllers.api.CartControllerApi.addToCart
 POST          /api/cart/delete                             controllers.api.CartControllerApi.deleteFromCart
 PUT           /api/cart/item                               controllers.api.CartControllerApi.updateCartItemQuantity

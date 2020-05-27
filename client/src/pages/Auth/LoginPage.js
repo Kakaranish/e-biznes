@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../Utils';
-import * as Utils from '../../Utils';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+
 
 const LoginPage = (props) => {
 
@@ -26,7 +27,20 @@ const LoginPage = (props) => {
             email: result.data.email,
             role: result.data.role
         };
+        
+        const cartItemsResult = await axios.get('/api/cart/raw', {
+            headers: { 'X-Auth-Token': auth.token },
+            validateStatus: false
+        });
+
+        if(cartItemsResult.status !== 200) {
+             alert("Unknown error occured.");
+             console.log(cartItemsResult);
+             return;
+        }
+
         props.logIn(auth);
+        props.setCartItems(cartItemsResult.data.map(x => x.productId));
 
         history.push('/');
     }
@@ -81,4 +95,7 @@ const LoginPage = (props) => {
     </>
 };
 
-export default Utils.createAuthAwareComponent(LoginPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withCartAwareness()
+    .build(LoginPage);

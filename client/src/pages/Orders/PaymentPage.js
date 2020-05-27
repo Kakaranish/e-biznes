@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { createAuthAwareComponent } from '../../Utils';
 import { getFormDataJsonFromEvent } from '../../Utils';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const PaymentPage = (props) => {
 
@@ -113,4 +113,6 @@ const PaymentPage = (props) => {
 	</>
 };
 
-export default createAuthAwareComponent(PaymentPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(PaymentPage);

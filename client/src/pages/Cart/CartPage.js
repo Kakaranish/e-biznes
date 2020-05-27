@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
-import * as Utils from '../../Utils';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const CartPage = (props) => {
 
@@ -21,7 +21,7 @@ const CartPage = (props) => {
         history.push(`/orders/${result.data}`);
     }
 
-    const deleteFromCart = async cartItemId => {
+    const deleteFromCart = async (cartItemId, productId) => {
         const result = await axios.post('/api/cart/delete', { cartItemId: cartItemId }, {
             headers: { 'X-Auth-Token': props.auth.token },
             validateStatus: false
@@ -32,6 +32,7 @@ const CartPage = (props) => {
             return;
         }
 
+        props.removeFromCart(productId);
         history.go();
     }
 
@@ -124,7 +125,7 @@ const CartPage = (props) => {
                         Go to product
                     </Link>
 
-                    <button className="btn btn-danger" onClick={async () => await deleteFromCart(ci.cartItem.id)}>
+                    <button className="btn btn-danger" onClick={async () => await deleteFromCart(ci.cartItem.id, ci.product.id)}>
                         Remove from cart
                     </button>
                 </div>
@@ -134,4 +135,7 @@ const CartPage = (props) => {
     </>
 };
 
-export default Utils.createAuthAwareComponent(CartPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withCartAwareness()
+    .build(CartPage);

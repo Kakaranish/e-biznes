@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent } from '../../Utils';
-import { createAuthAwareComponent } from '../../Utils';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const RegisterPage = (props) => {
 
@@ -107,4 +107,6 @@ const RegisterPage = (props) => {
     </>
 };
 
-export default createAuthAwareComponent(RegisterPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(RegisterPage);

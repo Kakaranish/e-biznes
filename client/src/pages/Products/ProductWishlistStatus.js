@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import * as Utils from '../../Utils';
 import wishlistOnIcon from '../../assets/img/heart-on.svg';
 import wishlistOffIcon from '../../assets/img/heart-off.svg';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const ProductWishlistStatus = (props) => {
 
@@ -64,4 +64,6 @@ const ProductWishlistStatus = (props) => {
     </>
 };
 
-export default Utils.createAuthAwareComponent(ProductWishlistStatus);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(ProductWishlistStatus);

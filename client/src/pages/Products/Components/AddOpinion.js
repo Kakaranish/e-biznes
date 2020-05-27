@@ -1,6 +1,7 @@
 import React from 'react';
-import { createAuthAwareComponent, getFormDataJsonFromEvent } from '../../../Utils';
+import { getFormDataJsonFromEvent } from '../../../Utils';
 import axios from 'axios';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const AddOpinion = (props) => {
 
@@ -39,4 +40,6 @@ const AddOpinion = (props) => {
     </>
 };
 
-export default createAuthAwareComponent(AddOpinion);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(AddOpinion);

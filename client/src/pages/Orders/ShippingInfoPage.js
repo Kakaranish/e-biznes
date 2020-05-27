@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { createAuthAwareComponent, getFormDataJsonFromEvent } from '../../Utils';
+import { getFormDataJsonFromEvent } from '../../Utils';
 import axios from 'axios';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const ShippingInfoPage = (props) => {
 
@@ -141,4 +142,6 @@ const ShippingInfoPage = (props) => {
     }
 };
 
-export default createAuthAwareComponent(ShippingInfoPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(ShippingInfoPage);

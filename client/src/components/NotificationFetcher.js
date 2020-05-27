@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react';
-import { createAuthAndNotifAwareComponent } from '../Utils';
 import axios from 'axios';
+import AwareComponentBuilder from '../common/AwareComponentBuilder';
 
 const NotificationFetcher = (props) => {
 
     let interval;
     
     let action = async () => {
+        const token = props.auth?.token;
+        if(!token) {
+            if(!props.notifs.length > 0) props.setNotifs([]);
+            return;
+        }
+
         const result = await axios.get('/api/notifications/user/unread', {
             headers: { 'X-Auth-Token': props.auth.token },
             validateStatus: false
@@ -34,4 +40,7 @@ const NotificationFetcher = (props) => {
     return <></>
 };
 
-export default createAuthAndNotifAwareComponent(NotificationFetcher);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withNotifsAwareness()
+    .build(NotificationFetcher);

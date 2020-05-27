@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { createAuthAwareComponent } from '../../Utils';
 import axios from 'axios';
 import moment from 'moment';
 import Modal from '../../components/Modal';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const OrderPage = (props) => {
 
@@ -203,4 +203,6 @@ const OrderPage = (props) => {
     </>
 };
 
-export default createAuthAwareComponent(OrderPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(OrderPage);

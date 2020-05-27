@@ -18,6 +18,10 @@ class CartItemDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
   import dbConfig._
   import profile.api._
 
+  def getAllForCart(cartId: String) = db.run {
+    cartItemTable.filter(_.cartId === cartId)
+      .result
+  }
 
   def getAllWithProductsForCart(cartId: String) = db.run((for {
     (cartItem, product) <- cartItemTable joinLeft

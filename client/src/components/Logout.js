@@ -1,6 +1,6 @@
 import React from 'react';
-import * as Utils from '../Utils';
 import { useHistory } from 'react-router-dom';
+import AwareComponentBuilder from '../common/AwareComponentBuilder';
 
 const Logout = (props) => {
 
@@ -13,6 +13,7 @@ const Logout = (props) => {
         }
 
         props.logOut();
+        props.clearCart();
         history.go();
     };
 
@@ -21,4 +22,7 @@ const Logout = (props) => {
     </div>
 };
 
-export default Utils.createAuthAwareComponent(Logout);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withCartAwareness()
+    .build(Logout);

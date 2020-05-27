@@ -6,6 +6,7 @@ import ProductWishlistStatus from './ProductWishlistStatus';
 import * as Utils from '../../Utils';
 import Modal from '../../components/Modal';
 import AddOpinion from './Components/AddOpinion';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const ProductPage = (props) => {
 
@@ -34,6 +35,7 @@ const ProductPage = (props) => {
 			return;
 		}
 
+		props.addToCart(productId);
 		history.go();
 	}
 
@@ -183,4 +185,7 @@ const ProductPage = (props) => {
 };
 
 
-export default Utils.createAuthAwareComponent(ProductPage);
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.withCartAwareness()
+    .build(ProductPage);

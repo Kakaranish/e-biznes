@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
 import Logout from './Logout';
-import cartIcon from '../../src/assets/img/cart.svg';
-import notificationIcon from '../../src/assets/img/notification.svg';
-import { createAuthAndNotifAwareComponent } from '../Utils';
+import Notification from './Notification';
+import Cart from './Cart';
+import AwareComponentBuilder from '../common/AwareComponentBuilder';
 
 const Navbar = (props) => {
 
@@ -24,20 +24,10 @@ const Navbar = (props) => {
 				props.auth?.email && <>
 
 					<ul className="navbar-nav ml-auto mt-lg-0">
-						<Link to={{ pathname: '/notifications' }} className="bg-blue border-darken-2 mr-2" style={{ cursor: "pointer" }} >
-							<img src={notificationIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
 
-							{
-								props.notifs?.length > 0 &&
-								<span className="badge badge-danger">
-									{props.notifs.length}
-								</span>
-							}
-						</Link>
+						<Notification />
 
-						<Link to={{ pathname: '/cart' }}>
-							<img src={cartIcon} style={{ width: "25px", opacity: "0.4", paddingTop: "7px" }} />
-						</Link>
+						<Cart />
 
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#"
@@ -67,4 +57,6 @@ const Navbar = (props) => {
 	);
 };
 
-export default createAuthAndNotifAwareComponent(Navbar);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(Navbar);
