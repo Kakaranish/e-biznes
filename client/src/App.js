@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import MainPage from './pages/MainPage';
@@ -33,7 +32,7 @@ const App = () => {
           <Route path='/orders' component={OrderRoutes} />
           <Route path='/users' component={UserRoutes} />
           <Route path='/auth' component={AuthRoutes} />
-          <Route path='/cart' component={CartRoutes} />
+          <AuthorizedOnlyRoute path='/cart' component={CartRoutes} />
           <AuthorizedOnlyRoute path='/notifications' component={NotificationsPage} />
           <AuthorizedOnlyRoute path='/wishlist' component={WishlistPage} />
 
