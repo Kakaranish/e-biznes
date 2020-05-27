@@ -3,6 +3,7 @@ import axios from 'axios';
 import wishlistOnIcon from '../../assets/img/heart-on.svg';
 import wishlistOffIcon from '../../assets/img/heart-off.svg';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { doRequest } from '../../Utils';
 
 const ProductWishlistStatus = (props) => {
 
@@ -15,17 +16,17 @@ const ProductWishlistStatus = (props) => {
 
     useEffect(() => {
         const fetchIsWishlisted = async () => {
-            const result = await axios.get(`/api/wishlist/product/${productId}/status`, {
-                validateStatus: false,
-                headers: { 'X-Auth-Token': props.auth.token }
-            });
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
+            try {
+                const action = async () => axios.get(`/api/wishlist/product/${productId}/status`, {
+                    validateStatus: false,
+                    headers: { 'X-Auth-Token': props.auth.token }
+                });
+                const result = await doRequest(action);
+                if (!result) return;
+                setWishlisted(isWishlistedState);
+            } catch (error) {
+                alert(`${error} error occured`);
             }
-
-            if (!result.data) return;
-            setWishlisted(isWishlistedState);
         };
 
         if (initState === undefined) fetchIsWishlisted();
@@ -39,23 +40,23 @@ const ProductWishlistStatus = (props) => {
 
         let result;
         const headers = { 'X-Auth-Token': props.auth.token };
-        if (wishlisted.wishlisted) {
-            result = await axios.delete('/api/wishlist/product', {
-                data: { productId: productId },
-                validateStatus: false,
-                headers
-            });
-        } else {
-            result = await axios.post('/api/wishlist/product',
-                { productId: productId }, { validateStatus: false, headers });
-        }
 
-        if (result.status !== 200) {
-            alert("Error while adding to wishlist occured. Try to refresh page.");
-            return;
+        let action;
+        if (wishlisted.wishlisted) action = async () => axios.delete('/api/wishlist/product', {
+            data: { productId: productId },
+            validateStatus: false,
+            headers
+        });
+        else action = async () => axios.post('/api/wishlist/product',
+            { productId: productId }, { validateStatus: false, headers });
+
+        try {
+            const result = await doRequest(action);
+            if (wishlisted.wishlisted) setWishlisted(isNotWishlistedState);
+            else setWishlisted(isWishlistedState);
+        } catch (error) {
+            alert(`${error} error occured`);
         }
-        if (wishlisted.wishlisted) setWishlisted(isNotWishlistedState);
-        else setWishlisted(isWishlistedState);
     };
 
     return <>

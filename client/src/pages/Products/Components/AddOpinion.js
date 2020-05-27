@@ -13,7 +13,7 @@ const AddOpinion = (props) => {
         formData.productId = productId;
 
         try {
-            const action = async () => await axios.post('/api/opinions', formData, {
+            const action = async () => axios.post('/api/opinions', formData, {
                 validateStatus: false,
                 headers: { 'X-Auth-Token': props.auth.token }
             });

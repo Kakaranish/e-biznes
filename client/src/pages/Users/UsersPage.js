@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { doRequest } from '../../Utils';
 
 const UsersPage = () => {
     const history = useHistory();
@@ -11,13 +12,14 @@ const UsersPage = () => {
     const [state, setState] = useState({ loading: true, users: null });
     useEffect(() => {
         const fetchUsers = async () => {
-            const result = await axios.get('/api/users', { validateStatus: false });
-            if (result.status !== 200) {
-                alert('Some error occured');
+            try {
+                const action = async () => axios.get('/api/users', { validateStatus: false });
+                const result = await doRequest(action);
+                setState({ loading: false, users: result });
+            } catch (error) {
+                alert(`${error} error occured`);
                 setState({ loading: false });
-                return;
             }
-            setState({ loading: false, users: result.data });
         };
         fetchUsers();
     }, []);

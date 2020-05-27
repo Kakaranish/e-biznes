@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID } from '../../Utils';
+import { isValidUUID, doRequest } from '../../Utils';
 
 const UserPage = (props) => {
-    
+
     const history = useHistory();
     const userId = props.match.params.id;
 
@@ -15,22 +15,23 @@ const UserPage = (props) => {
     const onDelete = () => {
 
     };
-    
+
     const [state, setState] = useState({ loading: true, user: null });
     useEffect(() => {
         const fetchUser = async () => {
-            const result = await axios.get(`/api/users/${userId}`,
-                { validateStatus: false });
 
-            if (result.status === 404) {
-                setState({ loading: false, user: null });
-                return;
+            try {
+                const action = async () => axios.get(`/api/users/${userId}`,
+                    { validateStatus: false });
+                const result = await doRequest(action);
+                setState({ loading: false, user: result });
+            } catch (error) {
+                if (error === 404) {
+                    setState({ loading: false, user: null });
+                    return;
+                }
+                alert(`${error} error occured`);
             }
-            if (result.status !== 200) {
-                alert('Some error occured');
-                return;
-            }
-            setState({ loading: false, user: result.data });
         };
 
         if (isValidUUID(userId)) fetchUser();

@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { doRequest } from '../../../Utils';
 
 const ProductsPage = () => {
 
 	const [state, setState] = useState({ loading: true, products: null });
 	useEffect(() => {
 		const fetchProducts = async () => {
-			const result = await axios.get('/api/products', { validateStatus: false });
-			if (result.status !== 200) {
+			try {
+				const action = async () => axios.get('/api/products', { validateStatus: false });
+				const result = await doRequest(action);
+				setState({ loading: false, products: result.map(p => p.product) });
+			} catch (error) {
 				setState({ loading: false, products: null });
-				alert('Some error occured');
-				console.log(result);
-				return;
+				alert(`${error} error occured`);
 			}
-			setState({ loading: false, products: result.data.map(p => p.product) });
 		};
 		fetchProducts();
 	}, []);

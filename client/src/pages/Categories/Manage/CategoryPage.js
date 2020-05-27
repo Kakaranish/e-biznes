@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { isValidUUID } from '../../../Utils';
+import { isValidUUID, doRequest } from '../../../Utils';
 import Modal from '../../../components/Modal';
 import { useHistory } from 'react-router-dom';
 
@@ -11,33 +11,27 @@ const CategoryPage = (props) => {
 	const onEdit = async () => history.push(`/manage/categories/${categoryId}/edit`);
 
 	const onDelete = async () => {
-		const result = await axios.delete('/api/categories',
-			{ validateStatus: false, data: { id: categoryId } })
-		if (result.status === 500) {
-			alert('Some error occured');
-			console.log(result);
-			return;
+		try {
+			const action = async () => axios.delete('/api/categories',
+				{ validateStatus: false, data: { id: categoryId } })
+			await doRequest(action);
+			history.push('/manage/categories');
+		} catch (error) {
+			alert(`${error} error occured`);
 		}
-		if (result.status !== 200) {
-			const validationErrors = result.data.obj.map(e => e.msg[0]);
-			setValidationErrors(validationErrors);
-			return;
-		}
-		alert('Removed');
-		setValidationErrors(null);
-		history.push('/manage/categories');
 	}
 
 	const [validationErrors, setValidationErrors] = useState(null);
 	const [state, setState] = useState({ loading: true, category: null });
 	useEffect(() => {
 		const fetchCategory = async () => {
-			const result = await axios.get(`/api/categories/${categoryId}`);
-			if (result.status !== 200) {
-				alert('Some error occured');
-				return;
+			try {
+				const action = async () => axios.get(`/api/categories/${categoryId}`);
+				const result = await doRequest(action);
+				setState({ loading: false, category: result });
+			} catch (error) {
+				alert(`${error} error occured`);
 			}
-			setState({ loading: false, category: result.data });
 		};
 
 		if (isValidUUID(categoryId)) fetchCategory();

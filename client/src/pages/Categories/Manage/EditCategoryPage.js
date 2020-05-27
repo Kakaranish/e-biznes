@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID, getFormDataJsonFromEvent } from '../../../Utils';
+import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 
 const EditCategoryPage = (props) => {
 	const categoryId = props.match.params.id;
@@ -12,24 +12,33 @@ const EditCategoryPage = (props) => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		const formData = getFormDataJsonFromEvent(event);
-		const result = await axios.put('/api/categories', formData, { validateStatus: false });
-		if (result.status !== 200) {
-			alert('Some error occured');
-			setValidationErrors(result.data.obj.map(r => r.msg));
-			return;
+
+		let result;
+		try {
+			const action = async () => axios.put('/api/categories', formData, { validateStatus: false });
+			await doRequest(action);
+			history.push(`/manage/categories/${categoryId}`);
+		} catch (error) {
+			// TODO:
+			if(error === 400) {
+				setValidationErrors(result.data.obj.map(r => r.msg));
+				return;
+			}
+			alert(`${error} error occured`);
 		}
-		history.push(`/manage/categories/${categoryId}`);
+
 	};
 
 	const [state, setState] = useState({ loading: true, category: null });
 	useEffect(() => {
 		const fetchCategory = async () => {
-			const result = await axios.get(`/api/categories/${categoryId}`);
-			if (result.status !== 200) {
-				alert('Some error occured');
-				return;
+			try {
+				const action = async () => axios.get(`/api/categories/${categoryId}`);
+				const result = await doRequest(action);
+				setState({ loading: false, category: result });
+			} catch (error) {
+				alert(`${error} error occured`);
 			}
-			setState({ loading: false, category: result.data });
 		};
 
 		if (isValidUUID(categoryId)) fetchCategory();

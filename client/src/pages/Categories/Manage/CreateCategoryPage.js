@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getFormDataJsonFromEvent } from '../../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import axios from 'axios';
 
 const CreateCategoryPage = () => {
@@ -11,13 +11,20 @@ const CreateCategoryPage = () => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
-		const result = await axios.post('/api/categories', formData,
+		
+		let result;
+		try {
+			const action = async () =>  axios.post('/api/categories', formData,
 			{ validateStatus: false });
-		if (result.status !== 200) {
-			setValidationErrors(result.data.obj.map(r => r.msg));
-			return;
+			result = await doRequest(action);
+			history.push('/manage/categories');
+		} catch (error) {
+			if(error === 400) {
+				setValidationErrors(result.obj.map(r => r.msg));
+				return;
+			}
+			alert(`${error} error occured`);
 		}
-		history.push('/manage/categories');
 	};
 
 	return (
