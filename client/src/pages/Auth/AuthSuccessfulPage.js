@@ -1,28 +1,44 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import queryString from 'query-string';
-import { logIn } from './duck/actions';
+import axios from 'axios';
+import { doRequest } from '../../Utils';
+import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const AuthSuccessfulPage = (props) => {
 
     const history = useHistory();
-    
     const queryParams = queryString.parse(props.location.search);
+
     const auth = {
         token: queryParams.token,
         tokenExpiry: parseInt(queryParams.tokenExpiry),
         email: queryParams.email,
         role: queryParams.role
     };
-    props.logIn(auth);
-    history.push('/');
+
+    useEffect(() => {
+        const performLogIn = async () => {
+            const action = async () => axios.get('/api/cart/raw', {
+                headers: { 'X-Auth-Token': auth.token },
+                validateStatus: false
+            });
+            try {
+                const cartItemsResult = await doRequest(action);
+                props.setCartItems(cartItemsResult.map(x => x.productId));
+                props.logIn(auth);
+                history.push('/');
+            } catch (error) {
+                alert(error.msg);
+            }
+        };
+        performLogIn();
+    }, []);
 
     return <></>
 };
 
-const mapDispatchToProps = dispatch => ({
-    logIn: item => dispatch(logIn(item))
-});
-
-export default connect(null, mapDispatchToProps)(AuthSuccessfulPage);
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .withCartAwareness()
+    .build(AuthSuccessfulPage);

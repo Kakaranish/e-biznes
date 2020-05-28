@@ -43,25 +43,14 @@ const LoginPage = (props) => {
         }
     }
 
-    const logWithGoogleOnClick = () => {
+    const logWithGoogleOnClick = () =>
         window.location = 'http://localhost:9000/auth/provider/google';
-    }
 
-    const logWithFacebookOnClick = () => {
+    const logWithFacebookOnClick = () =>
         window.location = 'http://localhost:9000/auth/provider/facebook';
-    }
 
     return <>
-        <h3>Sign In</h3>
-
-        <button className="btn btn-primary" onClick={logWithGoogleOnClick}>
-            Google
-        </button>
-
-        <button className="btn btn-primary" onClick={logWithFacebookOnClick}>
-            Facebook
-        </button>
-
+        <h5>Log in using credentials</h5>
         <form onSubmit={onSubmit}>
             <div className="form-group">
                 <input name="email" type="email" className="form-control" id="emailInput" placeholder="Email..." required />
@@ -71,7 +60,7 @@ const LoginPage = (props) => {
             </div>
 
             <button type="submit" className="btn btn-primary">
-                Submit
+                Log In
             </button>
 
             {
@@ -90,6 +79,14 @@ const LoginPage = (props) => {
                 </div>
             }
         </form>
+
+        <div className="p-2 mt-3">
+            <h5>Or use social providers</h5>
+
+            <img src={googleIcon} className="pr-2" style={{ width: "35px", cursor: "pointer" }} onClick={logWithGoogleOnClick} />
+
+            <img src={facebookIcon} style={{ width: "25px", cursor: "pointer" }} onClick={logWithFacebookOnClick} />
+        </div>
     </>
 };
 
