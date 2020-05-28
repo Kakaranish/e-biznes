@@ -5,7 +5,7 @@
     @flash.get("success").getOrElse("")
 
     @form(routes.PaymentController.createHandler()) {
-        @helper.CSRF.formField
+
         <h3>Create payment</h3>
 
         <div>

@@ -6,7 +6,7 @@
 
     <h3>Create product</h3>
     @form(routes.ProductController.createHandler()) {
-        @helper.CSRF.formField
+
 
         @inputText(productForm("name"), '_label -> "Name")
         @inputText(productForm("description"), '_label -> "Description")

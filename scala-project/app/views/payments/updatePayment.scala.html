@@ -5,7 +5,7 @@
   @flash.get("success").getOrElse("")
 
   @form(routes.PaymentController.updateHandler()) {
-    @helper.CSRF.formField
+
     <h3><b>Payment to update: </b> @paymentForm("id").value</h3>
 
     <input name="id" value="@paymentForm("id").value" hidden />

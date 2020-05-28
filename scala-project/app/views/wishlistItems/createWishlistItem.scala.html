@@ -5,7 +5,7 @@
     @flash.get("success").getOrElse("")
 
     @form(routes.WishlistController.createHandler()) {
-        @helper.CSRF.formField
+
         <h3>Create wishlist item</h3>
 
         <div>

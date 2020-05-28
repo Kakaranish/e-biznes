@@ -5,7 +5,7 @@
     @flash.get("success").getOrElse("")
 
     @form(routes.ShippingController.updateHandler()) {
-        @helper.CSRF.formField
+
 
         <input name="id" value="@shippingInfoForm("id").value" hidden />
 

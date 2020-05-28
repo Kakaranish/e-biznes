@@ -6,7 +6,7 @@
 
     <h3>Create Shipping Info</h3>
     @form(routes.ShippingController.createHandler()) {
-        @helper.CSRF.formField
+
 
         @inputText(shippingInfoForm("country"), '_label -> "Country")
         @inputText(shippingInfoForm("city"), '_label -> "City")

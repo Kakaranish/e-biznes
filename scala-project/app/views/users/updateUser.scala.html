@@ -5,7 +5,7 @@
     @flash.get("success").getOrElse("")
 
     @form(routes.UserController.updateHandler()) {
-        @helper.CSRF.formField
+
 
         <h3><b>UserId: </b>@userForm("id").value</h3>
         <input name="id" value="@userForm("id").value" hidden />
