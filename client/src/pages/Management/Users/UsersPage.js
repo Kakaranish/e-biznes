@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { doRequest } from '../../Utils';
+import { doRequest } from '../../../Utils';
 
 const UsersPage = () => {
     const history = useHistory();
     const onCreate = () => {
-        history.push('/users/create');
+        history.push('/manage/users/create');
     }
 
     const [state, setState] = useState({ loading: true, users: null });
@@ -32,7 +32,7 @@ const UsersPage = () => {
             <ul>
                 {
                     state.users.map((user, i) =>
-                        <Link to={`/users/${user.id}`} key={`link-${i}`}>
+                        <Link to={`/manage/users/${user.id}`} key={`link-${i}`}>
                             <li key={`user-${i}`}>
                                 {user.email}
                             </li>

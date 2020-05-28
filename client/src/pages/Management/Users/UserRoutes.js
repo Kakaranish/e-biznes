@@ -5,8 +5,8 @@ import UserPage from './UserPage';
 
 const UserRoutes = () => {
 	return <Switch>
-		<Route path='/users' component={UsersPage} exact />
-		<Route path='/users/:id' component={UserPage} />
+		<Route path='/manage/users' component={UsersPage} exact />
+		<Route path='/manage/users/:id' component={UserPage} />
 	</Switch>
 };
 

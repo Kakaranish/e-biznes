@@ -3,11 +3,8 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import NotFoundPage from './pages/NotFoundPage';
-import ManageCategoryRoutes from './pages/Categories/Manage/ManageCategoryRoutes';
-import ManageProductRoutes from './pages/Products/Manage/ManageProductRoutes';
-import UserRoutes from './pages/Users/UserRoutes';
-import AuthRoutes from './pages/Auth/AuthRoutes';
 import CartRoutes from './pages/Cart/CartRoutes';
+import AuthRoutes from './pages/Auth/AuthRoutes';
 import ProductRoutes from './pages/Products/ProductRoutes';
 import WishlistPage from './pages/WishlistPage';
 import CategoriesPage from './pages/Categories/CategoriesPage';
@@ -16,6 +13,7 @@ import AuthorizedOnlyRoute from './routes/AuthorizedOnlyRoute';
 import OrderRoutes from './pages/Orders/OrderRoutes';
 import NotificationFetcher from './components/NotificationFetcher';
 import NotificationsPage from './pages/Notifications/NotificationsPage';
+import ManagementRoutes  from './pages/Management/Routes';
 
 const App = () => {
   return <>
@@ -25,16 +23,14 @@ const App = () => {
         <Switch>
           <Redirect exact from='/' to='/products' />
           <Route path='/products' component={ProductRoutes} />
-          <Route path='/manage/products' component={ManageProductRoutes} />
           <Route path='/categories' component={CategoriesPage} />
-          <Route path='/manage/categories' component={ManageCategoryRoutes} />
           <Route path='/orders' component={OrderRoutes} />
-          <Route path='/users' component={UserRoutes} />
           <Route path='/auth' component={AuthRoutes} />
           <AuthorizedOnlyRoute path='/cart' component={CartRoutes} />
           <AuthorizedOnlyRoute path='/notifications' component={NotificationsPage} />
           <AuthorizedOnlyRoute path='/wishlist' component={WishlistPage} />
 
+          <Route path='/manage' component={ManagementRoutes} />
           <Route component={NotFoundPage} />
         </Switch>
       </MainLayout>
