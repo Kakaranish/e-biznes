@@ -28,6 +28,7 @@ POST          /api/notifications/user                      controllers.api.Notif
 POST          /api/opinions                                controllers.api.OpinionControllerApi.create
 PUT           /api/opinions                                controllers.api.OpinionControllerApi.update
 DELETE        /api/opinions                                controllers.api.OpinionControllerApi.delete
+DELETE        /api/admin/opinions                          controllers.api.OpinionControllerApi.adminDelete
 
 # OrderController
 GET           /api/orders/user                             controllers.api.OrderControllerApi.getPreviewsForUser

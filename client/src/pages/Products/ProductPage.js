@@ -4,10 +4,8 @@ import axios from 'axios';
 import { isValidUUID, doRequest } from '../../Utils';
 import ProductWishlistStatus from './ProductWishlistStatus';
 import * as Utils from '../../Utils';
-import AddOpinionForm from './Components/AddOpinionForm';
-import EditableOpinion from './Components/EditableOpinion';
-import Opinion from './Components/Opinion';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import Opinions from './Components/Opinions';
 
 const ProductPage = (props) => {
 
@@ -111,27 +109,8 @@ const ProductPage = (props) => {
 				</form>
 		}
 
-		<h3 className="mb-4">Opinions</h3>
-		{
-			!state.result.opinions || state.result.opinions.length === 0
-				? <p>No opinions yet</p>
-				: <>
-					{
-						state.result.opinions.map(o =>
-							o.user.id !== state.result.userId
-								? <Opinion opinionInfo={o} key={`op-${o.opinion.id}`} />
-								: <EditableOpinion opinionInfo={o}
-									auth={props.auth}
-									key={`op-${o.opinion.id}`} />
-						)
-					}
-				</>
-		}
+		<Opinions state={state} />
 
-		{
-			state.result.allowAddOpinion &&
-			<AddOpinionForm productId={productId} callback={() => history.go()} />
-		}
 	</>
 };
 
