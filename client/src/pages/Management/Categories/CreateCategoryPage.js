@@ -13,21 +13,20 @@ const CreateCategoryPage = (props) => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
 
-		let result;
-		try {
-			const action = async () => axios.post('/api/categories', formData,{
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-			result = await doRequest(action);
-			history.push('/manage/categories');
-		} catch (error) {
-			if (error === 400) {
-				setValidationErrors(result.obj.map(r => r.msg));
-				return;
-			}
-			alert(`${error} error occured`);
+		const result = await axios.post('/api/categories', formData, {
+			headers: { 'X-Auth-Token': props.auth.token },
+			validateStatus: false
+		});
+		if (result.status === 400) {
+			setValidationErrors(result.data.obj.map(r => r.msg));
+			return;
 		}
+		else if(result.status !== 200) {
+			alert("Some error occured");
+			console.log(result);
+			return;
+		}
+		history.push('/manage/categories');
 	};
 
 	return (

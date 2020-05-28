@@ -52,6 +52,7 @@ DELETE        /api/products                                controllers.api.Produ
 # UserController
 GET           /api/users                                   controllers.api.UserControllerApi.getAll
 GET           /api/users/:id                               controllers.api.UserControllerApi.getById(id: String)
+PUT           /api/admin/users                                   controllers.api.UserControllerApi.update
 
 # ShippingController
 POST          /api/shipping-info                           controllers.api.ShippingControllerApi.create

@@ -1,7 +1,7 @@
 package daos.api
 
 import javax.inject.{Inject, Singleton}
-import models.TableDefinitions
+import models.{TableDefinitions, User}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -24,4 +24,17 @@ class UserDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
       .result
       .headOption
   )
+
+  def getByEmail(email: String) = db.run {
+    userTable.filter(r => r.email === email)
+      .result
+      .headOption
+  }
+
+  def update(user: User) = {
+    val toUpdate = user.copy()
+    val action = userTable.filter(_.id === user.id)
+      .update(toUpdate)
+    db.run(action).map(_ =>toUpdate)
+  }
 }
