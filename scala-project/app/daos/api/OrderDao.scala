@@ -20,6 +20,11 @@ class OrderDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
   import dbConfig._
   import profile.api._
 
+  def getAllPopulatedWithUser() = db.run {
+    orderTable.join(userTable).on((x, y) => x.userId === y.id)
+      .result
+  }
+
   def create(order: Order) = {
     val id = UUID.randomUUID().toString()
     val nowIso = new DateTime().toString(DateTimeFormat

@@ -49,6 +49,12 @@ const Sidebar = (props) => {
                         </div>
 
                         <div className="list-group list-group-flush">
+                            <Link to={'/manage/orders'} className="list-group-item list-group-item-action bg-light">
+                                Manage Orders
+                            </Link>
+                        </div>
+
+                        <div className="list-group list-group-flush">
                             <Link to={'/manage/notifications/create'} className="list-group-item list-group-item-action bg-light">
                                 Create Notification
                             </Link>

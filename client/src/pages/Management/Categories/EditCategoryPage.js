@@ -13,36 +13,31 @@ const EditCategoryPage = (props) => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		const formData = getFormDataJsonFromEvent(event);
-
-		let result;
-		try {
-			const action = async () => axios.put('/api/categories', formData, {
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-			await doRequest(action);
-			history.push(`/manage/categories/${categoryId}`);
-		} catch (error) {
-			// TODO:
-			if (error === 400) {
-				setValidationErrors(result.data.obj.map(r => r.msg));
-				return;
-			}
-			alert(`${error} error occured`);
+		const result = await axios.put('/api/categories', formData, {
+			headers: { 'X-Auth-Token': props.auth.token },
+			validateStatus: false
 		}
-
+		);
+		if(result.status === 400) {
+			setValidationErrors(result.data.obj.map(r => r.msg));
+			return;
+		}
+		else if (result.status !== 200) {
+			alert('Some error occured');
+			return;
+		}
+		history.push(`/manage/categories/${categoryId}`);
 	};
 
 	const [state, setState] = useState({ loading: true, category: null });
 	useEffect(() => {
 		const fetchCategory = async () => {
-			try {
-				const action = async () => axios.get(`/api/categories/${categoryId}`);
-				const result = await doRequest(action);
-				setState({ loading: false, category: result });
-			} catch (error) {
-				alert(`${error} error occured`);
+			const result = await axios.get(`/api/categories/${categoryId}`);
+			if (result.status !== 200) {
+				alert('Some error occured');
+				return;
 			}
+			setState({ loading: false, category: result.data });
 		};
 
 		if (isValidUUID(categoryId)) fetchCategory();

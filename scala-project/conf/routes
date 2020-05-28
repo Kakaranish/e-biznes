@@ -34,6 +34,8 @@ GET           /api/orders/user                             controllers.api.Order
 POST          /api/orders                                  controllers.api.OrderControllerApi.create
 GET           /api/orders/:id/shipping-info                controllers.api.OrderControllerApi.getPopulatedWithShippingInfoById(id: String)
 GET           /api/orders/:id                              controllers.api.OrderControllerApi.getPopulatedById(id: String)
+GET           /api/admin/orders                            controllers.api.OrderControllerApi.getAll
+GET           /api/admin/orders/:id                        controllers.api.OrderControllerApi.adminGetPopulatedById(id: String)
 
 # PaymentController
 POST          /api/payments                                controllers.api.PaymentControllerApi.create

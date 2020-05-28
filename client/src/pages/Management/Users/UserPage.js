@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { isValidUUID, doRequest } from '../../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const UserPage = (props) => {
 
@@ -21,8 +22,10 @@ const UserPage = (props) => {
         const fetchUser = async () => {
 
             try {
-                const action = async () => axios.get(`/api/users/${userId}`,
-                    { validateStatus: false });
+                const action = async () => axios.get(`/api/users/${userId}`, {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
                 const result = await doRequest(action);
                 setState({ loading: false, user: result });
             } catch (error) {
@@ -63,4 +66,6 @@ const UserPage = (props) => {
     }
 };
 
-export default UserPage;
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(UserPage);

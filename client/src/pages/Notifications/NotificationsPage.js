@@ -37,9 +37,10 @@ const NotificationsPage = (props) => {
         <h3>Your notifications</h3>
 
         {
-            state.notifs.map((n, i) =>
+            state.notifs.map((notif, i) =>
                 <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`n-${i}`}>
-                    Notification 1
+                    <h3>Notification {i + 1}</h3>
+                    <p>{notif.content}</p>
                 </div>
             )
         }

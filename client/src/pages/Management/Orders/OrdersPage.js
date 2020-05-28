@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import AwareComponentBuilder from '../../common/AwareComponentBuilder';
-import { doRequest } from '../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
+import { doRequest } from '../../../Utils';
 
 const OrdersPage = (props) => {
 
@@ -11,7 +11,7 @@ const OrdersPage = (props) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const action = async () => axios.get('/api/orders/user', {
+                const action = async () => axios.get('/api/admin/orders', {
                     headers: { 'X-Auth-Token': props.auth.token },
                     validateStatus: false
                 });
@@ -26,30 +26,31 @@ const OrdersPage = (props) => {
     }, []);
 
     if (state.loading) return <></>
-    else if (!state.orders || state.orders.length === 0) return <>
-        <h3>You have no orders yet</h3>
-    </>
+    else if (!state.orders || state.orders.length === 0) return <h3>No orders found</h3>
     else return <>
-        <h3>Your orders</h3>
+        <h3>Orders</h3>
 
         {
-            state.orders.map(order =>
-                <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`div-${order.id}`}>
+            state.orders.map(orderInfo =>
+                <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`div-${orderInfo.order.id}`}>
                     <p>
-                        Order <b>{order.id}</b>
+                        Order <b>{orderInfo.order.id}</b>
                     </p>
 
                     <p>
-                        Date of order: {moment(order.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
+                        Date of order: {moment(orderInfo.order.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
                     </p>
 
-                    <Link to={`/orders/${order.id}`} className="btn btn-primary w-25">
+                    <p>
+                        Belongs to: {orderInfo.user.firstName} {orderInfo.user.lastName} ({orderInfo.user.email})
+                    </p>
+
+                    <Link to={`/manage/orders/${orderInfo.order.id}`} className="btn btn-primary w-25">
                         Show more information
                     </Link>
                 </div>
             )
         }
-
     </>
 };
 

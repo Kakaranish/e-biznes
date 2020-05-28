@@ -20,33 +20,12 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
                                   (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
-  def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
-    implicit val createOrderRead =
-      (JsPath \ "cartId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
-
-    val validation = request.body.validate[String](createOrderRead)
-    validation match {
-      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
-      case s: JsSuccess[String] => {
-        val cartId = s.value
-        cartDao.getById(cartId).flatMap { c =>
-          c match {
-            case Some(cart) => {
-              if (cart.userId != request.identity.id) Future(Status(BAD_REQUEST)("cart does not belong to given user"))
-              else if (cart.isFinalized) Future(Status(BAD_REQUEST)("cart is already finalized"))
-              else {
-                cartDao.setFinalized(cartId).flatMap(_ => {
-                  orderDao.create(Order(null, cart.id, request.identity.id, null, null)).flatMap(order => {
-                    Future(Ok(Json.toJson(order.id)))
-                  })
-                })
-              }
-            }
-            case None => Future(Status(NOT_FOUND)(Json.toJson("there is no cart with given id")))
-          }
-        }
-      }
-    }
+  def getAll() = silhouette.SecuredAction.async { implicit request =>
+    if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
+    else orderDao.getAllPopulatedWithUser().flatMap(orders => Future(Ok(Json.toJson(orders.map(order => Json.obj(
+      "order" -> order._1,
+      "user" -> order._2
+    ))))))
   }
 
   def getPreviewsForUser() = silhouette.SecuredAction.async { implicit request =>
@@ -93,5 +72,58 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
         })
       }
     )
+  }
+
+  def adminGetPopulatedById(orderId: String) = silhouette.SecuredAction.async { implicit request =>
+    if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
+    else {
+      orderDao.getPopulatedById(orderId).flatMap(oi => oi match {
+        case Some(orderInfo) => {
+
+          val cartItemsInfo = orderInfo._4.map(ci => Json.obj(
+            "cartItem" -> ci._1,
+            "product" -> ci._2
+          ))
+          var resultObj = Json.obj(
+            "order" -> orderInfo._1,
+            "cart" -> orderInfo._2,
+            "cartItems" -> cartItemsInfo,
+            "payments" -> Json.toJson(orderInfo._5)
+          )
+          if (orderInfo._3.isDefined) resultObj = resultObj + ("shippingInfo" -> Json.toJson(orderInfo._3.get))
+
+          Future(Ok(Json.toJson(resultObj)))
+        }
+      })
+    }
+  }
+
+  def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+    implicit val createOrderRead =
+      (JsPath \ "cartId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+
+    val validation = request.body.validate[String](createOrderRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[String] => {
+        val cartId = s.value
+        cartDao.getById(cartId).flatMap { c =>
+          c match {
+            case Some(cart) => {
+              if (cart.userId != request.identity.id) Future(Status(BAD_REQUEST)("cart does not belong to given user"))
+              else if (cart.isFinalized) Future(Status(BAD_REQUEST)("cart is already finalized"))
+              else {
+                cartDao.setFinalized(cartId).flatMap(_ => {
+                  orderDao.create(Order(null, cart.id, request.identity.id, null, null)).flatMap(order => {
+                    Future(Ok(Json.toJson(order.id)))
+                  })
+                })
+              }
+            }
+            case None => Future(Status(NOT_FOUND)(Json.toJson("there is no cart with given id")))
+          }
+        }
+      }
+    }
   }
 }

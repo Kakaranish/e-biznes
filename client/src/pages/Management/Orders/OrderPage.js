@@ -2,21 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import Modal from '../../components/Modal';
-import AwareComponentBuilder from '../../common/AwareComponentBuilder';
-import { doRequest } from '../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
+import { doRequest } from '../../../Utils';
 
 const OrderPage = (props) => {
 
     const orderId = props.match.params.id;
-    const history = useHistory();
 
     const [state, setState] = useState({ loading: true, orderInfo: null });
     useEffect(() => {
         const fetchOrder = async () => {
             let result;
             try {
-                const action = async () => axios.get(`/api/orders/${orderId}`, {
+                const action = async () => axios.get(`/api/admin/orders/${orderId}`, {
                     headers: { 'X-Auth-Token': props.auth.token },
                     validateStatus: false
                 });
@@ -41,32 +39,23 @@ const OrderPage = (props) => {
                 paymentsValue: paymentsValue,
                 toPay: toPay
             });
+
+            console.log(result);
         };
 
         fetchOrder();
     }, []);
-
-    const deleteShippingInfoOnClick = async () => {
-
-        try {
-            const action = async () => axios.delete('/api/shipping-info', {
-                data: { shippingInfoId: state.orderInfo.shippingInfo.id },
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
-            });
-            await doRequest(action);
-
-            history.go();
-        } catch (error) {
-            alert(`${error} error occured`);
-        }
-    }
 
     if (state.loading) return <></>
     else if (!state.orderInfo) return <h3>No such order...</h3>
     return <>
 
         <h3>Order {orderId}</h3>
+        
+        <p>
+            User: {state.orderInfo.order.userId}
+        </p>
+
         <p>Created: {moment(state.orderInfo.order.dateCreated).format('YYYY-MM-DD hh:mm:ss')}</p>
 
         <p>
@@ -90,19 +79,12 @@ const OrderPage = (props) => {
             <b>Remaining money to paid:</b> {state.toPay} PLN
         </p>
 
-        {
-            state.toPay > 0 &&
-            <Link to={`/orders/${orderId}/payment`} className="btn btn-primary w-25 mb-5">
-                Pay
-            </Link>
-        }
-
         <h3 className="mt-5">Shipping info</h3>
         <div className="p-3 mb-5" style={{ border: "1px solid gray" }}>
 
             {
                 !state.orderInfo.shippingInfo
-                    ? <p> You provided no shipping info </p>
+                    ? <p> User provided no shipping info </p>
 
                     : <>
                         <p>
@@ -122,36 +104,12 @@ const OrderPage = (props) => {
                         </p>
                     </>
             }
-
-            <div>
-                <Link to={`/orders/${orderId}/shipping-info`} className="btn btn-primary w-25">
-                    {
-                        !state.orderInfo.shippingInfo
-                            ? "Add shipping info"
-                            : "Edit"
-                    }
-                </Link>
-
-                {
-                    state.orderInfo.shippingInfo &&
-                    <Modal title={"Are you sure?"}
-                        btnText={"Delete"}
-                        btnClasses={"btn btn-danger w-25"}
-                        modalTitle={"Are you sure?"}
-                        modalPrimaryBtnText={"Delete"}
-                        modalPrimaryBtnClasses={"btn btn-danger"}
-                        onModalPrimaryBtnClick={deleteShippingInfoOnClick}
-                        modalSecondaryBtnText={"Cancel"}
-                        modalSecondaryBtnClasses={"btn btn-secondary"}
-                    />
-                }
-            </div>
         </div>
 
         <div className="mb-5">
             <h3>Payments</h3>
             {!state.orderInfo.payments || state.orderInfo.payments.length === 0
-                ? <p>You have no payments yet</p>
+                ? <p>No payments yet</p>
 
                 :
                 state.orderInfo.payments.map((p, i) =>
@@ -176,6 +134,7 @@ const OrderPage = (props) => {
                 )
             }
         </div>
+
 
         <h3>Ordered products</h3>
         {
