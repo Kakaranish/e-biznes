@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../../components/Modal';
 import { isValidUUID, doRequest } from '../../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const ProductPage = (props) => {
 
@@ -12,9 +13,11 @@ const ProductPage = (props) => {
     const onEdit = () => history.push(`/manage/products/${productId}/edit`);
 
     const onDelete = async () => {
-        const action = async () => axios.delete('/api/products',
-            { validateStatus: false, data: { id: productId } });
-
+        const action = async () => axios.delete('/api/products', {
+            headers: { 'X-Auth-Token': props.auth.token },
+            validateStatus: false,
+            data: { id: productId }
+        });
         try {
             await doRequest(action);
             setValidationErrors(null);
@@ -23,7 +26,7 @@ const ProductPage = (props) => {
             if (error === 404) {
                 setValidationErrors(["no product with such id"]);
                 return;
-            } 
+            }
             alert(`${error} occured`)
         }
     }
@@ -116,4 +119,6 @@ const Product = (props) => {
     </>
 };
 
-export default ProductPage;
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(ProductPage);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import axios from 'axios';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const EditProductPage = (props) => {
 
@@ -14,10 +15,11 @@ const EditProductPage = (props) => {
 		formData.price = parseFloat(formData.price);
 		formData.quantity = parseInt(formData.quantity);
 
-
 		try {
-			const action = async () => axios.put('/api/products', formData,
-				{ validateStatus: false });
+			const action = async () => axios.put('/api/products', formData,{
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+			});
 			await doRequest(action);
 			history.push(`/manage/products/${productId}`);
 		} catch (error) {
@@ -123,4 +125,6 @@ const EditProductPage = (props) => {
 	}
 };
 
-export default EditProductPage;
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.build(EditProductPage);

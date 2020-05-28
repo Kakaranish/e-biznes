@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import axios from 'axios';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
-const CreateCategoryPage = () => {
+const CreateCategoryPage = (props) => {
 	const history = useHistory();
 
 	const [validationErrors, setValidationErrors] = useState(null);
@@ -11,15 +12,17 @@ const CreateCategoryPage = () => {
 	const onSubmit = async event => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
-		
+
 		let result;
 		try {
-			const action = async () =>  axios.post('/api/categories', formData,
-			{ validateStatus: false });
+			const action = async () => axios.post('/api/categories', formData,{
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+            });
 			result = await doRequest(action);
 			history.push('/manage/categories');
 		} catch (error) {
-			if(error === 400) {
+			if (error === 400) {
 				setValidationErrors(result.obj.map(r => r.msg));
 				return;
 			}
@@ -59,4 +62,6 @@ const CreateCategoryPage = () => {
 	);
 };
 
-export default CreateCategoryPage;
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.build(CreateCategoryPage);

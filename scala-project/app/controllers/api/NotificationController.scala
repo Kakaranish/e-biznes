@@ -4,8 +4,8 @@ import com.mohiva.play.silhouette.api.Silhouette
 import daos.api.{NotificationDaoApi, UserDaoApi}
 import javax.inject.{Inject, Singleton}
 import models.Notification
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Json, JsonValidationError}
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
 import silhouette.DefaultEnv
 
@@ -16,15 +16,16 @@ class NotificationControllerApi @Inject()(cc: MessagesControllerComponents,
                                           notificationDao: NotificationDaoApi,
                                           userDao: UserDaoApi,
                                           silhouette: Silhouette[DefaultEnv])
-                                         (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
+                                         (implicit ec: ExecutionContext)
+  extends MessagesAbstractController(cc) {
 
-  def create() = silhouette.SecuredAction.async(parse.json) {implicit request =>
-    if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
+  def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+    if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val createNotificationRead = (
         (JsPath \ "userId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
           (JsPath \ "content").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
-        )(CreateNotificationRequest.apply _)
+        ) (CreateNotificationRequest.apply _)
 
       val validation = request.body.validate[CreateNotificationRequest](createNotificationRead)
       validation match {
@@ -54,5 +55,5 @@ class NotificationControllerApi @Inject()(cc: MessagesControllerComponents,
     notificationDao.makeAllReadForUser(request.identity.id).flatMap(_ => Future(Ok))
   }
 
-  case class CreateNotificationRequest (userId: String, content: String)
+  case class CreateNotificationRequest(userId: String, content: String)
 }

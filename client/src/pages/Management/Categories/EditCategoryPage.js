@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const EditCategoryPage = (props) => {
 	const categoryId = props.match.params.id;
@@ -15,12 +16,15 @@ const EditCategoryPage = (props) => {
 
 		let result;
 		try {
-			const action = async () => axios.put('/api/categories', formData, { validateStatus: false });
+			const action = async () => axios.put('/api/categories', formData, {
+                headers: { 'X-Auth-Token': props.auth.token },
+                validateStatus: false
+            });
 			await doRequest(action);
 			history.push(`/manage/categories/${categoryId}`);
 		} catch (error) {
 			// TODO:
-			if(error === 400) {
+			if (error === 400) {
 				setValidationErrors(result.data.obj.map(r => r.msg));
 				return;
 			}
@@ -83,4 +87,6 @@ const EditCategoryPage = (props) => {
 	}
 };
 
-export default EditCategoryPage;
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.build(EditCategoryPage);

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
-const CreateProductPage = () => {
+const CreateProductPage = (props) => {
 
 	const history = useHistory();
 
@@ -14,8 +15,10 @@ const CreateProductPage = () => {
 		formData.quantity = parseInt(formData.quantity)
 
 		try {
-			const action = async () => axios.post('/api/products', formData,
-				{ validateStatus: false });
+			const action = async () => axios.post('/api/products', formData, {
+				headers: { 'X-Auth-Token': props.auth.token },
+				validateStatus: false
+			});
 			await doRequest(action);
 			history.push('/manage/products');
 		} catch (error) {
@@ -71,7 +74,7 @@ const CreateProductPage = () => {
 					<label>Category</label>
 					<select name="categoryId" className="custom-select" size="6" required>
 						{
-							state.categories.map((cat, i) =>
+							state.categories.map(cat =>
 								<option key={`opt-${cat.id}`} value={cat.id}>{cat.name}</option>
 							)
 						}
@@ -86,4 +89,6 @@ const CreateProductPage = () => {
 	);
 };
 
-export default CreateProductPage;
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.build(CreateProductPage);

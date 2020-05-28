@@ -3,6 +3,7 @@ import axios from 'axios';
 import { isValidUUID, doRequest } from '../../../Utils';
 import Modal from '../../../components/Modal';
 import { useHistory } from 'react-router-dom';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const CategoryPage = (props) => {
 	const categoryId = props.match.params.id;
@@ -12,8 +13,11 @@ const CategoryPage = (props) => {
 
 	const onDelete = async () => {
 		try {
-			const action = async () => axios.delete('/api/categories',
-				{ validateStatus: false, data: { id: categoryId } })
+			const action = async () => axios.delete('/api/categories', {
+				headers: { 'X-Auth-Token': props.auth.token },
+				validateStatus: false,
+				data: { id: categoryId }
+			})
 			await doRequest(action);
 			history.push('/manage/categories');
 		} catch (error) {
@@ -85,4 +89,6 @@ const CategoryPage = (props) => {
 	}
 };
 
-export default CategoryPage;
+export default new AwareComponentBuilder()
+	.withAuthAwareness()
+	.build(CategoryPage);

@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { doRequest } from '../../../Utils';
+import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
-const UsersPage = () => {
+const UsersPage = (props) => {
     const history = useHistory();
-    const onCreate = () => {
-        history.push('/manage/users/create');
-    }
+    const onCreate = () => history.push('/manage/users/create');
 
     const [state, setState] = useState({ loading: true, users: null });
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const action = async () => axios.get('/api/users', { validateStatus: false });
+                const action = async () => axios.get('/api/users', {
+                    headers: { 'X-Auth-Token': props.auth.token },
+                    validateStatus: false
+                });
                 const result = await doRequest(action);
                 setState({ loading: false, users: result });
             } catch (error) {
@@ -48,4 +50,6 @@ const UsersPage = () => {
     }
 };
 
-export default UsersPage;
+export default new AwareComponentBuilder()
+    .withAuthAwareness()
+    .build(UsersPage);
