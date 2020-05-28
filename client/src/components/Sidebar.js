@@ -47,6 +47,12 @@ const Sidebar = (props) => {
                                 Manage Users
                             </Link>
                         </div>
+
+                        <div className="list-group list-group-flush">
+                            <Link to={'/manage/notifications/create'} className="list-group-item list-group-item-action bg-light">
+                                Create Notification
+                            </Link>
+                        </div>
                     </>
                 }
 
@@ -63,7 +69,7 @@ const Sidebar = (props) => {
                         <div className="list-group list-group-flush">
                             <Link to={'/auth/register'} className="list-group-item list-group-item-action bg-light">
                                 Register
-                                </Link>
+                            </Link>
                         </div>
                     </>
                 }

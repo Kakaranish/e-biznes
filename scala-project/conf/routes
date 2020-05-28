@@ -19,6 +19,7 @@ PUT           /api/categories                              controllers.api.Categ
 DELETE        /api/categories                              controllers.api.CategoryControllerApi.delete
 
 # NotificationController
+POST          /api/notifications                           controllers.api.NotificationControllerApi.create
 GET           /api/notifications/user/unread               controllers.api.NotificationControllerApi.getUnreadForUser
 GET           /api/notifications/user                      controllers.api.NotificationControllerApi.getAllForUser
 POST          /api/notifications/user                      controllers.api.NotificationControllerApi.makeAllReadForUser

@@ -1,21 +1,21 @@
 package daos
 
 import java.util.UUID
+
 import javax.inject.{Inject, Singleton}
-import models.{User, UserTable}
+import models.{TableDefinitions, User, UserTable}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
+class UserDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext)
+extends TableDefinitions{
+    val dbConfig = dbConfigProvider.get[JdbcProfile]
 
-  import dbConfig._
-  import profile.api._
-
-  private val userTable = TableQuery[UserTable]
+    import dbConfig._
+    import profile.api._
 
   def getAll() = db.run(userTable.result)
 
