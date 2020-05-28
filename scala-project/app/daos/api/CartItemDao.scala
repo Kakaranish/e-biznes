@@ -49,10 +49,10 @@ class CartItemDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
     .headOption
   )
 
-  def updateQuantity(cartItemId: String, quantity: Int) = db.run {
-    cartItemTable.filter(_.id === cartItemId)
-      .map(record => record.quantity)
-      .update(quantity)
+  def update(cartItem: CartItem) = db.run {
+    cartItemTable.filter(_.id === cartItem.id)
+      .map(record => (record.quantity, record.pricePerProduct))
+      .update((cartItem.quantity, cartItem.pricePerProduct))
   }
 
   def belongsToUser(cartItemId: String, userId: String) = {
@@ -74,7 +74,7 @@ class CartItemDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
 
   def create(cartItem: CartItem) = {
     val id = UUID.randomUUID().toString()
-    val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
+    val toAdd = cartItem.copy(id = id)
     db.run(cartItemTable += toAdd).map(_ => toAdd)
   }
 

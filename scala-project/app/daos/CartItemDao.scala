@@ -39,7 +39,7 @@ class CartItemDao @Inject()(dbConfigProvider: DatabaseConfigProvider,
 
   def create(cartItem: CartItem) = db.run {
     val id = UUID.randomUUID().toString()
-    val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity)
+    val toAdd = CartItem(id, cartItem.cartId, cartItem.productId, cartItem.quantity, cartItem.pricePerProduct)
     cartItemTable += toAdd
   }
 

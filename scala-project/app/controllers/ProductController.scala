@@ -31,7 +31,7 @@ class ProductController @Inject()(cc: MessagesControllerComponents,
     productsResult.map(products => {
       if (products.isEmpty) Ok("No products found")
       else Ok(views.html.products.productsPreviews(
-        products.map(product => ProductPreview(product._1, product._2))))
+        products.map(product => ProductPreview(product._1, product._2, product._3))))
     })
   }
 

@@ -26,7 +26,7 @@ class ProductDao @Inject()(dbConfigProvider: DatabaseConfigProvider, categoryDao
   }
 
   def getAllPreviews() = db.run {
-    productTable.map(record => (record.id, record.name))
+    productTable.map(record => (record.id, record.name, record.price))
       .result
   }
 

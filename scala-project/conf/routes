@@ -3,20 +3,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Init routes
-GET           /xD                                          controllers.HomeController.index
-GET           /special/secured                             controllers.misc.MiscController.restricted
+# ---  API  -----------------------------------------------------------------------------------------------------------
+
+# Auth
 GET           /auth/provider/:provider                     controllers.api.auth.SocialController.authenticate(provider: String)
 POST          /auth/login                                  controllers.api.auth.SignInController.submit
 POST          /auth/register                               controllers.api.auth.SignUpController.submit
 POST          /auth/verify                                 controllers.api.auth.AuthController.verify
-GET           /special/user-aware                          controllers.misc.MiscController.userAware
-#GET           /restricted                              controllers.HomeController.restricted
-GET           /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
-
-# AccountController
-POST          /login                                       controllers.AccountController.login
-POST          /register                                    controllers.AccountController.register
 
 # CategoryController
 GET           /api/categories                              controllers.api.CategoryControllerApi.getAll
@@ -24,6 +17,65 @@ GET           /api/categories/:id                          controllers.api.Categ
 POST          /api/categories                              controllers.api.CategoryControllerApi.create
 PUT           /api/categories                              controllers.api.CategoryControllerApi.update
 DELETE        /api/categories                              controllers.api.CategoryControllerApi.delete
+
+# NotificationController
+GET           /api/notifications/user/unread               controllers.api.NotificationControllerApi.getUnreadForUser
+GET           /api/notifications/user                      controllers.api.NotificationControllerApi.getAllForUser
+POST          /api/notifications/user                      controllers.api.NotificationControllerApi.makeAllReadForUser
+
+# OpinionController
+POST          /api/opinions                                controllers.api.OpinionControllerApi.create
+PUT           /api/opinions                                controllers.api.OpinionControllerApi.update
+DELETE        /api/opinions                                controllers.api.OpinionControllerApi.delete
+
+# OrderController
+GET           /api/orders/user                             controllers.api.OrderControllerApi.getPreviewsForUser
+POST          /api/orders                                  controllers.api.OrderControllerApi.create
+GET           /api/orders/:id/shipping-info                controllers.api.OrderControllerApi.getPopulatedWithShippingInfoById(id: String)
+GET           /api/orders/:id                              controllers.api.OrderControllerApi.getPopulatedById(id: String)
+
+# PaymentController
+POST          /api/payments                                controllers.api.PaymentControllerApi.create
+
+# ProductController
+GET           /api/products                                controllers.api.ProductControllerApi.getAll
+GET           /api/products/category/:id                   controllers.api.ProductControllerApi.getAllByCategory(id: String)
+GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
+POST          /api/products                                controllers.api.ProductControllerApi.create
+PUT           /api/products                                controllers.api.ProductControllerApi.update
+DELETE        /api/products                                controllers.api.ProductControllerApi.delete
+
+# UserController
+GET           /api/users                                   controllers.api.UserControllerApi.getAll
+GET           /api/users/:id                               controllers.api.UserControllerApi.getById(id: String)
+
+# ShippingController
+POST          /api/shipping-info                           controllers.api.ShippingControllerApi.create
+PUT           /api/shipping-info                           controllers.api.ShippingControllerApi.update
+DELETE        /api/shipping-info                           controllers.api.ShippingControllerApi.delete
+
+# WishlistController
+GET           /api/wishlist                                controllers.api.WishlistControllerApi.getAllForUser
+GET           /api/wishlist/product/:id/status             controllers.api.WishlistControllerApi.getProductStatus(id: String)
+POST          /api/wishlist/product                        controllers.api.WishlistControllerApi.addToWishlist
+DELETE        /api/wishlist/product                        controllers.api.WishlistControllerApi.deleteFromWishlist
+
+# CartController
+GET           /api/cart                                    controllers.api.CartControllerApi.getPopulatedCartItems
+GET           /api/cart/raw                                controllers.api.CartControllerApi.getCartItems
+POST          /api/cart/add                                controllers.api.CartControllerApi.addToCart
+POST          /api/cart/delete                             controllers.api.CartControllerApi.deleteFromCart
+PUT           /api/cart/item                               controllers.api.CartControllerApi.updateCartItemQuantity
+
+# ---  WITH TEMPLATE ENGINE  -------------------------------------------------------------------------------------------
+
+GET           /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
+
+# AccountController
+POST          /login                                       controllers.AccountController.login
+POST          /register                                    controllers.AccountController.register
+
+# CategoryController
 GET           /categories                                  controllers.CategoryController.getAll
 GET           /categories/create                           controllers.CategoryController.create
 POST          /categories/create                           controllers.CategoryController.createHandler
@@ -32,13 +84,7 @@ POST          /categories/update                           controllers.CategoryC
 DELETE        /categories/:categoryId                      controllers.CategoryController.delete(categoryId: String)
 GET           /categories/:categoryId                      controllers.CategoryController.getById(categoryId: String)
 
-# FeaturedController
-GET           /featured/:productId                         controllers.FeaturedController.featured(productId: String)
-
 # NotificationController
-GET           /api/notifications/user/unread               controllers.api.NotificationControllerApi.getUnreadForUser
-GET           /api/notifications/user                      controllers.api.NotificationControllerApi.getAllForUser
-POST          /api/notifications/user                      controllers.api.NotificationControllerApi.makeAllReadForUser
 GET           /notifications/user/:userId                  controllers.NotificationController.notifications(userId: String)
 GET           /notifications/create                        controllers.NotificationController.create
 POST          /notifications/create                        controllers.NotificationController.createHandler
@@ -48,9 +94,6 @@ DELETE        /notifications/:notificationId               controllers.Notificat
 GET           /notifications/:notificationId               controllers.NotificationController.notification(notificationId: String)
 
 # OpinionController
-POST          /api/opinions                                controllers.api.OpinionControllerApi.create
-PUT           /api/opinions                                controllers.api.OpinionControllerApi.update
-DELETE        /api/opinions                                controllers.api.OpinionControllerApi.delete
 GET           /opinions/product/:productId                 controllers.OpinionController.getAllForProduct(productId: String)
 GET           /opinions/create                             controllers.OpinionController.create
 POST          /opinions/create                             controllers.OpinionController.createHandler
@@ -60,10 +103,6 @@ DELETE        /opinions/:opinionId                         controllers.OpinionCo
 GET           /opinions/:opinionId                         controllers.OpinionController.getById(opinionId: String)
 
 # OrderController
-GET           /api/orders/user                             controllers.api.OrderControllerApi.getPreviewsForUser
-POST          /api/orders                                  controllers.api.OrderControllerApi.create
-GET           /api/orders/:id/shipping-info                controllers.api.OrderControllerApi.getPopulatedWithShippingInfoById(id: String)
-GET           /api/orders/:id                              controllers.api.OrderControllerApi.getPopulatedById(id: String)
 GET           /orders                                      controllers.OrderController.getAll
 GET           /orders/user/:userId                         controllers.OrderController.getAllForUser(userId: String)
 GET           /orders/create/cart/:cartId                  controllers.OrderController.create(cartId: String)
@@ -71,7 +110,6 @@ PUT           /order/:orderId                              controllers.OrderCont
 GET           /orders/:orderId                             controllers.OrderController.getById(orderId: String)
 
 # PaymentController
-POST          /api/payments                                controllers.api.PaymentControllerApi.create
 GET           /payments                                    controllers.PaymentController.getAll
 GET           /payments/create                             controllers.PaymentController.create
 POST          /payments/create                             controllers.PaymentController.createHandler
@@ -80,12 +118,6 @@ POST          /payments/update                             controllers.PaymentCo
 GET           /payments/:paymentId                         controllers.PaymentController.getById(paymentId: String)
 
 # ProductController
-GET           /api/products                                controllers.api.ProductControllerApi.getAll
-GET           /api/products/category/:id                   controllers.api.ProductControllerApi.getAllByCategory(id: String)
-GET           /api/products/:id                            controllers.api.ProductControllerApi.getById(id: String)
-POST          /api/products                                controllers.api.ProductControllerApi.create
-PUT           /api/products                                controllers.api.ProductControllerApi.update
-DELETE        /api/products                                controllers.api.ProductControllerApi.delete
 GET           /products                                    controllers.ProductController.getAll
 GET           /products/previews                           controllers.ProductController.getAllPreviews
 GET           /products/create                             controllers.ProductController.create
@@ -96,8 +128,6 @@ DELETE        /products/:productId                         controllers.ProductCo
 GET           /products/:productId                         controllers.ProductController.getById(productId: String)
 
 # UserController
-GET           /api/users                                   controllers.api.UserControllerApi.getAll
-GET           /api/users/:id                               controllers.api.UserControllerApi.getById(id: String)
 GET           /users                                       controllers.UserController.getAll
 GET           /users/create                                controllers.UserController.create
 POST          /users/create                                controllers.UserController.createHandler
@@ -107,10 +137,6 @@ DELETE        /users/:userId                               controllers.UserContr
 GET           /users/:userId                               controllers.UserController.getById(userId: String)
 
 # WishlistController
-GET           /api/wishlist                                controllers.api.WishlistControllerApi.getAllForUser
-GET           /api/wishlist/product/:id/status             controllers.api.WishlistControllerApi.getProductStatus(id: String)
-POST          /api/wishlist/product                        controllers.api.WishlistControllerApi.addToWishlist
-DELETE        /api/wishlist/product                        controllers.api.WishlistControllerApi.deleteFromWishlist
 GET           /wishlist/user/:userId                       controllers.WishlistController.wishItemsForUser(userId: String)
 GET           /wishlist/item/create                        controllers.WishlistController.create
 POST          /wishlist/item/create                        controllers.WishlistController.createHandler
@@ -118,9 +144,6 @@ DELETE        /wishlist/item/:wishItemId                   controllers.WishlistC
 GET           /wishlist/item/:wishItemId                   controllers.WishlistController.wishItem(wishItemId: String)
 
 # ShippingController
-POST          /api/shipping-info                           controllers.api.ShippingControllerApi.create
-PUT           /api/shipping-info                           controllers.api.ShippingControllerApi.update
-DELETE        /api/shipping-info                           controllers.api.ShippingControllerApi.delete
 GET           /shippinginfos                               controllers.ShippingController.getAll
 GET           /shippinginfos/create                        controllers.ShippingController.create
 POST          /shippinginfos/create                        controllers.ShippingController.createHandler
@@ -130,11 +153,6 @@ DELETE        /shippinginfos/:shippingInfoId               controllers.ShippingC
 GET           /shippinginfos/:shippingInfoId               controllers.ShippingController.getById(shippingInfoId: String)
 
 # Cart
-GET           /api/cart                                    controllers.api.CartControllerApi.getPopulatedCartItems
-GET           /api/cart/raw                                controllers.api.CartControllerApi.getCartItems
-POST          /api/cart/add                                controllers.api.CartControllerApi.addToCart
-POST          /api/cart/delete                             controllers.api.CartControllerApi.deleteFromCart
-PUT           /api/cart/item                               controllers.api.CartControllerApi.updateCartItemQuantity
 GET           /carts                                       controllers.CartController.getAllPreviews
 GET           /cart/user/:userId                           controllers.CartController.getByUserId(userId: String)
 GET           /cart/create/user/:userId                    controllers.CartController.createForUser(userId: String)

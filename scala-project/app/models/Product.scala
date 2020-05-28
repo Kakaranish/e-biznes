@@ -11,7 +11,7 @@ case class Product(id: String,
                    categoryId: String,
                    isDeleted: Boolean)
 
-case class ProductPreview(id: String, name: String)
+case class ProductPreview(id: String, name: String, price: Float)
 
 object ProductPreview {
   implicit val productPreviewFormat = Json.format[ProductPreview]

@@ -42,7 +42,7 @@ class WishlistController @Inject()(cc: MessagesControllerComponents,
 
     Ok(views.html.wishlistItems.createWishlistItem(createForm,
       usersPreviews.map(userPreview => UserPreview(userPreview._1, userPreview._2)),
-      productsPreviews.map(productPreview => ProductPreview(productPreview._1, productPreview._2)))
+      productsPreviews.map(productPreview => ProductPreview(productPreview._1, productPreview._2, productPreview._3)))
     )
   }
 
@@ -73,7 +73,7 @@ class WishlistController @Inject()(cc: MessagesControllerComponents,
         Future.successful(
           BadRequest(views.html.wishlistItems.createWishlistItem(
             errorForm, usersPreviews.map(userPreview => UserPreview(userPreview._1, userPreview._2)),
-            productsPreviews.map(productPreview => ProductPreview(productPreview._1, productPreview._2))))
+            productsPreviews.map(productPreview => ProductPreview(productPreview._1, productPreview._2, productPreview._3))))
         )
       },
       createForm => {

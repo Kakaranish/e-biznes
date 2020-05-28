@@ -48,7 +48,8 @@ const PaymentPage = (props) => {
 			}
 
 			let totalPrice = 0;
-			result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
+			result.cartItems.forEach(ci => 
+				totalPrice += ci.cartItem.quantity * ci.cartItem.pricePerProduct);
 
 			let paymentsValue = 0;
 			result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);

@@ -9,6 +9,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.data.format.Formats.floatFormat
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
 
 import scala.concurrent.duration.Duration
@@ -90,9 +91,9 @@ class CartController @Inject()(cc: MessagesControllerComponents,
       val availableProducts = Await.result(productDao.getAllPreviews(), Duration.Inf)
       if (availableProducts.isEmpty) Future(Ok("There are no products found"))
       else {
-        val formToPass = addItemToCartForm.fill(AddToCartForm(cartId, null, 0))
+        val formToPass = addItemToCartForm.fill(AddToCartForm(cartId, null, 0, 0))
         val productsPreviews = availableProducts.map(product =>
-          ProductPreview(product._1, product._2))
+          ProductPreview(product._1, product._2, product._3))
         Future(Ok(views.html.carts.addToCart(formToPass, productsPreviews)))
       }
     }
@@ -149,7 +150,8 @@ class CartController @Inject()(cc: MessagesControllerComponents,
     mapping(
       "cartId" -> nonEmptyText,
       "productId" -> nonEmptyText,
-      "quantity" -> number(1, 20)
+      "quantity" -> number(1, 20),
+      "pricePerProduct" -> of(floatFormat)
     )(AddToCartForm.apply)(AddToCartForm.unapply)
   }
 
@@ -161,11 +163,11 @@ class CartController @Inject()(cc: MessagesControllerComponents,
         val availableProducts = Await.result(productDao.getAllPreviews(), Duration.Inf)
         Future.successful(
           BadRequest(views.html.carts.addToCart(errorForm, availableProducts.map(
-            tuple => ProductPreview(tuple._1, tuple._2))))
+            tuple => ProductPreview(tuple._1, tuple._2, tuple._3))))
         )
       },
       cartForm => {
-        val cartItem = CartItem(null, cartForm.cartId, cartForm.productId, cartForm.quantity)
+        val cartItem = CartItem(null, cartForm.cartId, cartForm.productId, cartForm.quantity, cartForm.pricePerProduct)
         cartItemDao.create(cartItem).map(_ => {
           cartDao.setUpdateDateToNow(cartForm.cartId)
           Redirect(routes.CartController.addToCart(cartForm.cartId))
@@ -178,4 +180,5 @@ class CartController @Inject()(cc: MessagesControllerComponents,
 
 case class AddToCartForm(cartId: String,
                          productId: String,
-                         quantity: Int)
+                         quantity: Int,
+                         pricePerProduct: Float)

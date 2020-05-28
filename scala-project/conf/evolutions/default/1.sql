@@ -61,7 +61,7 @@ CREATE TABLE "Product" (
 	"Id"	TEXT NOT NULL UNIQUE,
 	"Name"	TEXT NOT NULL,
 	"Description" TEXT NOT NULL,
-	"Price"	REAL,
+	"Price"	REAL NOT NULL,
 	"Quantity"	INTEGER NOT NULL DEFAULT 0,
 	"CategoryId"	TEXT NOT NULL,
 	"IsDeleted"	INTEGER NOT NULL DEFAULT 0,
@@ -124,6 +124,7 @@ CREATE TABLE "CartItem" (
 	"CartId"	TEXT NOT NULL,
 	"ProductId"	TEXT NOT NULL,
 	"Quantity"	INTEGER NOT NULL DEFAULT 0,
+	"PricePerProduct"	REAL NOT NULL,
 	PRIMARY KEY("Id"),
 	FOREIGN KEY("CartId") REFERENCES "Cart"("Id"),
 	FOREIGN KEY("ProductId") REFERENCES "Product"("Id")

@@ -121,7 +121,7 @@ const CartPage = (props) => {
 
                     <p>Price/Item: {ci.product.price.toFixed(2)}PLN</p>
 
-                    <p>Total price: {ci.product.price.toFixed(2) * ci.cartItem.quantity} PLN</p>
+                    <p>Total price: {ci.cartItem.pricePerProduct * ci.cartItem.quantity} PLN</p>
 
                     <Link to={`/products/${ci.product.id}`} key={`prod-link-${ci.product.id}`}
                         className="btn btn-primary mr-2">

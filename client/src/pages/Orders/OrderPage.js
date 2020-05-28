@@ -27,7 +27,7 @@ const OrderPage = (props) => {
             }
 
             let totalPrice = 0;
-            result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.product.price);
+            result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.cartItem.pricePerProduct);
 
             let paymentsValue = 0;
             result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
@@ -197,11 +197,11 @@ const OrderPage = (props) => {
                     </p>
 
                     <p>
-                        <b>Price/Item:</b> {ci.product.price.toFixed(2)}PLN
+                        <b>Price/Item:</b> {ci.cartItem.pricePerProduct.toFixed(2)}PLN
                     </p>
 
                     <p>
-                        <b>Total price:</b> {ci.product.price.toFixed(2) * ci.cartItem.quantity} PLN
+                        <b>Total price:</b> {ci.cartItem.pricePerProduct.toFixed(2) * ci.cartItem.quantity} PLN
                     </p>
                 </div>
             )

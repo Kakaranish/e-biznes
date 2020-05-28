@@ -42,7 +42,7 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
 
     val availableProductsResult = Await.result(productDao.getAllPreviews(), Duration.Inf)
     if (availableProductsResult.isEmpty) Ok("Can't add opinion - there are no products in db.")
-    val availableProducts = availableProductsResult.map(product => ProductPreview(product._1, product._2))
+    val availableProducts = availableProductsResult.map(product => ProductPreview(product._1, product._2, product._3))
 
     Ok(views.html.opinions.createOpinion(createForm, availableUsers, availableProducts))
   }
@@ -95,7 +95,7 @@ class OpinionController @Inject()(cc: MessagesControllerComponents,
       errorForm => {
         val availableUsers = Await.result(userDao.getAll(), Duration.Inf)
         val availableProducts = Await.result(productDao.getAllPreviews(), Duration.Inf)
-          .map(product => ProductPreview(product._1, product._2))
+          .map(product => ProductPreview(product._1, product._2, product._3))
         Future.successful(
           BadRequest(views.html.opinions.createOpinion(errorForm, availableUsers, availableProducts))
         )

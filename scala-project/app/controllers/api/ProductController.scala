@@ -3,7 +3,7 @@ package controllers.api
 import com.mohiva.play.silhouette.api.Silhouette
 import daos.api.{CategoryDaoApi, ProductDaoApi}
 import javax.inject.{Inject, Singleton}
-import models.{Category, Product}
+import models.Product
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{MessagesControllerComponents, _}
@@ -93,7 +93,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     implicit val productRead = (
       (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "price").read[Float].filter(JsonValidationError("must be greater > 0"))(x => x != null && x > 0) and
+        (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
         (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
         (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
       ) (CreateProductDto.apply _)
@@ -125,7 +125,7 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
         (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "price").read[Float].filter(JsonValidationError("must be greater > 0"))(x => x != null && x > 0) and
+        (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
         (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
         (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
       ) (UpdateProductDto.apply _)
