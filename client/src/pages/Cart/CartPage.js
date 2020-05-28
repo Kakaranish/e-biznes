@@ -17,6 +17,7 @@ const CartPage = (props) => {
 
         try {
             const result = await doRequest(action)
+            props.clearCart();
             history.push(`/orders/${result}`);
         } catch (error) {
             alert(error.msg);

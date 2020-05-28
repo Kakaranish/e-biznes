@@ -6,7 +6,6 @@ import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
-
 const LoginPage = (props) => {
 
     const history = useHistory();
