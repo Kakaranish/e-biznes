@@ -1,8 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
-import MainPage from './pages/MainPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ManageCategoryRoutes from './pages/Categories/Manage/ManageCategoryRoutes';
 import ManageProductRoutes from './pages/Products/Manage/ManageProductRoutes';
@@ -24,7 +23,7 @@ const App = () => {
     <Router>
       <MainLayout>
         <Switch>
-          <Route path='/' component={MainPage} exact />
+          <Redirect exact from='/' to='/products' />
           <Route path='/products' component={ProductRoutes} />
           <Route path='/manage/products' component={ManageProductRoutes} />
           <Route path='/categories' component={CategoriesPage} />

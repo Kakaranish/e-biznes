@@ -56,6 +56,13 @@ class OpinionDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
     }
   }
 
+  def update(opinionId: String, newContent: String) = {
+    val action = opinionTable.filter(record => record.id === opinionId)
+      .map(r => r.content)
+      .update(newContent)
+    db.run(action).map(_ => opinionId)
+  }
+
   def delete(opinionId: String) = db.run {
     opinionTable.filter(_.id === opinionId)
       .delete

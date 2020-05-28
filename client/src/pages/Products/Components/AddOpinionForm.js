@@ -1,11 +1,12 @@
 import React from 'react';
-import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
-const AddOpinion = (props) => {
+const AddOpinionForm = ({ productId, auth }) => {
 
-    const productId = props.productId;
+    const history = useHistory();
 
     const onSubmit = async event => {
         event.preventDefault();
@@ -15,14 +16,13 @@ const AddOpinion = (props) => {
         try {
             const action = async () => axios.post('/api/opinions', formData, {
                 validateStatus: false,
-                headers: { 'X-Auth-Token': props.auth.token }
+                headers: { 'X-Auth-Token': auth.token }
             });
             await doRequest(action);
+            history.go();
         } catch (error) {
             alert(`${error} error occured`);
         }
-
-        props.callback();
     };
 
     return <>
@@ -41,4 +41,4 @@ const AddOpinion = (props) => {
 
 export default new AwareComponentBuilder()
     .withAuthAwareness()
-    .build(AddOpinion);
+    .build(AddOpinionForm);

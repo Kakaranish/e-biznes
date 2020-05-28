@@ -48,6 +48,24 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
+  def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+    implicit val updateOpinionRead = (
+      (JsPath \ "opinionId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "content").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      ) (UpdateOpinionRequest.apply _)
+
+    val validation = request.body.validate[UpdateOpinionRequest](updateOpinionRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[UpdateOpinionRequest] => {
+        opinionDao.belongsToUser(s.value.opinionId, request.identity.id).flatMap(belongs => {
+          if(!belongs) Future(Status(BAD_REQUEST)("there is no such opinion for given user"))
+          else opinionDao.update(s.value.opinionId, s.value.content).flatMap(_ => Future(Ok))
+        })
+      }
+    }
+  }
+
   def delete() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val deleteOpinionRead =
       (JsPath \ "opinionId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
@@ -66,4 +84,6 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   case class CreateOpinionRequest(productId: String, content: String)
+
+  case class UpdateOpinionRequest(opinionId: String, content: String)
 }

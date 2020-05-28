@@ -49,6 +49,7 @@ GET           /notifications/:notificationId               controllers.Notificat
 
 # OpinionController
 POST          /api/opinions                                controllers.api.OpinionControllerApi.create
+PUT           /api/opinions                                controllers.api.OpinionControllerApi.update
 DELETE        /api/opinions                                controllers.api.OpinionControllerApi.delete
 GET           /opinions/product/:productId                 controllers.OpinionController.getAllForProduct(productId: String)
 GET           /opinions/create                             controllers.OpinionController.create
