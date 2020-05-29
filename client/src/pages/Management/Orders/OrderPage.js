@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import { doRequest } from '../../../common/Utils';
 import ShippingInfo from './components/ShippingInfo';
 import OrderedProducts from '../../../components/Orders/OrderedProducts';
 import Payments from './components/Payments';
+import BasicOrderInfo from '../../../components/Orders/BasicOrderInfo';
 
 const OrderPage = (props) => {
 
@@ -52,34 +52,7 @@ const OrderPage = (props) => {
     else if (!state.orderInfo) return <h3>No such order...</h3>
     return <>
 
-        <h3>Order {orderId}</h3>
-
-        <p>
-            User: {state.orderInfo.order.userId}
-        </p>
-
-        <p>Created: {moment(state.orderInfo.order.dateCreated).format('YYYY-MM-DD hh:mm:ss')}</p>
-
-        <p>
-            <b>Paid? </b>
-            {
-                state.toPay <= 0
-                    ? <span className="text-success">Yes</span>
-                    : <span className="text-danger">No</span>
-            }
-        </p>
-
-        <p>
-            <b>Total Price:</b> {state.totalPrice.toFixed(2)} PLN
-        </p>
-
-        <p>
-            <b>Money paid in: </b> {state.paymentsValue.toFixed(2)} PLN
-        </p>
-
-        <p>
-            <b>Remaining money to paid:</b> {state.toPay} PLN
-        </p>
+        <BasicOrderInfo orderState={state} showUser={true} />
 
         <ShippingInfo shippingInfo={state.orderInfo.shippingInfo} />
 
