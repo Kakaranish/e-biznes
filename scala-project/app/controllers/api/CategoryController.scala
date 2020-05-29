@@ -93,12 +93,7 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
         case s: JsSuccess[String] => {
           categoryDao.getById(s.value).flatMap(category => {
             if (category.getOrElse(null) == null) Future(Status(BAD_REQUEST)(JsError.toJson(JsError("no category with such id"))))
-            else {
-              productDao.existsAnyWithCategoryId(s.value).flatMap(exists => {
-                if (exists) Future(Status(BAD_REQUEST)(JsError.toJson(JsError("cannot remove because category is assigned to at least one product"))))
-                else categoryDao.delete(s.value).flatMap(_ => Future(Ok))
-              })
-            }
+            else categoryDao.delete(s.value).flatMap(_ => Future(Ok))
           })
         }
       }

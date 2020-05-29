@@ -85,12 +85,6 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
     } yield (product, wishlistItem, cart, cartItem, opinions, boughtByUser)).transactionally
   }
 
-  def existsAnyWithCategoryId(categoryId: String) = db.run {
-    productTable.filter(p => p.isDeleted === false && p.categoryId === categoryId)
-      .exists
-      .result
-  }
-
   def subtractAmt(productId: String, toSubtract: Int) = {
     (for {
       product <- productTable.filter(_.id === productId).result.headOption

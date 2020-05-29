@@ -88,7 +88,15 @@ const ProductPage = (props) => {
 		</p>
 
 		<p>
-			<b>Category:</b> {state.result.category?.name ?? 'None'}
+			<b>Category:</b>&nbsp;
+			{
+				state.result.category == null
+					? 'None'
+					: <>
+						{state.result.category.name}
+						{state.result.category?.isDeleted && <i>(DELETED)</i>}
+					</>
+			}
 		</p>
 
 		{

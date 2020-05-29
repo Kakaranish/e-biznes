@@ -9,6 +9,9 @@ const EditProductPage = (props) => {
 	const history = useHistory();
 	const productId = props.match.params.id;
 
+	const [selectedCategory, setSelectedCategory] = useState();
+	const onSelect = event => setSelectedCategory(event.target.value);
+
 	const onSubmit = async event => {
 		event.preventDefault();
 		let formData = getFormDataJsonFromEvent(event);
@@ -16,9 +19,9 @@ const EditProductPage = (props) => {
 		formData.quantity = parseInt(formData.quantity);
 
 		try {
-			const action = async () => axios.put('/api/products', formData,{
-                headers: { 'X-Auth-Token': props.auth.token },
-                validateStatus: false
+			const action = async () => axios.put('/api/products', formData, {
+				headers: { 'X-Auth-Token': props.auth.token },
+				validateStatus: false
 			});
 			await doRequest(action);
 			history.push(`/manage/products/${productId}`);
@@ -56,6 +59,7 @@ const EditProductPage = (props) => {
 				return;
 			}
 
+			setSelectedCategory(productResult.product.categoryId);
 			setState({
 				loading: false,
 				product: productResult.product,
@@ -95,7 +99,7 @@ const EditProductPage = (props) => {
 					<div className="form-group">
 						<label>Price</label>
 						<input name="price" type="number" min={0} step="0.01" className="form-control" id="descriptionInput"
-							placeholder="0.00" defaultValue={state.product.price} required />
+							placeholder="0.00" defaultValue={state.product.price.toFixed(2)} required />
 					</div>
 
 					<div className="form-group">
@@ -106,10 +110,11 @@ const EditProductPage = (props) => {
 
 					<div className="form-group">
 						<label>Category</label>
-						<select name="categoryId" className="custom-select" size="6" required>
+						<select name="categoryId" className="custom-select" size="6"
+							value={selectedCategory} onChange={onSelect} required>
 							{
-								state.categories.map((prod, i) =>
-									<option selected={prod.id == state.product.categoryId} key={`opt-${prod.id}`} value={prod.id}>
+								state.categories.map(prod =>
+									<option key={`opt-${prod.id}`} value={prod.id}>
 										{prod.name}
 									</option>
 								)

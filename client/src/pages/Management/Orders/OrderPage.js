@@ -43,8 +43,6 @@ const OrderPage = (props) => {
                 paymentsValue: paymentsValue,
                 toPay: toPay
             });
-
-            console.log(result);
         };
 
         fetchOrder();

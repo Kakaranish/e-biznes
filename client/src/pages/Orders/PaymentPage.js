@@ -56,7 +56,6 @@ const PaymentPage = (props) => {
 
 			const toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
 
-			console.log(result);
 			setState({
 				loading: false,
 				orderInfo: result,

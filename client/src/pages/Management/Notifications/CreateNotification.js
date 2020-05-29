@@ -18,7 +18,6 @@ const CreateNotification = (props) => {
                 });
                 const result = await doRequest(action);
                 setState({ loading: false, users: result });
-                console.log(result);
             } catch (error) {
                 alert(`${error} error occured`);
                 setState({ loading: false });
