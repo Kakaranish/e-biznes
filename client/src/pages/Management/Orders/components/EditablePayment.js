@@ -57,8 +57,25 @@ const EditablePayment = (props) => {
             !inEditMode
                 ? <>
                     <p>
-                        <b>Status:</b> {statusState}
+                        <b>Status:&nbsp;
+
+                        {
+                                (() => {
+                                    switch (statusState) {
+                                        case "CANCELLED":
+                                            return <span style={{ color: "gray" }}>Cancelled</span>
+                                        case "PENDING":
+                                            return <span style={{ color: "orange" }}>Pending</span>
+                                        case "ACCEPTED":
+                                            return <span style={{ color: "green" }}>Accepted</span>
+                                        case "REJECTED":
+                                            return <span style={{ color: "red" }}>Rejected</span>
+                                    }
+                                })()
+                            }
+                        </b>
                     </p>
+
                     <button className="btn btn-primary w-25" onClick={() => setInEditMode(true)}>
                         Edit status
                     </button>

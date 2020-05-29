@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import { doRequest } from '../../../Utils';
-import EditablePayment  from './components/EditablePayment';
+import ShippingInfo from './components/ShippingInfo';
+import OrderedProducts from './components/OrderedProducts';
+import Payments from './components/Payments';
 
 const OrderPage = (props) => {
 
@@ -82,75 +83,11 @@ const OrderPage = (props) => {
             <b>Remaining money to paid:</b> {state.toPay} PLN
         </p>
 
-        <h3 className="mt-5">Shipping info</h3>
-        <div className="p-3 mb-5" style={{ border: "1px solid gray" }}>
+        <ShippingInfo shippingInfo={state.orderInfo.shippingInfo} />
 
-            {
-                !state.orderInfo.shippingInfo
-                    ? <p> User provided no shipping info </p>
+        <Payments payments={state.orderInfo.payments} />
 
-                    : <>
-                        <p>
-                            <b>Country:</b> {state.orderInfo.shippingInfo.country}
-                        </p>
-
-                        <p>
-                            <b>City:</b> {state.orderInfo.shippingInfo.city}
-                        </p>
-
-                        <p>
-                            <b>Address:</b> {state.orderInfo.shippingInfo.address}
-                        </p>
-
-                        <p>
-                            <b>Zip/Postcode:</b> {state.orderInfo.shippingInfo.zipOrPostcode}
-                        </p>
-                    </>
-            }
-        </div>
-
-        <div className="mb-5">
-            <h3>Payments</h3>
-            {!state.orderInfo.payments || state.orderInfo.payments.length === 0
-                ? <p>No payments yet</p>
-
-                :
-                state.orderInfo.payments.map((p, i) =>
-                    <EditablePayment payment={p} key={`p-${p.id}`} />
-                )
-            }
-        </div>
-
-
-        <h3>Ordered products</h3>
-        {
-            state.orderInfo.cartItems.map((ci, i) =>
-                <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`div-${ci.product.id}`}>
-                    <p>
-                        <b>{ci.product.name}</b>
-                    </p>
-
-                    {
-                        ci.product.description &&
-                        <p>
-                            <b>Description:</b> {ci.product.description}
-                        </p>
-                    }
-
-                    <p>
-                        <b>Quantity:</b> {ci.cartItem.quantity}
-                    </p>
-
-                    <p>
-                        <b>Price/Item:</b> {ci.cartItem.pricePerProduct.toFixed(2)}PLN
-                    </p>
-
-                    <p>
-                        <b>Total price:</b> {ci.cartItem.pricePerProduct.toFixed(2) * ci.cartItem.quantity} PLN
-                    </p>
-                </div>
-            )
-        }
+        <OrderedProducts cartItems={state.orderInfo.cartItems} />
     </>
 };
 
