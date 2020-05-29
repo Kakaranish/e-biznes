@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import AwareComponentBuilder from '../common/AwareComponentBuilder';
-import { doRequest } from '../Utils';
+import { doRequest } from '../common/Utils';
 
 const NotificationFetcher = (props) => {
 

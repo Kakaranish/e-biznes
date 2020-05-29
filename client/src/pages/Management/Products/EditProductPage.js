@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../common/Utils';
 import axios from 'axios';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 

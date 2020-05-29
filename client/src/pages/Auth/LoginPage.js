@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { getFormDataJsonFromEvent, doRequest } from '../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../common/Utils';
 import facebookIcon from '../../assets/img/facebook.svg';
 import googleIcon from '../../assets/img/google.svg';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';

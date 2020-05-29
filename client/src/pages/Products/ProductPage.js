@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID, doRequest } from '../../Utils';
+import { isValidUUID, doRequest } from '../../common/Utils';
 import ProductWishlistStatus from './ProductWishlistStatus';
-import * as Utils from '../../Utils';
+import * as Utils from '../../common/Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 import Opinions from './Components/Opinions';
 

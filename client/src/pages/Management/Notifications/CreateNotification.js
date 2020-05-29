@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { doRequest, getFormDataJsonFromEvent } from '../../../Utils';
+import { doRequest, getFormDataJsonFromEvent } from '../../../common/Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const CreateNotification = (props) => {

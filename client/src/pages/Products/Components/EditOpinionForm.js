@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import { getFormDataJsonFromEvent, doRequest } from '../../../common/Utils';
 
 const EditOpinionForm = ({ opinion, auth, onFinishEditCb }) => {
 

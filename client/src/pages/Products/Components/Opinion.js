@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { doRequest } from '../../../Utils';
+import { doRequest } from '../../../common/Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import Modal from '../../../components/Modal';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
-import { doRequest } from '../../../Utils';
+import { doRequest } from '../../../common/Utils';
 import axios from 'axios';
 
 const Payment = (props) => {

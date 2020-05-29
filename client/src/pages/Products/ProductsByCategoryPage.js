@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { doRequest } from '../../Utils';
+import { doRequest } from '../../common/Utils';
 import axios from 'axios';
 
 const ProductsByCategoryPage = (props) => {

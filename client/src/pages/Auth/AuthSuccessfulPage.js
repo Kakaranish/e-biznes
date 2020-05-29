@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import queryString from 'query-string';
 import axios from 'axios';
-import { doRequest } from '../../Utils';
+import { doRequest } from '../../common/Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 
 const AuthSuccessfulPage = (props) => {

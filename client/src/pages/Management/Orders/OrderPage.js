@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
-import { doRequest } from '../../../Utils';
+import { doRequest } from '../../../common/Utils';
 import ShippingInfo from './components/ShippingInfo';
 import OrderedProducts from './components/OrderedProducts';
 import Payments from './components/Payments';

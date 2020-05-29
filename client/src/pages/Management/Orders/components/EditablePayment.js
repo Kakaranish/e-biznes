@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../../common/AwareComponentBuilder';
-import { doRequest, getFormDataJsonFromEvent } from '../../../../Utils';
+import { doRequest, getFormDataJsonFromEvent } from '../../../../common/Utils';
 
 const EditablePayment = (props) => {
     const payment = props.payment;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { isValidUUID, doRequest } from '../../../Utils';
+import { isValidUUID, doRequest } from '../../../common/Utils';
 import Modal from '../../../components/Modal';
 import { useHistory } from 'react-router-dom';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../Utils';
+import { isValidUUID, getFormDataJsonFromEvent, doRequest } from '../../../common/Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const EditCategoryPage = (props) => {

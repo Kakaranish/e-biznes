@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
-import { doRequest } from '../../Utils';
+import { doRequest } from '../../common/Utils';
 
 const CartPage = (props) => {
 

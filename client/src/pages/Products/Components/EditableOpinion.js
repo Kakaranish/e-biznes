@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { doRequest } from '../../../Utils';
+import { doRequest } from '../../../common/Utils';
 import Modal from '../../../components/Modal';
 import EditOpinionForm from '../Components/EditOpinionForm';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';

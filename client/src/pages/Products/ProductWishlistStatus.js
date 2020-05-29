@@ -3,7 +3,7 @@ import axios from 'axios';
 import wishlistOnIcon from '../../assets/img/heart-on.svg';
 import wishlistOffIcon from '../../assets/img/heart-off.svg';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
-import { doRequest } from '../../Utils';
+import { doRequest } from '../../common/Utils';
 
 const ProductWishlistStatus = (props) => {
 
@@ -38,9 +38,7 @@ const ProductWishlistStatus = (props) => {
 
     const toggleWishlist = async () => {
 
-        let result;
         const headers = { 'X-Auth-Token': props.auth.token };
-
         let action;
         if (wishlisted.wishlisted) action = async () => axios.delete('/api/wishlist/product', {
             data: { productId: productId },
@@ -51,7 +49,7 @@ const ProductWishlistStatus = (props) => {
             { productId: productId }, { validateStatus: false, headers });
 
         try {
-            const result = await doRequest(action);
+            await doRequest(action);
             if (wishlisted.wishlisted) setWishlisted(isNotWishlistedState);
             else setWishlisted(isWishlistedState);
         } catch (error) {

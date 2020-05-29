@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Modal from '../../../components/Modal';
-import { isValidUUID, doRequest } from '../../../Utils';
+import { isValidUUID, doRequest } from '../../../common/Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
 const ProductPage = (props) => {

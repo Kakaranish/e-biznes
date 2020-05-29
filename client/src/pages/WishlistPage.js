@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProductWishlistStatus from './Products/ProductWishlistStatus';
 import AwareComponentBuilder from '../common/AwareComponentBuilder';
-import { doRequest } from '../Utils';
+import { doRequest } from '../common/Utils';
 
 const WishlistPage = (props) => {
 
