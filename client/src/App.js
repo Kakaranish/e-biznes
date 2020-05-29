@@ -11,7 +11,7 @@ import CategoriesPage from './pages/Categories/CategoriesPage';
 import MainLayout from './routes/MainLayout';
 import AuthorizedOnlyRoute from './routes/AuthorizedOnlyRoute';
 import OrderRoutes from './pages/Orders/OrderRoutes';
-import NotificationFetcher from './components/NotificationFetcher';
+import NotificationFetcher from './skeleton/NotificationFetcher';
 import NotificationsPage from './pages/Notifications/NotificationsPage';
 import ManagementRoutes  from './pages/Management/Routes';
 
