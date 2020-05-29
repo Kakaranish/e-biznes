@@ -34,7 +34,7 @@ const Opinion = (props) => {
 			<p>{opinionInfo.opinion.content}</p>
 
 			{
-				props.auth.role === 'ADMIN' &&
+				props.auth?.role === 'ADMIN' &&
 				<Modal title={"Are you sure"}
 					btnText={"Delete"}
 					btnClasses={"btn btn-danger w-25"}
