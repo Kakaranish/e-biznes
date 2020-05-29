@@ -19,7 +19,7 @@ const AuthorizedOnlyRoute = ({ component: Component, ...rest }) => {
                 alert('This page requires to be logged in. Redirecting to login page...');
                 history.push('/auth/login');
                 return;
-            };
+            }
             const result = await axios.post('/auth/verify', {}, {
                 headers: { 'X-Auth-Token': token },
                 validateStatus: false

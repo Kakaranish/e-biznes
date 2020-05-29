@@ -7,7 +7,7 @@ const NotificationFetcher = (props) => {
 
     let interval;
 
-    let action = async () => {
+    let fetchNotifs = async () => {
         const token = props.auth?.token;
         if (!token) {
             if (!props.notifs.length > 0) props.setNotifs([]);
@@ -27,10 +27,10 @@ const NotificationFetcher = (props) => {
     };
 
     useEffect(() => {
-        action();
+        fetchNotifs();
 
         interval = setInterval(() => {
-            action();
+            fetchNotifs();
         }, 10 * 1000);
 
         return () => { clearInterval(interval) };

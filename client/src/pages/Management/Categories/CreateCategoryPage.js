@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getFormDataJsonFromEvent, doRequest } from '../../../common/Utils';
+import { getFormDataJsonFromEvent } from '../../../common/Utils';
 import axios from 'axios';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 
@@ -21,7 +21,7 @@ const CreateCategoryPage = (props) => {
 			setValidationErrors(result.data.obj.map(r => r.msg));
 			return;
 		}
-		else if(result.status !== 200) {
+		else if (result.status !== 200) {
 			alert("Some error occured");
 			console.log(result);
 			return;
@@ -47,7 +47,7 @@ const CreateCategoryPage = (props) => {
 						<p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
 							Validation errors
                         </p>
-						<ul style={{ paddingTop: "0" }, { marginTop: "0px" }}>
+						<ul style={{ paddingTop: "0", marginTop: "0px" }}>
 							{
 								validationErrors.map((error, i) => {
 									return <li key={`val-err-${i}`} className="text-danger">{error}</li>

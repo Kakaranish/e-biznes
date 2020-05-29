@@ -25,7 +25,6 @@ const CategoryPage = (props) => {
 		}
 	}
 
-	const [validationErrors, setValidationErrors] = useState(null);
 	const [state, setState] = useState({ loading: true, category: null });
 	useEffect(() => {
 		const fetchCategory = async () => {
@@ -69,22 +68,6 @@ const CategoryPage = (props) => {
 				modalSecondaryBtnText={"Cancel"}
 				modalSecondaryBtnClasses={"btn btn-secondary"}
 			/>
-
-			{
-				validationErrors &&
-				<div className="col-12 mt-2">
-					<p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
-						Validation errors
-                        </p>
-					<ul style={{ paddingTop: "0" }, { marginTop: "0px" }}>
-						{
-							validationErrors.map((error, i) => {
-								return <li key={`val-err-${i}`} className="text-danger">{error}</li>
-							})
-						}
-					</ul>
-				</div>
-			}
 		</>
 	}
 };

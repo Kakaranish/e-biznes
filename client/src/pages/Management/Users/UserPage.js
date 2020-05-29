@@ -11,10 +11,6 @@ const UserPage = (props) => {
 
     const onEdit = () => history.push(`/manage/users/${userId}/edit`);
 
-    const onDelete = () => {
-
-    };
-
     const [state, setState] = useState({ loading: true, user: null });
     useEffect(() => {
         const fetchUser = async () => {
