@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import { doRequest } from '../../../common/Utils';
 import axios from 'axios';
+import PaymentBasicInfo from '../../../components/PaymentBasicInfo';
 
 const Payment = (props) => {
 
@@ -25,22 +25,7 @@ const Payment = (props) => {
     };
 
     return <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`p-${payment.id}`}>
-
-        <p>
-            <b>Payment Id:</b> {payment.id}
-        </p>
-
-        <p>
-            <b>Amount of money:</b> {payment.amountOfMoney} PLN
-        </p>
-
-        <p>
-            <b>Payment method:</b> {payment.methodCode}
-        </p>
-
-        <p>
-            <b>Paid in:</b> {moment(payment.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
-        </p>
+        <PaymentBasicInfo payment={payment} />
 
         <p>
             <b>Status:&nbsp;

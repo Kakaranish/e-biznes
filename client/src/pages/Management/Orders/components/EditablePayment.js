@@ -3,6 +3,7 @@ import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../../common/AwareComponentBuilder';
 import { doRequest, getFormDataJsonFromEvent } from '../../../../common/Utils';
+import PaymentBasicInfo from '../../../../components/PaymentBasicInfo';
 
 const EditablePayment = (props) => {
     const payment = props.payment;
@@ -36,23 +37,8 @@ const EditablePayment = (props) => {
     }
 
     return <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`p-${payment.id}`}>
-
-        <p>
-            <b>Payment Id:</b> {payment.id}
-        </p>
-
-        <p>
-            <b>Amount of money:</b> {payment.amountOfMoney} PLN
-        </p>
-
-        <p>
-            <b>Payment method:</b> {payment.methodCode}
-        </p>
-
-        <p>
-            <b>Paid in:</b> {moment(payment.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
-        </p>
-
+        <PaymentBasicInfo payment={payment} />
+        
         {
             !inEditMode
                 ? <>
