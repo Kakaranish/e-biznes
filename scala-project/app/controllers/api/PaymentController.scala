@@ -46,7 +46,21 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
-  def updatePaymentStatus() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+  def cancelPaymentStatus() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+    implicit val paymentStatusRead = (JsPath \ "paymentId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+    val validation = request.body.validate[String](paymentStatusRead)
+    validation match {
+      case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+      case s: JsSuccess[String] => {
+        paymentDao.belongsToUser(s.value, request.identity.id).flatMap(belongs => {
+          if(!belongs) Future(Status(BAD_REQUEST)("payment does not belong to user"))
+          else paymentDao.updateStatus(s.value, "CANCELLED").flatMap(_ => Future(Ok))
+        })
+      }
+    }
+  }
+
+  def adminUpdatePaymentStatus() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val paymentStatusRead = (

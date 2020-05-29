@@ -25,6 +25,14 @@ class PaymentDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit
       .result
   }
 
+  def belongsToUser(paymentId: String, userId: String) = db.run {
+    paymentTable.filter(p => p.id === paymentId)
+      .joinLeft(orderTable).on((x,y) => x.orderId === y.id)
+      .filter(r => r._2.map(_.userId) === userId)
+      .exists
+      .result
+  }
+
   def create(payment: Payment) = {
     val availableMethods = List("BLIK", "CARD", "TRANSFER")
     if (!availableMethods.contains(payment.methodCode)) null
