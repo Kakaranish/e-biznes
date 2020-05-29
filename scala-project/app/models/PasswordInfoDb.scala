@@ -22,7 +22,7 @@ class PasswordInfoTable(tag: Tag) extends Table[PasswordInfoDb](tag, "PasswordIn
 
   def loginInfoId = column[String]("LoginInfoId")
 
-  def login_infoFK = foreignKey("login_info_fk", loginInfoId, TableQuery[LoginInfoTable])(_.id)
+  def loginInfoFK = foreignKey("login_info_fk", loginInfoId, TableQuery[LoginInfoTable])(_.id)
 
   def * = (hasher, password, salt, loginInfoId) <> ((PasswordInfoDb.apply _).tupled, PasswordInfoDb.unapply)
 }

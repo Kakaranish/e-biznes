@@ -23,6 +23,8 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
   import dbConfig._
   import profile.api._
 
+  val datetimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+
   def getById(cartId: String) = db.run {
     cartTable.filter(_.id === cartId)
       .result
@@ -50,7 +52,7 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
   def createForUser(userId: String) = {
     val id = UUID.randomUUID().toString()
     val nowIso = new DateTime().toString(DateTimeFormat
-      .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      .forPattern(datetimeFormat))
     val cartToAdd = Cart(id, userId, false, nowIso)
 
     val action = cartTable += cartToAdd
@@ -64,7 +66,7 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
       _ <- cartTable.filter(record => record.id === cartId)
         .map(record => record.isFinalized)
         .update(true)
-      now = new DateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      now = new DateTime().toString(DateTimeFormat.forPattern(datetimeFormat))
       _ <- cartTable.filter(record => record.id === cartId)
         .map(record => (record.updateDate))
         .update(now)
@@ -72,7 +74,7 @@ class CartDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider,
   }
 
   def setUpdateDateToNow(cartId: String) = db.run {
-    val nowIso = new DateTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    val nowIso = new DateTime().toString(DateTimeFormat.forPattern(datetimeFormat))
     cartTable.filter(record => record.id === cartId)
       .map(record => record.updateDate)
       .update(nowIso)

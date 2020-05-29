@@ -55,7 +55,7 @@ class WishlistControllerApi @Inject()(cc: MessagesControllerComponents,
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
       case s: JsSuccess[String] => {
         wishlistItemDao.deleteForUserAndProduct(s.value, request.identity.id).flatMap { result =>
-          Future(Ok(Json.toJson(if (result > 0) true else false)))
+          Future(Ok(Json.toJson(result > 0)))
         }
       }
     }

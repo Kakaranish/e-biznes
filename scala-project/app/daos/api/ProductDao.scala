@@ -58,31 +58,43 @@ class ProductDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
   def getWhenLoggedInPopulatedProduct(productId: String, userId: String) = db.run {
     (for {
       product <- productTable.filter(p => p.id === productId && p.isDeleted === false)
-        .joinLeft(categoryTable).on((x, y) => x.categoryId === y.id).result.headOption
-      wishlistItem <- if (product.isDefined) wishlistItemTable
-        .filter(r => r.userId === userId && r.productId === productId).result.headOption else DBIO.successful(null)
-      cart <- if (product.isDefined) cartTable
-        .filter(r => r.userId === userId && r.isFinalized === false).result.headOption else DBIO.successful(null)
+        .joinLeft(categoryTable).on((x, y) => x.categoryId === y.id)
+        .result
+        .headOption
+      wishlistItem <- {
+        if (!product.isDefined) DBIO.successful(null)
+        else wishlistItemTable.filter(r => r.userId === userId && r.productId === productId)
+          .result
+          .headOption
+      }
+      cart <- {
+        if (!product.isDefined) DBIO.successful(None)
+        else cartTable .filter(r => r.userId === userId && r.isFinalized === false)
+          .result
+          .headOption
+      }
       cartItem <- {
-        if (cart == null || !cart.isDefined) DBIO.successful(null)
-        else cartItemTable.filter(r => r.cartId === cart.get.id && r.productId === productId).result.headOption
+        if (!cart.isDefined) DBIO.successful(null)
+        else cartItemTable.filter(r => r.cartId === cart.get.id && r.productId === productId)
+          .result
+          .headOption
       }
       opinions <- {
-        if (product == null || !product.isDefined) DBIO.successful(List())
+        if (!product.isDefined) DBIO.successful(List())
         else opinionTable.filter(_.productId === productId)
           .joinLeft(userTable).on((x, y) => x.userId === y.id)
           .result
       }
       boughtByUser <- {
-        if (product == null || !product.isDefined) DBIO.successful(false)
+        if (!product.isDefined) DBIO.successful(false)
         else cartItemTable.filter(r => r.productId === productId)
           .joinLeft(cartTable).on((x, y) => x.cartId === y.id)
           .filter(c => c._2.map(_.userId) === userId && c._2.map(_.isFinalized) === true)
           .exists
           .result
       }
-
-    } yield (product, wishlistItem, cart, cartItem, opinions, boughtByUser)).transactionally
+    } yield (product, wishlistItem, cart, cartItem, opinions, boughtByUser))
+      .transactionally
   }
 
   def subtractAmt(productId: String, toSubtract: Int) = {

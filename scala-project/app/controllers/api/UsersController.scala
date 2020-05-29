@@ -1,10 +1,11 @@
 package controllers.api
 
 import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import daos.api.UserDaoApi
 import javax.inject.{Inject, Singleton}
 import models.User
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Json, JsonValidationError}
+import play.api.libs.json.{JsError, JsPath, JsSuccess, JsValue, Json, JsonValidationError}
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
 import play.api.libs.functional.syntax._
 import silhouette.DefaultEnv
@@ -17,6 +18,8 @@ class UserControllerApi @Inject()(cc: MessagesControllerComponents,
                                   silhouette: Silhouette[DefaultEnv])
                                  (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
+
+  val emptyStringMsg = "cannot be empty"
 
   def getAll() = silhouette.SecuredAction.async {implicit request =>
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
@@ -36,20 +39,10 @@ class UserControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
-  val emptyStringMsg = "cannot be empty"
-
   def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
-      implicit val userRead = (
-        (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "email").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "role").read[String].filter(JsonValidationError("invalid role"))(x => x != null && !x.isEmpty && List("USER", "ADMIN").contains(x)) and
-          (JsPath \ "firstName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "lastName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
-        ) (UpdateUserRequest.apply _)
-
-      val validation = request.body.validate[UpdateUserRequest](userRead)
+      val validation = validateUpdateUserRequest(request)
       validation match {
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
         case s: JsSuccess[UpdateUserRequest] => {
@@ -75,6 +68,18 @@ class UserControllerApi @Inject()(cc: MessagesControllerComponents,
         }
       }
     }
+  }
+
+  def validateUpdateUserRequest(request: SecuredRequest[DefaultEnv, JsValue]) = {
+    implicit val userRead = (
+      (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "email").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "role").read[String].filter(JsonValidationError("invalid role"))(x => x != null && !x.isEmpty && List("USER", "ADMIN").contains(x)) and
+        (JsPath \ "firstName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "lastName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
+      ) (UpdateUserRequest.apply _)
+
+    request.body.validate[UpdateUserRequest](userRead)
   }
 
   case class UpdateUserRequest(id: String, email: String, role: String, firstName: String, lastName: String)

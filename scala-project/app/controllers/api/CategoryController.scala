@@ -21,6 +21,8 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
                                      (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def getAll() = Action.async { implicit request =>
     val categoriesResult = categoryDao.getAll()
     categoriesResult.map(categories => Ok(Json.toJson(categories)))
@@ -35,7 +37,7 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val categoryRead: Reads[String] = (JsPath \ "name").read[String]
-        .filter(JsonValidationError("must be non-empty"))(_.length > 0)
+        .filter(JsonValidationError(emptyStringMsg))(_.length > 0)
 
       val validation = request.body.validate[String](categoryRead)
       validation match {
@@ -58,8 +60,8 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val categoryUpdateRead = (
-        (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "name").read[String].filter(JsonValidationError("must be non-empty"))(_.length > 0)
+        (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(_.length > 0)
         ) (CategoryUpdateDto.apply _)
 
       val validation = request.body.validate[CategoryUpdateDto](categoryUpdateRead)
@@ -86,7 +88,7 @@ class CategoryControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val categoryRead: Reads[String] = (JsPath \ "id").read[String]
-        .filter(JsonValidationError("must be non-empty"))(_.length > 0)
+        .filter(JsonValidationError(emptyStringMsg))(_.length > 0)
       val validation = request.body.validate[String](categoryRead)
       validation match {
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))

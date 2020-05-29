@@ -1,9 +1,10 @@
 package controllers.api
 
 import com.mohiva.play.silhouette.api.Silhouette
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import daos.api.{CategoryDaoApi, ProductDaoApi}
 import javax.inject.{Inject, Singleton}
-import models.Product
+import models._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{MessagesControllerComponents, _}
@@ -64,45 +65,16 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       case Some(user) => {
         productDao.getWhenLoggedInPopulatedProduct(productId, request.identity.get.id).map(result =>
           if (!result._1.isDefined) Status(NOT_FOUND)(JsError.toJson(JsError("not found")))
-          else {
-            val opinions = result._5.map(o => Json.obj(
-              "opinion" -> o._1,
-              "user" -> Json.obj(
-                "id" -> o._2.get.id,
-                "firstName" -> o._2.get.firstName,
-                "lastName" -> o._2.get.lastName,
-                "email" -> o._2.get.email
-              )
-            ))
-            var resJson = Json.obj(
-              "userId" -> user.id,
-              "product" -> result._1.get._1,
-              "opinions" -> opinions,
-              "boughtByUser" -> result._6
-            )
-            if (result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
-            if (result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
-            if (result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
-            Ok(resJson)
-          })
+          else Ok(mapResultToJsonWhenLoggedIn(result, user))
+        )
       }
     }
   }
 
-  case class CreateProductDto(name: String, description: String, price: Float, quantity: Int, categoryId: String)
-
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
-      implicit val productRead = (
-        (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
-          (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
-          (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
-        ) (CreateProductDto.apply _)
-
-      val validation = request.body.validate[CreateProductDto](productRead)
+      val validation = validateCreateRequest(request)
       validation match {
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
         case s: JsSuccess[CreateProductDto] => {
@@ -123,21 +95,10 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
-  case class UpdateProductDto(id: String, name: String, description: String, price: Float, quantity: Int, categoryId: String)
-
   def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
-      implicit val productRead = (
-        (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
-          (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
-          (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
-          (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
-        ) (UpdateProductDto.apply _)
-
-      val validation = request.body.validate[UpdateProductDto](productRead)
+      val validation = validateUpdateRequest(request)
       validation match {
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
         case s: JsSuccess[UpdateProductDto] => {
@@ -174,4 +135,58 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
       }
     }
   }
+
+  def validateCreateRequest(request: SecuredRequest[DefaultEnv, JsValue]) = {
+    implicit val productRead = (
+      (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
+        (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
+        (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
+      ) (CreateProductDto.apply _)
+
+    request.body.validate[CreateProductDto](productRead)
+  }
+
+  def validateUpdateRequest(request: SecuredRequest[DefaultEnv, JsValue]) = {
+    implicit val productRead = (
+      (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
+        (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
+        (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
+      ) (UpdateProductDto.apply _)
+
+    request.body.validate[UpdateProductDto](productRead)
+  }
+
+  def mapResultToJsonWhenLoggedIn(result: (Option[(Product, Option[Category])], Option[WishlistItem], Option[Cart], Option[CartItem], Seq[(Opinion, Option[User])], Boolean), user: UserIdentity) = {
+    val opinions = result._5.map(o => Json.obj(
+      "opinion" -> o._1,
+      "user" -> Json.obj(
+        "id" -> o._2.get.id,
+        "firstName" -> o._2.get.firstName,
+        "lastName" -> o._2.get.lastName,
+        "email" -> o._2.get.email
+      )
+    ))
+
+    var resJson = Json.obj(
+      "userId" -> user.id,
+      "product" -> result._1.get._1,
+      "opinions" -> opinions,
+      "boughtByUser" -> result._6
+    )
+    if (result._1.get._2.isDefined) resJson = resJson + ("category" -> Json.toJson(result._1.get._2.get))
+    if (result._2.isDefined) resJson = resJson + ("wishlistItem" -> Json.toJson(result._2.get))
+    if (result._4 != null && result._4.isDefined) resJson = resJson + ("cartItem" -> Json.toJson(result._4.get))
+
+    resJson
+  }
+
+  case class CreateProductDto(name: String, description: String, price: Float, quantity: Int, categoryId: String)
+
+  case class UpdateProductDto(id: String, name: String, description: String, price: Float, quantity: Int, categoryId: String)
+
 }
