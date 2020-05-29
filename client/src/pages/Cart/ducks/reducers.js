@@ -1,6 +1,8 @@
 import types from './types';
 
-const cartItemsReducer = (state = [], action) => {
+const cartItemsReducer = (state, action) => {
+    if(typeof state === 'undefined') return [];
+
     switch (action.type) {
         case types.CART_SET_ITEMS:
             return [...action.cartItems];

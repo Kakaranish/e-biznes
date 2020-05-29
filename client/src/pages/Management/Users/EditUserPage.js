@@ -9,7 +9,6 @@ const EditUserPage = (props) => {
     const history = useHistory();
     const userId = props.match.params.id;
 
-    const [validationErrors, setValidationErrors] = useState(null);
     const [state, setState] = useState({ loading: true, user: null });
 
     useEffect(() => {

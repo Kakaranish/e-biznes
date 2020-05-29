@@ -1,6 +1,8 @@
 import types from './types';
 
-const authReducer = (state = null, action) => {
+const authReducer = (state, action) => {
+    if(typeof state === 'undefined') return null;
+    
     switch(action.type) {
         case types.LOG_IN: 
             return {
