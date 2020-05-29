@@ -9,7 +9,6 @@ import play.api.libs.json.{JsError, JsPath, JsSuccess, JsValue, Json, JsonValida
 import play.api.mvc.{MessagesAbstractController, MessagesControllerComponents}
 import play.api.libs.functional.syntax._
 import silhouette.DefaultEnv
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -47,22 +46,12 @@ class UserControllerApi @Inject()(cc: MessagesControllerComponents,
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
         case s: JsSuccess[UpdateUserRequest] => {
           val user = s.value
+
           userDao.getById(user.id).flatMap(oById => oById match {
             case None => Future(Status(BAD_REQUEST)("no user with such id"))
             case Some(_) => {
-              userDao.getByEmail(user.email).flatMap(oByEmail => oByEmail match {
-                case Some(foundUser) => {
-                  if(foundUser.id != user.id) Future(Status(BAD_REQUEST)("user with such email already exists"))
-                  else {
-                    val toUpdate = User(user.id, user.email, user.firstName, user.lastName, user.role)
-                    userDao.update(toUpdate).flatMap(updatedUser => Future(Ok(Json.toJson(updatedUser))))
-                  }
-                }
-                case None => {
-                  val toUpdate = User(user.id, user.email, user.firstName, user.lastName, user.role)
-                  userDao.update(toUpdate).flatMap(updatedUser => Future(Ok(Json.toJson(updatedUser))))
-                }
-              })
+              val toUpdate = User(user.id, user.email, user.firstName, user.lastName, user.role)
+              userDao.update(toUpdate).flatMap(updatedUser => Future(Ok(Json.toJson(updatedUser))))
             }
           })
         }

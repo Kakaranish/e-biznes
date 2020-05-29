@@ -51,8 +51,7 @@ class OpinionDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)
           .result
       }
     } yield {
-      if(exists) false
-      else wasBought
+      if(exists) false else wasBought
     }
   }
 

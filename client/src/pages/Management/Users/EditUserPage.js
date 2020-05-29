@@ -41,12 +41,8 @@ const EditUserPage = (props) => {
         const result = await axios.put('/api/admin/users', formData, {
             headers: { 'X-Auth-Token': props.auth.token },
             validateStatus: false
-        });
-        if (result.status === 400) {
-            setValidationErrors(result.data.obj.map(r => r.msg));
-            return;
-        }
-        else if (result.status !== 200) {
+				});
+        if (result.status !== 200) {
             alert("Some error occured");
             console.log(result);
             return;
@@ -67,8 +63,8 @@ const EditUserPage = (props) => {
 
             <div className="form-group">
                 <label>Email</label>
-                <input name="email" type="text" className="form-control" placeholder="Email..."
-                    defaultValue={state.user.email} required />
+                <input name="email" type="text" className="form-control"
+                    defaultValue={state.user.email} disabled />
             </div>
 
             <div className="form-group">
@@ -101,22 +97,6 @@ const EditUserPage = (props) => {
             <button type="submit" className="btn btn-success w-25">
                 Update User
             </button>
-
-            {
-                validationErrors &&
-                <div className="col-12 mt-2">
-                    <p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
-                        Validation errors
-                    </p>
-                    <ul style={{ paddingTop: "0", marginTop: "0px" }}>
-                        {
-                            validationErrors.map((error, i) => {
-                                return <li key={`val-err-${i}`} className="text-danger">{error}</li>
-                            })
-                        }
-                    </ul>
-                </div>
-            }
         </form>
     </>
 };

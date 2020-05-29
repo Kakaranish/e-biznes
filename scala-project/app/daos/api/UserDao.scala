@@ -32,9 +32,9 @@ class UserDaoApi @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
   }
 
   def update(user: User) = {
-    val toUpdate = user.copy()
     val action = userTable.filter(_.id === user.id)
-      .update(toUpdate)
-    db.run(action).map(_ =>toUpdate)
+      .map(r => (r.firstName, r.lastName, r.role))
+      .update((user.firstName, user.lastName, user.role))
+    db.run(action).map(_ => user)
   }
 }
