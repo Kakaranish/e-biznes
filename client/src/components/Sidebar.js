@@ -7,7 +7,9 @@ const Sidebar = (props) => {
     return (
         <>
             <div className="bg-light border-right" id="sidebar-wrapper">
-                <div className="sidebar-heading">Start Bootstrap </div>
+                
+                <div className="sidebar-heading">My e-biznes </div>
+
                 <div className="list-group list-group-flush">
                     <Link to={'/'} className="list-group-item list-group-item-action bg-light">
                         Main Page

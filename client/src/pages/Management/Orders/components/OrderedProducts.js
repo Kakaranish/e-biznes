@@ -7,7 +7,8 @@ const OrderedProducts = ({ cartItems }) => {
             cartItems.map(cartItem =>
                 <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`div-${cartItem.product.id}`}>
                     <p>
-                        <b>{cartItem.product.name}</b>
+                        <b>{cartItem.product.name}</b>&nbsp;
+                        {cartItem.product.isDeleted && <i>(DELETED)</i>}
                     </p>
 
                     {
