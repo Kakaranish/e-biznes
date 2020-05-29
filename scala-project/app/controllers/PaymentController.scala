@@ -87,7 +87,7 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
         val nowIso = new DateTime().toString(DateTimeFormat
           .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
         val payment = Payment(null, createForm.orderId, createForm.methodCode,
-         nowIso, createForm.amountOfMoney)
+         nowIso, createForm.amountOfMoney, "PENDING")
 
         paymentDao.create(payment).map(_ =>
           Redirect(routes.PaymentController.create())
@@ -106,7 +106,7 @@ class PaymentController @Inject()(cc: MessagesControllerComponents,
       },
       updateForm => {
         val payment = Payment(updateForm.id, updateForm.orderId, updateForm.methodCode,
-          updateForm.dateCreated, updateForm.amountOfMoney)
+          updateForm.dateCreated, updateForm.amountOfMoney, "PENDING")
 
         paymentDao.update(payment).map(_ =>
           Redirect(routes.PaymentController.update(payment.id))

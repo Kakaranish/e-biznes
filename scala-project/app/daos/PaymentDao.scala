@@ -29,7 +29,8 @@ class PaymentDao @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec
 
   def create(payment: Payment) = db.run {
     val id = UUID.randomUUID().toString()
-    paymentTable += Payment(id, payment.orderId, payment.methodCode, payment.dateCreated, payment.amountOfMoney)
+    val initStatus = "PENDING"
+    paymentTable += Payment(id, payment.orderId, payment.methodCode, payment.dateCreated, payment.amountOfMoney, initStatus)
   }
 
   def update(paymentToUpdate: Payment) = db.run {

@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import { doRequest } from '../../../Utils';
+import EditablePayment  from './components/EditablePayment';
 
 const OrderPage = (props) => {
 
@@ -28,7 +29,9 @@ const OrderPage = (props) => {
             result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.cartItem.pricePerProduct);
 
             let paymentsValue = 0;
-            result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
+            result.payments.forEach(payment => {
+                if (payment.status === "ACCEPTED") paymentsValue += payment.amountOfMoney
+            });
 
             let toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
 
@@ -51,7 +54,7 @@ const OrderPage = (props) => {
     return <>
 
         <h3>Order {orderId}</h3>
-        
+
         <p>
             User: {state.orderInfo.order.userId}
         </p>
@@ -113,24 +116,7 @@ const OrderPage = (props) => {
 
                 :
                 state.orderInfo.payments.map((p, i) =>
-                    <div className="p-3 mb-2" style={{ border: "1px solid gray" }} key={`p-${p.id}`}>
-
-                        <p>
-                            <b>Payment Id:</b> {p.id}
-                        </p>
-
-                        <p>
-                            <b>Amount of money:</b> {p.amountOfMoney} PLN
-                        </p>
-
-                        <p>
-                            <b>Payment method:</b> {p.methodCode}
-                        </p>
-
-                        <p>
-                            <b>Paid in:</b> {moment(p.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
-                        </p>
-                    </div>
+                    <EditablePayment payment={p} key={`p-${p.id}`} />
                 )
             }
         </div>

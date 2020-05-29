@@ -37,7 +37,7 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
           case Some(order) => {
             if (order.userId != request.identity.id) Future(Status(BAD_REQUEST)("given order does not belong to user"))
             else {
-              val toAdd = Payment(null, data.orderId, data.methodCode, null, data.amountOfMoney)
+              val toAdd = Payment(null, data.orderId, data.methodCode, null, data.amountOfMoney, "PENDING")
               paymentDao.create(toAdd).flatMap(payment => Future(Ok(Json.toJson(payment))))
             }
           }
@@ -46,5 +46,29 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
+  def updatePaymentStatus() = silhouette.SecuredAction.async(parse.json) { implicit request =>
+    if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
+    else {
+      implicit val paymentStatusRead = (
+        (JsPath \ "paymentId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+          (JsPath \ "status").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty &&
+            List("PENDING", "ACCEPTED", "REJECTED", "CANCELLED").contains(x))
+        ) (UpdatePaymentRequest.apply _)
+
+      val validation = request.body.validate[UpdatePaymentRequest](paymentStatusRead)
+      validation match {
+        case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
+        case s: JsSuccess[UpdatePaymentRequest] => {
+          paymentDao.existsWithId(s.value.paymentId).flatMap(exists =>
+            if(!exists) Future(Status(NOT_FOUND)("payment with such id does not exist"))
+            else paymentDao.updateStatus(s.value.paymentId, s.value.status).flatMap(_ => Future(Ok))
+          )
+        }
+      }
+    }
+  }
+
   case class CreatePaymentRequest(orderId: String, methodCode: String, amountOfMoney: Float)
+
+  case class UpdatePaymentRequest(paymentId: String, status: String)
 }

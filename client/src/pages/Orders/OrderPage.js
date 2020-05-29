@@ -30,7 +30,9 @@ const OrderPage = (props) => {
             result.cartItems.forEach(ci => totalPrice += ci.cartItem.quantity * ci.cartItem.pricePerProduct);
 
             let paymentsValue = 0;
-            result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
+            result.payments.forEach(payment => {
+                if(payment.status === "ACCEPTED") paymentsValue += payment.amountOfMoney
+            });
 
             let toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
 
@@ -171,6 +173,10 @@ const OrderPage = (props) => {
 
                         <p>
                             <b>Paid in:</b> {moment(p.dateCreated).format('YYYY-MM-DD hh:mm:ss')}
+                        </p>
+
+                        <p>
+                            <b>Status:</b> {p.status}
                         </p>
                     </div>
                 )

@@ -94,6 +94,7 @@ CREATE TABLE "Payment" (
 	"MethodCode"	TEXT NOT NULL,
 	"DateCreated"	TEXT NOT NULL,
 	"AmountOfMoney"	REAL NOT NULL,
+	"Status"	TEXT NOT NULL,
 	PRIMARY KEY("Id"),
 	FOREIGN KEY("OrderId") REFERENCES "Order"("Id")
 );
