@@ -24,11 +24,11 @@ class OrderTable(tag: Tag) extends Table[Order](tag, "Order") {
 
   def dateCreated = column[String]("DateCreated")
 
-  def cart_fk = foreignKey("cart_fk", userId, TableQuery[CartTable])(_.id)
+  def cartFK = foreignKey("cart_fk", userId, TableQuery[CartTable])(_.id)
 
-  def user_fk = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
+  def userFK = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
 
-  def shippingInfo_fk = foreignKey("shippingInfo_fk", shippingInfoId, TableQuery[ShippingInfoTable])(_.id)
+  def shippingInfoFK = foreignKey("shippingInfo_fk", shippingInfoId, TableQuery[ShippingInfoTable])(_.id)
 
   override def * = (id, cartId, userId, shippingInfoId, dateCreated) <> ((Order.apply _).tupled, Order.unapply)
 }

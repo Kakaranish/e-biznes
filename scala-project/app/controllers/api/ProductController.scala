@@ -19,6 +19,8 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
                                      categoryDao: CategoryDaoApi)
                                     (implicit ec: ExecutionContext) extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def getAll() = Action.async { implicit request =>
     productDao.getAll().map(prods => Ok(Json.toJson(prods.map(p => Json.obj(
       "product" -> p._1,
@@ -93,11 +95,11 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val productRead = (
-        (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
           (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
           (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
-          (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+          (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
         ) (CreateProductDto.apply _)
 
       val validation = request.body.validate[CreateProductDto](productRead)
@@ -127,12 +129,12 @@ class ProductControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val productRead = (
-        (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "name").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "description").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "name").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "description").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
           (JsPath \ "price").read[Float].filter(JsonValidationError("must be > 0"))(x => x != null && x > 0) and
           (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x != null && x > 0) and
-          (JsPath \ "categoryId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+          (JsPath \ "categoryId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
         ) (UpdateProductDto.apply _)
 
       val validation = request.body.validate[UpdateProductDto](productRead)

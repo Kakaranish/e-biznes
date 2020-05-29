@@ -36,7 +36,7 @@ class ProductTable(tag: Tag) extends Table[Product](tag, "Product") {
 
   def isDeleted = column[Boolean]("IsDeleted")
 
-  def category_fk = foreignKey("category_fk", categoryId, TableQuery[CategoryTable])(_.id)
+  def categoryFK = foreignKey("category_fk", categoryId, TableQuery[CategoryTable])(_.id)
 
   override def * = (id, name, description, price, quantity, categoryId, isDeleted) <> ((Product.apply _).tupled, Product.unapply)
 }

@@ -28,7 +28,7 @@ class OAuth2InfoTable(tag: Tag) extends Table[OAuth2InfoDb](tag, "OAuth2Info") {
 
   def loginInfoId = column[String]("LoginInfoId")
 
-  def login_info_fk = foreignKey("login_info_fk", loginInfoId, TableQuery[LoginInfoTable])(_.id)
+  def login_infoFK = foreignKey("login_info_fk", loginInfoId, TableQuery[LoginInfoTable])(_.id)
 
   def * =  (id, accessToken, tokenType, expiresIn, refreshToken, loginInfoId) <> ((OAuth2InfoDb.apply _).tupled, OAuth2InfoDb.unapply)
 }

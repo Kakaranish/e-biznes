@@ -14,7 +14,7 @@
             <label><b>User</b></label><br/>
             <select name="userId">
             @for(user <- users) {
-                <option value="@user.id" name="userId">@user.email</option>
+                <option value="@user.id">@user.email</option>
             }
             </select>
         </div>

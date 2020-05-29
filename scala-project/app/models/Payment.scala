@@ -27,7 +27,7 @@ class PaymentTable(tag: Tag) extends Table[Payment](tag, "Payment") {
 
   def status = column[String]("Status")
 
-  def order_fk = foreignKey("order_fk", orderId, TableQuery[OrderTable])(_.id)
+  def orderFK = foreignKey("order_fk", orderId, TableQuery[OrderTable])(_.id)
 
   override def * = ((id, orderId, methodCode, dateCreated, amountOfMoney, status)
     <> ((Payment.apply _).tupled, Payment.unapply))

@@ -18,8 +18,8 @@ class OpinionTable(tag: Tag) extends Table[Opinion](tag, "Opinion") {
   def productId = column[String]("ProductId")
   def content = column[String]("Content")
 
-  def user_fk = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
-  def product_fk = foreignKey("product_fk", productId, TableQuery[ProductTable])(_.id)
+  def userFK = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
+  def productFK = foreignKey("product_fk", productId, TableQuery[ProductTable])(_.id)
 
   override def * = (id, userId, productId, content) <> ((Opinion.apply _).tupled, Opinion.unapply)
 }

@@ -24,9 +24,10 @@ class SignInController @Inject()(cc: MessagesControllerComponents,
   extends MessagesAbstractController(cc) with I18nSupport {
 
   def submit() = silhouette.UnsecuredAction(parse.json).async { implicit request =>
+    val emptyStringMsg = "cannot be empty"
     implicit val signInRead = (
-      (JsPath \ "email").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "password").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "email").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "password").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       ) (SignInRequest.apply _)
 
     val validation = request.body.validate[SignInRequest](signInRead)

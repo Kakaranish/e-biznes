@@ -22,6 +22,8 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
                                  (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) with TableDefinitions {
 
+  val emptyStringMsg = "cannot be empty"
+
   def getCartItems() = silhouette.SecuredAction.async { implicit request =>
     val user = request.identity
     cartDao.getByUserId(user.id).flatMap { c =>
@@ -58,7 +60,7 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def addToCart() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val addToCartRead = (
-      (JsPath \ "productId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+      (JsPath \ "productId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
         (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x > 0)
       ) (AddToCartRequest.apply _)
 
@@ -97,7 +99,7 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
   def deleteFromCart() = silhouette.SecuredAction.async(parse.json) {
     implicit request =>
       implicit val addToCartRead =
-        (JsPath \ "cartItemId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+        (JsPath \ "cartItemId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
 
       val validation = request.body.validate[String](addToCartRead)
       validation match {
@@ -123,7 +125,7 @@ class CartControllerApi @Inject()(cc: MessagesControllerComponents,
   def updateCartItemQuantity() = silhouette.SecuredAction.async(parse.json) {
     implicit request =>
       implicit val updateItemRead = (
-        (JsPath \ "cartItemId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "cartItemId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
           (JsPath \ "quantity").read[Int].filter(JsonValidationError("must be positive integer"))(x => x > 0)
         ) (UpdateCartItemQuantityRequest.apply _)
 

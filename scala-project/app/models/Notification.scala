@@ -21,7 +21,7 @@ class NotificationTable(tag: Tag) extends Table[Notification](tag, "Notification
 
   def isRead = column[Int]("IsRead")
 
-  def user_fk = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
+  def userFK = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
 
   override def * = (id, userId, content, isRead) <> ((Notification.apply _).tupled, Notification.unapply)
 }

@@ -36,15 +36,17 @@ class UserControllerApi @Inject()(cc: MessagesControllerComponents,
     }
   }
 
+  val emptyStringMsg = "cannot be empty"
+
   def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val userRead = (
-        (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "email").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
+        (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "email").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
           (JsPath \ "role").read[String].filter(JsonValidationError("invalid role"))(x => x != null && !x.isEmpty && List("USER", "ADMIN").contains(x)) and
-          (JsPath \ "firstName").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "lastName").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+          (JsPath \ "firstName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "lastName").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
         ) (UpdateUserRequest.apply _)
 
       val validation = request.body.validate[UpdateUserRequest](userRead)

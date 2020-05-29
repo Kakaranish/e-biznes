@@ -20,11 +20,13 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
                                     (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val createPaymentRead = (
-      (JsPath \ "orderId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "methodCode").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "amountOfMoney").read[Float].filter(JsonValidationError("cannot be empty"))(x => x > 0)
+      (JsPath \ "orderId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "methodCode").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "amountOfMoney").read[Float].filter(JsonValidationError(emptyStringMsg))(x => x > 0)
       ) (CreatePaymentRequest.apply _)
 
     val validation = request.body.validate[CreatePaymentRequest](createPaymentRead)
@@ -47,7 +49,7 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def cancelPaymentStatus() = silhouette.SecuredAction.async(parse.json) { implicit request =>
-    implicit val paymentStatusRead = (JsPath \ "paymentId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+    implicit val paymentStatusRead = (JsPath \ "paymentId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
     val validation = request.body.validate[String](paymentStatusRead)
     validation match {
       case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))
@@ -64,8 +66,8 @@ class PaymentControllerApi @Inject()(cc: MessagesControllerComponents,
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val paymentStatusRead = (
-        (JsPath \ "paymentId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "status").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty &&
+        (JsPath \ "paymentId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "status").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty &&
             List("PENDING", "ACCEPTED", "REJECTED", "CANCELLED").contains(x))
         ) (UpdatePaymentRequest.apply _)
 

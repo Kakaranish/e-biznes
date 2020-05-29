@@ -19,12 +19,14 @@ class NotificationControllerApi @Inject()(cc: MessagesControllerComponents,
                                          (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val createNotificationRead = (
-        (JsPath \ "userId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-          (JsPath \ "content").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+        (JsPath \ "userId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+          (JsPath \ "content").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
         ) (CreateNotificationRequest.apply _)
 
       val validation = request.body.validate[CreateNotificationRequest](createNotificationRead)

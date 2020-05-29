@@ -21,7 +21,7 @@ class CartTable(tag: Tag) extends Table[Cart](tag, "Cart") {
 
   def updateDate = column[String]("UpdateDate")
 
-  def user_fk = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
+  def userFK = foreignKey("user_fk", userId, TableQuery[UserTable])(_.id)
 
   override def * = (id, userId, isFinalized, updateDate) <> ((Cart.apply _).tupled, Cart.unapply)
 }

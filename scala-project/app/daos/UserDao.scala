@@ -32,7 +32,6 @@ extends TableDefinitions{
 
   def create(user: User) = db.run {
     val id = UUID.randomUUID().toString()
-    // TODO: In the future add password encryption here
     userTable += User(id, user.email, user.firstName, user.lastName, user.role)
   }
 

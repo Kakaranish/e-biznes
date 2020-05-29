@@ -45,7 +45,7 @@ class NotificationController @Inject()(cc: MessagesControllerComponents,
       val notification = notificationResult.get._1
       val user = notificationResult.get._2.get
       val updateFormToPass = updateForm.fill(UpdateNotificationForm(
-        notificationId, notification.userId, notification.content, if(notification.isRead != 0) true else false))
+        notificationId, notification.userId, notification.content, notification.isRead != 0))
       Ok(views.html.notifications.updateNotification(updateFormToPass, user))
     }
   }

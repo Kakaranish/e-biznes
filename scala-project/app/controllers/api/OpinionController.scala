@@ -19,10 +19,12 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
                                     (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val createOpinionRead = (
-      (JsPath \ "productId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "content").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "productId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "content").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       ) (CreateOpinionRequest.apply _)
 
     val validation = request.body.validate[CreateOpinionRequest](createOpinionRead)
@@ -50,8 +52,8 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val updateOpinionRead = (
-      (JsPath \ "opinionId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "content").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "opinionId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "content").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       ) (UpdateOpinionRequest.apply _)
 
     val validation = request.body.validate[UpdateOpinionRequest](updateOpinionRead)
@@ -68,7 +70,7 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def delete() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val deleteOpinionRead =
-      (JsPath \ "opinionId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "opinionId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
 
     val validation = request.body.validate[String](deleteOpinionRead)
     validation match {
@@ -87,7 +89,7 @@ class OpinionControllerApi @Inject()(cc: MessagesControllerComponents,
     if (request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
     else {
       implicit val deleteOpinionRead =
-        (JsPath \ "opinionId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+        (JsPath \ "opinionId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       val validation = request.body.validate[String](deleteOpinionRead)
       validation match {
         case e: JsError => Future(Status(BAD_REQUEST)(JsError.toJson(e)))

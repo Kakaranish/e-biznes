@@ -19,13 +19,15 @@ class ShippingControllerApi @Inject()(cc: MessagesControllerComponents,
                                      (implicit ec: ExecutionContext)
   extends MessagesAbstractController(cc) {
 
+  val emptyStringMsg = "cannot be empty"
+
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val createShippingInfoRead = (
-      (JsPath \ "orderId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "country").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "city").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "address").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "zipOrPostcode").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "orderId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "country").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "city").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "address").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "zipOrPostcode").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       ) (CreateShippingInfoRequest.apply _)
 
     val validation = request.body.validate[CreateShippingInfoRequest](createShippingInfoRead)
@@ -49,11 +51,11 @@ class ShippingControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def update() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val updateShippingInfoRead = (
-      (JsPath \ "id").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "country").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "city").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "address").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty) and
-        (JsPath \ "zipOrPostcode").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty)
+      (JsPath \ "id").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "country").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "city").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "address").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty) and
+        (JsPath \ "zipOrPostcode").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty)
       ) (UpdateShippingInfoRequest.apply _)
 
     val validation = request.body.validate[UpdateShippingInfoRequest](updateShippingInfoRead)
@@ -74,7 +76,7 @@ class ShippingControllerApi @Inject()(cc: MessagesControllerComponents,
 
   def delete() = silhouette.SecuredAction.async(parse.json) { implicit request =>
     implicit val deleteShippingRead = (
-      (JsPath \ "shippingInfoId").read[String].filter(JsonValidationError("cannot be empty"))(x => x != null && !x.isEmpty))
+      (JsPath \ "shippingInfoId").read[String].filter(JsonValidationError(emptyStringMsg))(x => x != null && !x.isEmpty))
 
     val validation = request.body.validate[String](deleteShippingRead)
     validation match {

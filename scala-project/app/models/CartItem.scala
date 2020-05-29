@@ -24,9 +24,9 @@ class CartItemTable(tag: Tag) extends Table[CartItem](tag, "CartItem") {
 
   def pricePerProduct = column[Float]("PricePerProduct")
 
-  def cart_fk = foreignKey("cart_fk", cartId, TableQuery[CartTable])(_.id)
+  def cartFK = foreignKey("cart_fk", cartId, TableQuery[CartTable])(_.id)
 
-  def product_fk = foreignKey("product_fk", productId, TableQuery[ProductTable])(_.id)
+  def productFK = foreignKey("product_fk", productId, TableQuery[ProductTable])(_.id)
 
   override def * = (id, cartId, productId, quantity, pricePerProduct) <> ((CartItem.apply _).tupled, CartItem.unapply)
 }
