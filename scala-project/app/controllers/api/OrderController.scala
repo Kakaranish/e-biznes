@@ -51,51 +51,13 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
 
     orderDao.belongsToUser(orderId, request.identity.id).flatMap(belongs =>
       if (!belongs) Future(Status(BAD_REQUEST)("orderId does not belong to user"))
-      else {
-        orderDao.getPopulatedById(orderId).flatMap(oi => oi match {
-          case Some(orderInfo) => {
-
-            val cartItemsInfo = orderInfo._4.map(ci => Json.obj(
-              "cartItem" -> ci._1,
-              "product" -> ci._2
-            ))
-            var resultObj = Json.obj(
-              "order" -> orderInfo._1,
-              "cart" -> orderInfo._2,
-              "cartItems" -> cartItemsInfo,
-              "payments" -> Json.toJson(orderInfo._5)
-            )
-            if (orderInfo._3.isDefined) resultObj = resultObj + ("shippingInfo" -> Json.toJson(orderInfo._3.get))
-
-            Future(Ok(Json.toJson(resultObj)))
-          }
-        })
-      }
+      else getOrderJson(orderId).flatMap(orderJson => Future(Ok(orderJson)))
     )
   }
 
   def adminGetPopulatedById(orderId: String) = silhouette.SecuredAction.async { implicit request =>
     if(request.identity.role != "ADMIN") Future(Status(UNAUTHORIZED))
-    else {
-      orderDao.getPopulatedById(orderId).flatMap(oi => oi match {
-        case Some(orderInfo) => {
-
-          val cartItemsInfo = orderInfo._4.map(ci => Json.obj(
-            "cartItem" -> ci._1,
-            "product" -> ci._2
-          ))
-          var resultObj = Json.obj(
-            "order" -> orderInfo._1,
-            "cart" -> orderInfo._2,
-            "cartItems" -> cartItemsInfo,
-            "payments" -> Json.toJson(orderInfo._5)
-          )
-          if (orderInfo._3.isDefined) resultObj = resultObj + ("shippingInfo" -> Json.toJson(orderInfo._3.get))
-
-          Future(Ok(Json.toJson(resultObj)))
-        }
-      })
-    }
+    else getOrderJson(orderId).flatMap(orderJson => Future(Ok(orderJson)))
   }
 
   def create() = silhouette.SecuredAction.async(parse.json) { implicit request =>
@@ -125,5 +87,26 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
         }
       }
     }
+  }
+
+  def getOrderJson(orderId: String) = {
+    orderDao.getPopulatedById(orderId).flatMap(oi => oi match {
+      case Some(orderInfo) => {
+
+        val cartItemsInfo = orderInfo._4.map(ci => Json.obj(
+          "cartItem" -> ci._1,
+          "product" -> ci._2
+        ))
+        var resultObj = Json.obj(
+          "order" -> orderInfo._1,
+          "cart" -> orderInfo._2,
+          "cartItems" -> cartItemsInfo,
+          "payments" -> Json.toJson(orderInfo._5)
+        )
+        if (orderInfo._3.isDefined) resultObj = resultObj + ("shippingInfo" -> Json.toJson(orderInfo._3.get))
+
+        Future(Json.toJson(resultObj))
+      }
+    })
   }
 }

@@ -6,7 +6,7 @@ import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 import { doRequest } from '../../common/Utils';
 import ShippingInfo from './components/ShippingInfo';
 import Payments from './components/Payments';
-import OrderedProducts from './components/OrderedProducts';
+import OrderedProducts from '../../components/Orders/OrderedProducts';
 
 const OrderPage = (props) => {
 

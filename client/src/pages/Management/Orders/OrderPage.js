@@ -4,7 +4,7 @@ import moment from 'moment';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
 import { doRequest } from '../../../common/Utils';
 import ShippingInfo from './components/ShippingInfo';
-import OrderedProducts from './components/OrderedProducts';
+import OrderedProducts from '../../../components/Orders/OrderedProducts';
 import Payments from './components/Payments';
 
 const OrderPage = (props) => {
