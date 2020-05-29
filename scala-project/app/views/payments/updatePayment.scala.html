@@ -6,7 +6,7 @@
 
   @form(routes.PaymentController.updateHandler()) {
 
-    <h3><b>Payment to update: </b> @paymentForm("id").value</h3>
+    <h3><strong>Payment to update: </strong> @paymentForm("id").value</h3>
 
     <input name="id" value="@paymentForm("id").value" hidden />
     <input name="orderId" value="@paymentForm("orderId").value" hidden />
@@ -14,13 +14,13 @@
 
     <div>
       <p>
-        <b>For order: </b> @paymentForm("orderId").value
+        <strong>For order: </strong> @paymentForm("orderId").value
       </p>
     </div>
 
     <div>
       <p>
-        <b>Date Created: </b> @paymentForm("dateCreated").value
+        <strong>Date Created: </strong> @paymentForm("dateCreated").value
       </p>
     </div>
 

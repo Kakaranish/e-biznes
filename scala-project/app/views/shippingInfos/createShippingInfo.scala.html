@@ -14,7 +14,7 @@
         @inputText(shippingInfoForm("zipOrPostcode"), '_label -> "Zip or postcode")
 
         <div>
-            <label><b>Order</b></label><br/>
+            <label><strong>Order</strong></label><br/>
             <select name="orderId">
             @for(orderId <- ordersIds) {
                 <option value="@orderId">@orderId</option>

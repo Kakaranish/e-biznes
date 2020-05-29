@@ -11,7 +11,7 @@
         @inputText(notificationForm("content"), '_label -> "Content")
 
         <div>
-            <label><b>User</b></label><br/>
+            <label><strong>User</strong></label><br/>
             <select name="userId">
             @for(user <- users) {
                 <option value="@user.id">@user.email</option>

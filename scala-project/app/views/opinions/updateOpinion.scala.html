@@ -7,16 +7,16 @@
     @form(routes.OpinionController.updateHandler()) {
 
 
-        <h3><b>Opinion to update: </b> @opinionForm("id").value</h3>
+        <h3><strong>Opinion to update: </strong> @opinionForm("id").value</h3>
         <input name="id" value="@opinionForm("id").value" hidden />
 
         <p>
-            <b>Product: </b> @product.name
+            <strong>Product: </strong> @product.name
             <input name="productId" value="@opinionForm("productId").value" hidden />
         </p>
 
         <p>
-            <b>User: </b> @user.firstName @user.lastName
+            <strong>User: </strong> @user.firstName @user.lastName
             <input name="userId" value="@opinionForm("userId").value" hidden />
         </p>
 
