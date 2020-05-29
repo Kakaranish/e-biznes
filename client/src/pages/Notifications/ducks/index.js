@@ -1,2 +1,2 @@
-import notifReducer from './reducers';
+import notifReducer from './notifReducer';
 export default notifReducer;

@@ -1,2 +1,2 @@
-import cartItemsReducer from './reducers';
+import cartItemsReducer from './cartItemsReducer';
 export default cartItemsReducer;
