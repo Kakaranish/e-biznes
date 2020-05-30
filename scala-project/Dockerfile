@@ -5,7 +5,6 @@ gnupg2 \
 unzip \
 nano \
 git \
-vim \
 wget \
 curl \
 openjdk-8-jdk 
@@ -19,15 +18,9 @@ RUN curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E4
 RUN apt-get update
 RUN apt-get install sbt
 
-RUN apt-get install -y npm
-RUN npm install -g npm@6.8
-RUN hash -r
+WORKDIR /home/e-biznes/
+RUN git clone https://github.com/Kakaranish/e-biznes.git . && git pull origin master
+WORKDIR /home/e-biznes/scala-project
+RUN sbt compile
 
-RUN useradd -ms /bin/bash sgruz
-RUN adduser sgruz sudo
-USER sgruz
-
-VOLUME [ "/home/sgruz/projekt" ]
-WORKDIR /home/sgruz
-
-EXPOSE 8000 9000 5000 8888
+EXPOSE 9000
