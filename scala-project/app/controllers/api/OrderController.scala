@@ -33,7 +33,7 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def getPopulatedWithShippingInfoById(orderId: String) = silhouette.SecuredAction.async {implicit request =>
-    if (orderId == null || orderId.isBlank || orderId.isEmpty)
+    if (orderId == null || orderId.isEmpty)
       Future(Status(BAD_REQUEST)("orderId is invalid"))
 
     orderDao.getPopulatedWithShippingInfoById(orderId).flatMap(o => o match {
@@ -46,7 +46,7 @@ class OrderControllerApi @Inject()(cc: MessagesControllerComponents,
   }
 
   def getPopulatedById(orderId: String) = silhouette.SecuredAction.async { implicit request =>
-    if (orderId == null || orderId.isBlank || orderId.isEmpty)
+    if (orderId == null || orderId.isEmpty)
       Future(Status(BAD_REQUEST)("orderId is invalid"))
 
     orderDao.belongsToUser(orderId, request.identity.id).flatMap(belongs =>
