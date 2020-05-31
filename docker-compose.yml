@@ -5,8 +5,7 @@ services:
     ports:
       - "9000:9000"
     volumes: 
-      - path/to/database:/home/backend/ebiznes.db
-      - path/to/silhouette.conf:/home/backend/conf/silhouette.conf
+      - path/to/dir/with/db:/home/backend/data
     command: sbt run
   frontend:
     stdin_open: true
