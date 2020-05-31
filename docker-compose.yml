@@ -4,6 +4,9 @@ services:
     build: ./scala-project
     ports:
       - "9000:9000"
+    volumes: 
+      - path/to/database:/home/backend/ebiznes.db
+      - path/to/silhouette.conf:/home/backend/conf/silhouette.conf
     command: sbt run
   frontend:
     stdin_open: true
@@ -12,3 +15,4 @@ services:
       - "3000:3000"
     depends_on: 
       - backend
+    command: npm start

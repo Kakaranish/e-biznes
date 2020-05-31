@@ -18,9 +18,6 @@ RUN curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E4
 RUN apt-get update
 RUN apt-get install sbt
 
-WORKDIR /home/e-biznes/
-RUN git clone https://github.com/Kakaranish/e-biznes.git . && git pull origin master
-WORKDIR /home/e-biznes/scala-project
+WORKDIR /home/backend
+COPY . .
 RUN sbt compile
-
-EXPOSE 9000

@@ -1,12 +1,13 @@
 FROM alpine:latest
 
-RUN apk update && apk add bash nano git npm
-RUN npm install -g npm@6.8
-RUN hash -r
+RUN apk update && apk add \
+    bash \
+    nano \
+    git
+RUN apk add npm && \
+    npm install -g npm@6.8 && \
+    hash -r
 
-WORKDIR /home/e-biznes/
-RUN git clone https://github.com/Kakaranish/e-biznes.git . && git pull origin master
-WORKDIR /home/e-biznes/client
+WORKDIR /home/frontend
+COPY . .
 RUN npm i
-
-CMD ["npm", "start"]
