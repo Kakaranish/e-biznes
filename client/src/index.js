@@ -6,15 +6,15 @@ import * as serviceWorker from './serviceWorker';
 import App from './App';
 import configureStore from './store';
 
-const {store, persistor} = configureStore();
+const { store, persistor } = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>
-    <PersistGate loading={null} persistor={persistor}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <App />
-      </Provider>
-    </PersistGate>
+      </PersistGate>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

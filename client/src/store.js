@@ -5,7 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import rootReducer from './rootReducer';
 
-const persistConfig = { key: 'root', storage };
+const persistConfig = { key: 'root', storage, debug: true };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = createStore(persistedReducer, composeWithDevTools(applyMiddleware(thunk)));

@@ -6,6 +6,7 @@ import ProductWishlistStatus from './ProductWishlistStatus';
 import * as Utils from '../../common/Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
 import Opinions from './Components/Opinions';
+import AddToCartBtn from './Components/AddToCartBtn';
 
 const ProductPage = (props) => {
 
@@ -102,19 +103,9 @@ const ProductPage = (props) => {
 		{
 			state.result.product.quantity === 0
 				? <h3 className="text-danger">Product is not available</h3>
-				: <form onSubmit={addToCartOnSubmit} className="form-inline mb-4">
-					<div className="form-group w-100">
-						<input name="quantity" type="number" step="1" min="0" max={state.result.product.quantity} className="form-control form-control"
-							style={{ width: "10%" }} placeholder="Quantity to add" disabled={state.result.cartItem ? true : false} required />
-						<button type="submit" className="btn btn-primary w-25 mr-2" disabled={state.result.cartItem ? true : false}>
-							{
-								state.result.cartItem
-									? "Product already in cart"
-									: "Add to cart"
-							}
-						</button>
-					</div>
-				</form>
+				: <AddToCartBtn productInfo={state.result}
+					authenticated={!!props.auth}
+					onAddToCartCb={addToCartOnSubmit} />
 		}
 
 		<Opinions state={state} />
