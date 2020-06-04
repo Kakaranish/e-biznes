@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { isValidUUID, getFormDataJsonFromEvent } from '../../../common/Utils';
 import AwareComponentBuilder from '../../../common/AwareComponentBuilder';
+import CategoryForm from './components/CategoryForm';
 
 const EditCategoryPage = (props) => {
 	const categoryId = props.match.params.id;
@@ -18,7 +19,7 @@ const EditCategoryPage = (props) => {
 			validateStatus: false
 		}
 		);
-		if(result.status === 400) {
+		if (result.status === 400) {
 			setValidationErrors(result.data.obj.map(r => r.msg));
 			return;
 		}
@@ -45,41 +46,14 @@ const EditCategoryPage = (props) => {
 
 	if (!isValidUUID(categoryId)) return <h3>Category Id '{categoryId}' is invalid UUID</h3>
 	else if (state.loading) return <></>
-	else {
-		if (!state.category) return <h3>Category Id '{categoryId}' does not exist</h3>
-		else return <>
-			<h3>Edit category</h3>
+	else if (!state.category) return <h3>Category Id '{categoryId}' does not exist</h3>
+	else return <>
+		<h3>Edit category</h3>
 
-			<form onSubmit={onSubmit}>
-				<div className="form-group">
-					<input name="id" type="text" className="form-control" id="idInput" value={categoryId} readOnly />
-				</div>
-				<div className="form-group">
-					<input name="name" type="text" className="form-control" id="nameInput" defaultValue={state.category.name} />
-				</div>
-
-				<button type="submit" className="btn btn-success w-25">
-					Submit
-				</button>
-
-				{
-					validationErrors &&
-					<div className="col-12 mt-2">
-						<p className="text-danger font-weight-bold" style={{ marginBottom: '0px' }}>
-							Validation errors
-                        </p>
-						<ul style={{ paddingTop: "0", marginTop: "0px" }}>
-							{
-								validationErrors.map((error, i) => {
-									return <li key={`val-err-${i}`} className="text-danger">{error}</li>
-								})
-							}
-						</ul>
-					</div>
-				}
-			</form>
-		</>
-	}
+		<CategoryForm initState={{ categoryId, categoryName: state.category.name }}
+			onSubmitCb={onSubmit}
+			validationErrors={validationErrors} />
+	</>
 };
 
 export default new AwareComponentBuilder()
