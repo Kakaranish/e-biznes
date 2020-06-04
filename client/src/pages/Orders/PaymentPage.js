@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { getFormDataJsonFromEvent, doRequest } from '../../common/Utils';
 import AwareComponentBuilder from '../../common/AwareComponentBuilder';
+import { fetchOrderInfoAsUser } from '../../common/orders-common';
 
 const PaymentPage = (props) => {
 
@@ -24,7 +25,7 @@ const PaymentPage = (props) => {
 			const action = async () => axios.post('/api/payments', formData, {
 				headers: { 'X-Auth-Token': props.auth.token },
 				validateStatus: false
-			});			
+			});
 			await doRequest(action);
 			history.push(`/orders/${orderId}`);
 		} catch (error) {
@@ -35,34 +36,10 @@ const PaymentPage = (props) => {
 	const [state, setState] = useState({ loading: true, orderInfo: null });
 	useEffect(() => {
 		const fetchOrder = async () => {
-			
-			let result;
 			try {
-				const action = async () => axios.get(`/api/orders/${orderId}`, {
-					headers: { 'X-Auth-Token': props.auth.token },
-					validateStatus: false
-				});
-				result = await doRequest(action);
-			} catch (error) {
-				alert(`${error} error occured`);
-			}
-
-			let totalPrice = 0;
-			result.cartItems.forEach(ci => 
-				totalPrice += ci.cartItem.quantity * ci.cartItem.pricePerProduct);
-
-			let paymentsValue = 0;
-			result.payments.forEach(payment => paymentsValue += payment.amountOfMoney);
-
-			const toPay = parseFloat((totalPrice - paymentsValue).toFixed(2));
-
-			setState({
-				loading: false,
-				orderInfo: result,
-				totalPrice: totalPrice,
-				paymentsValue: paymentsValue,
-				toPay: toPay
-			});
+				const result = await fetchOrderInfoAsUser(props.auth, orderId);
+				if (result) setState(Object.assign({ loading: false }, result));
+			} catch (error) { alert(`${error} error occured`); }
 		};
 
 		fetchOrder();

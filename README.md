@@ -4,7 +4,7 @@
 
 ## How to run app?
 
-1\. Fill social providers info in `scala-project/conf/silhouette.conf`. "BLAH BLAH BLAH" means placeholder for your data. The complete `silhouette.conf` should look like this: 
+Fill social providers info in `scala-project/conf/silhouette.conf`. "BLAH BLAH BLAH" means placeholder for your data. The complete `silhouette.conf` should look like this: 
 <pre>
 silhouette {
   socialStateHandler.signer.key = "[aRe7QuPXuNNdPasdas7qPLhk3vg12312smy]"
@@ -42,10 +42,4 @@ silhouette {
 }
 </pre>
 
-2\. Provide database
-- If you don't have database for app yet replace `path/to/dir/with/db` with path to any directory. In this path will be created `ebiznes.db`
-
-- If you already have sqlite database `ebiznes.db` under path `/any/path` replace `path/to/dir/with/db` in `docker-compose.yml` with `/any/path`. The line should look like this:
-```
-- /any/path:/home/backend/data
-```
+NOTE: By default database will be created under `./scala-project/data` path. You can easily change it in `docker-compose.yaml`.
